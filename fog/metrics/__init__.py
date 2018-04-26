@@ -1,1 +1,1 @@
-import cosine
+from cosine import *
