@@ -13,5 +13,5 @@ lint:
 
 unit:
 	@echo Running unit tests...
-	python -m pytest -s
+	pytest -s
 	@echo
