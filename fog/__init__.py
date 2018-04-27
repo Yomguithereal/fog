@@ -1,1 +1,1 @@
-import metrics
+import fog.metrics as metrics

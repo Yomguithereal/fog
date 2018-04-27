@@ -2,11 +2,16 @@
 SOURCE = fog
 
 # Commands
-all: lint
+all: lint test
 
-# test: test-unittest
+test: unit
 
 lint:
 	@echo Linting source code using pep8...
-	pycodestyle $(SOURCE)
+	pycodestyle --ignore E501 $(SOURCE) test
+	@echo
+
+unit:
+	@echo Running unit tests...
+	pytest -s
 	@echo

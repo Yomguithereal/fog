@@ -1,1 +1,1 @@
-from cosine import *
+from fog.metrics.cosine import *

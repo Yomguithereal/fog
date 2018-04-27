@@ -7,18 +7,22 @@
 import math
 
 
-def sparse_cosine_similarity(A, B):
-    '''
+def sparse_cosine_similarity(A, B, key=lambda x: x):
+    """
     Function computing cosine similarity on sparse weighted sets represented
-    by python Counter instances.
+    by python dicts.
+
+    Runs in O(n), n being the sum of A & B's sizes.
 
     Args:
         A (Counter): First weighted set.
         B (Counter): Second weighted set.
+        key (callable, optional): Function retrieving the weight from item.
 
     Returns:
         float: Cosine similarity between A & B.
-    '''
+
+    """
     xx = 0
     xy = 0
     yy = 0
@@ -27,13 +31,15 @@ def sparse_cosine_similarity(A, B):
     if len(A) > len(B):
         A, B = B, A
 
-    for key, weight in A.items():
+    for k, v in A.items():
+        weight = key(v)
         xx += weight ** 2
 
-        if key in B:
-            xy += weight * B[key]
+        if k in B:
+            xy += weight * key(B[k])
 
-    for weight in B.values():
+    for v in B.values():
+        weight = key(v)
         yy += weight ** 2
 
     return xy / math.sqrt(xx * yy)
