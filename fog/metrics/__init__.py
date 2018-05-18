@@ -1,1 +1,1 @@
-from fog.metrics.cosine import *
+from fog.metrics.cosine import sparse_cosine_similarity
