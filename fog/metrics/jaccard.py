@@ -6,7 +6,7 @@
 #
 
 
-def weighted_jaccard_similarity(A, B, key=lambda x: x):
+def weighted_jaccard_similarity(A, B):
     """
     Function computing the weighted Jaccard similarity.
 
@@ -21,7 +21,6 @@ def weighted_jaccard_similarity(A, B, key=lambda x: x):
     Args:
         A (Counter): First weighted set.
         B (Counter): Second weighted set.
-        key (callable, optional): Function retrieving the weight from item.
 
     Returns:
         float: Weighted Jaccard similarity between A & B.
@@ -46,13 +45,13 @@ def weighted_jaccard_similarity(A, B, key=lambda x: x):
 
     # Computing intersection
     for k, v in A.items():
-        weight_A = key(v)
+        weight_A = v
         weight_B = 0.0
 
         v2 = B.get(k)
 
         if v2 is not None:
-            weight_B = key(v2)
+            weight_B = v2
             done.add(k)
 
         if weight_A < weight_B:
@@ -67,6 +66,6 @@ def weighted_jaccard_similarity(A, B, key=lambda x: x):
         if k in done:
             continue
 
-        U += key(v)
+        U += v
 
     return I / U

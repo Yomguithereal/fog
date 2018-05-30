@@ -20,16 +20,3 @@ class TestSparseCosineSimilarity(object):
     def test_basics(self):
         for A, B, similarity in BASIC_TESTS:
             assert sparse_cosine_similarity(A, B) == approx(similarity, 1e-2)
-
-    def test_key(self):
-        tests = []
-
-        for test in BASIC_TESTS:
-            tests.append((
-                {k: {'weight': v} for k, v in test[0].items()},
-                {k: {'weight': v} for k, v in test[1].items()},
-                test[2]
-            ))
-
-        for A, B, similarity in tests:
-            assert sparse_cosine_similarity(A, B, key=lambda x: x['weight']) == approx(similarity, 1e-2)
