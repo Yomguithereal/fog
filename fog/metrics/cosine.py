@@ -6,10 +6,6 @@
 #
 import math
 
-# TODO: test one of the two counters is empty
-# TODO: test both are empty
-# TODO: test 1 dimension (identical + different)
-
 
 def sparse_cosine_similarity(A, B, key=lambda x: x):
     """
@@ -27,9 +23,13 @@ def sparse_cosine_similarity(A, B, key=lambda x: x):
         float: Cosine similarity between A & B.
 
     """
-    xx = 0
-    xy = 0
-    yy = 0
+    xx = 0.0
+    xy = 0.0
+    yy = 0.0
+
+    # Early termination
+    if len(A) == 0 or len(B) == 0:
+        return 0.0
 
     # Swapping to iterate over smaller set and minimize lookups
     if len(A) > len(B):
