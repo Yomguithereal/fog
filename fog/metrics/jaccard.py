@@ -44,14 +44,10 @@ def weighted_jaccard_similarity(A, B):
         A, B = B, A
 
     # Computing intersection
-    for k, v in A.items():
-        weight_A = v
-        weight_B = 0.0
+    for k, weight_A in A.items():
+        weight_B = B.get(k, 0.0)
 
-        v2 = B.get(k)
-
-        if v2 is not None:
-            weight_B = v2
+        if weight_B != 0.0:
             done.add(k)
 
         if weight_A < weight_B:
