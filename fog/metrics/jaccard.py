@@ -55,8 +55,12 @@ def weighted_jaccard_similarity(A, B, key=lambda x: x):
             weight_B = key(v2)
             done.add(k)
 
-        I += min(weight_A, weight_B)
-        U += max(weight_A, weight_B)
+        if weight_A < weight_B:
+            I += weight_A
+            U += weight_B
+        else:
+            I += weight_B
+            U += weight_A
 
     # Finalizing union
     for k, v in B.items():
