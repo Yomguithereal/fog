@@ -23,13 +23,17 @@ def sparse_cosine_similarity(A, B, key=lambda x: x):
         float: Cosine similarity between A & B.
 
     """
+
+    # Early termination
+    if A is B:
+        return 1.0
+
+    if len(A) == 0 or len(B) == 0:
+        return 0.0
+
     xx = 0.0
     xy = 0.0
     yy = 0.0
-
-    # Early termination
-    if len(A) == 0 or len(B) == 0:
-        return 0.0
 
     # Swapping to iterate over smaller set and minimize lookups
     if len(A) > len(B):
