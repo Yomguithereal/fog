@@ -52,3 +52,34 @@ def sparse_cosine_similarity(A, B):
         yy += weight ** 2
 
     return xy / math.sqrt(xx * yy)
+
+
+def sparse_dotproduct(A, B):
+    """
+    Function used to compute the dotproduct of sparse weighted sets represented
+    by python dicts.
+
+    Runs in O(n), n being the size of the smallest set.
+
+    Args:
+        A (Counter): First weighted set.
+        B (Counter): Second weighted set.
+
+    Returns:
+        float: Dot product of A & B.
+
+    """
+
+    # Swapping so we iterate over the smallest set
+    if len(A) > len(B):
+        A, B = B, A
+
+    product = 0.0
+
+    for k, w1 in A.items():
+        w2 = B.get(k)
+
+        if w2 is not None:
+            product += w1 * w2
+
+    return product
