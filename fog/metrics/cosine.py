@@ -6,6 +6,10 @@
 #
 import math
 
+# TODO: test one of the two counters is empty
+# TODO: test both are empty
+# TODO: test 1 dimension (identical + different)
+
 
 def sparse_cosine_similarity(A, B, key=lambda x: x):
     """
@@ -35,8 +39,10 @@ def sparse_cosine_similarity(A, B, key=lambda x: x):
         weight = key(v)
         xx += weight ** 2
 
-        if k in B:
-            xy += weight * key(B[k])
+        v2 = B.get(k)
+
+        if v2 is not None:
+            xy += weight * key(v2)
 
     for v in B.values():
         weight = key(v)
