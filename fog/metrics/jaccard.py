@@ -40,6 +40,10 @@ def weighted_jaccard_similarity(A, B, key=lambda x: x):
 
     done = set()
 
+    # Swapping to iterate over smaller set and minimize lookups
+    if len(A) > len(B):
+        A, B = B, A
+
     # Computing intersection
     for k, v in A.items():
         weight_A = key(v)
