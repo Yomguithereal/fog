@@ -16,6 +16,7 @@ pip install fog
 
 * [Metrics](#metrics)
   - [sparse_cosine_similarity](#sparse_cosine_similarity)
+  - [jaccard_similarity](#jaccard_similarity)
   - [weighted_jaccard_similarity](#weighted_jaccard_similarity)
 
 ### Metrics
@@ -36,6 +37,23 @@ sparse_cosine_similarity({'apple': 34, 'pear': 3}, {'pear': 1, 'orange': 1})
 
 * **A** *Counter*: first weighted set. Must be a dictionary mapping keys to weights.
 * **B** *Counter*: second weighted set. Muset be a dictionary mapping keys to weights.
+
+#### jaccard_similarity
+
+Computes the Jaccard similarity of two arbitrary iterables.
+
+```python
+from fog.metrics import jaccard_similarity
+
+# Basic
+jaccard_similarity('context', 'contact')
+>>> ~0.571
+```
+
+*Arguments*
+
+* **A** *iterable*: first sequence to compare.
+* **B** *iterable*: second sequence to compare.
 
 #### weighted_jaccard_similarity
 

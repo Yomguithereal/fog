@@ -3,9 +3,20 @@
 # =============================================================================
 from pytest import approx
 from collections import Counter
-from fog.metrics import weighted_jaccard_similarity
+from fog.metrics import jaccard_similarity, weighted_jaccard_similarity
 
-BASIC_TESTS = [
+TESTS = [
+    ('abc', '', 0),
+    ('', 'abc', 0),
+    ('', '', 1),
+    ('abc', 'abc', 1),
+    ('abc', 'xyz', 0),
+    ('night', 'nacht', 3 / 7),
+    ('context', 'contact', 4 / 7),
+    ('ht', 'nacht', 2 / 5)
+]
+
+WEIGHTED_TESTS = [
     ({}, {}, 0.0),
     ({}, {0: 3}, 0.0),
     ({0: 2}, {0: 2}, 1.0),
@@ -15,7 +26,13 @@ BASIC_TESTS = [
 ]
 
 
+class TestJaccardSimilarity(object):
+    def test_basics(self):
+        for A, B, similarity in TESTS:
+            assert jaccard_similarity(A, B) == similarity
+
+
 class TestWeightedJaccardSimilarity(object):
     def test_basics(self):
-        for A, B, similarity in BASIC_TESTS:
+        for A, B, similarity in WEIGHTED_TESTS:
             assert weighted_jaccard_similarity(A, B) == approx(similarity, 1e-2)
