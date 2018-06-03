@@ -14,6 +14,6 @@ setup(name='fog',
       author_email='kropotkinepiotr@gmail.com',
       keywords='fuzzy',
       python_requires='>=3',
-      packages=find_packages(exclude=['test']),
+      packages=find_packages(exclude=['experiments', 'test']),
       package_data={'docs': ['README.md']},
       zip_safe=True)
