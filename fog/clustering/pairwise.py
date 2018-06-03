@@ -5,7 +5,6 @@
 # Clustering algorithm computing every pairwise distance/similarity
 # calculations to find suitable matches.
 #
-import math
 from collections import defaultdict
 from fog.clustering.utils import make_similarity_function
 
@@ -18,7 +17,7 @@ from fog.clustering.utils import make_similarity_function
 # TODO: split fuzzy_pairwise? and document arbitrary
 
 def pairwise(data, similarity=None, distance=None, radius=None,
-             min_size=2, max_size=math.inf, fuzzy_clusters=False):
+             min_size=2, max_size=float('inf'), fuzzy_clusters=False):
     """
     Function returning an iterator over found clusters using a naive
     algorithm computing every pairwise distance/similarity calculations
