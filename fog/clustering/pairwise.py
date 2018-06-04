@@ -6,6 +6,7 @@
 # suitable matches.
 #
 from collections import defaultdict
+from phylactery import BitSet
 from fog.clustering.utils import make_similarity_function
 
 # TODO: use a bitset
@@ -51,7 +52,7 @@ def pairwise(data, similarity=None, distance=None, radius=None,
         data = list(data)
 
     n = len(data)
-    visited = set()
+    visited = BitSet(n)
 
     for i in range(n):
         A = data[i]
@@ -73,7 +74,7 @@ def pairwise(data, similarity=None, distance=None, radius=None,
 
                 if len(cluster) > max_size:
                     for i in range(1, len(cluster)):
-                        visited.delete(i)
+                        visited.reset(i)
                     break
 
                 visited.add(j)
@@ -135,7 +136,7 @@ def fuzzy_pairwise(data, similarity=None, distance=None, radius=None,
                 graph[j].append(i)
 
     # Building clusters
-    visited = set()
+    visited = BitSet(n)
     for i, neighbors in graph.items():
         if i in visited:
             continue

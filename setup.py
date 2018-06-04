@@ -16,5 +16,5 @@ setup(name='fog',
       python_requires='>=3',
       packages=find_packages(exclude=['experiments', 'test']),
       package_data={'docs': ['README.md']},
-      install_requires=['phylactery==0.0.2'],
+      install_requires=['phylactery==0.0.3'],
       zip_safe=True)
