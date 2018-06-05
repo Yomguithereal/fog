@@ -2,14 +2,15 @@
 # Fog Ngrams Tokenizers
 # =============================================================================
 #
-# Functions returning iterators of n-grams.
+# Functions related to n-grams.
 #
 from functools import partial
 
 
 def ngrams(n, tokens):
     """
-    Function returning an iterator of n-grams of the given sequence of tokens.
+    Function returning an iterator over the given sequence's n-grams. The
+    type of yielded n-grams will match the sequence's one.
 
     Args:
         n (number): size of the subsequences.
