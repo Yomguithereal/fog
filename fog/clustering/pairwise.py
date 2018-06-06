@@ -7,7 +7,7 @@
 #
 from collections import defaultdict
 from multiprocessing import Pool
-from phylactery import BitSet, UnionFind
+from phylactery import UnionFind
 
 from fog.clustering.utils import make_similarity_function
 
@@ -77,7 +77,7 @@ def pairwise_leader(data, similarity=None, distance=None, radius=None,
         data = list(data)
 
     n = len(data)
-    visited = BitSet(n)
+    visited = set()
 
     for i in range(n):
         if i in visited:
@@ -102,7 +102,7 @@ def pairwise_leader(data, similarity=None, distance=None, radius=None,
 
                 if len(cluster) > max_size:
                     for c in range(1, len(cluster)):
-                        visited.reset(c)
+                        visited.delete(c)
                     break
 
                 visited.add(j)
@@ -190,7 +190,7 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
             pass
 
     # Building clusters
-    visited = BitSet(n)
+    visited = set()
     for i, neighbors in graph.items():
         if i in visited:
             continue
