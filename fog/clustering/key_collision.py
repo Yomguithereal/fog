@@ -6,6 +6,8 @@
 #
 from collections import defaultdict
 
+# TODO: multiple keys per item
+
 
 def key_collision(data, key, min_size=2, max_size=float('inf')):
     """

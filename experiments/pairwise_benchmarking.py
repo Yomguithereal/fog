@@ -3,10 +3,19 @@ from timeit import default_timer as timer
 from fog.clustering import *
 from Levenshtein import distance as levenshtein
 
-with open('./data/musicians.csv', 'r') as f:
+with open('./data/universities.csv', 'r') as f:
     reader = csv.DictReader(f)
 
-    artists = set(line['artist'] for line in reader)
+    universities = set(line['university'] for line in reader)
 
-    for cluster in key_collision(artists, key=lambda x: ' '.join(sorted(set(x.strip().lower().split(' '))))):
-        print(cluster)
+    start = timer()
+    clusters = list(pairwise_leader(universities, distance=levenshtein, radius=2))
+    print('Leader (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(pairwise_fuzzy_clusters(universities, distance=levenshtein, radius=2))
+    print('Fuzzy clusters (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(pairwise_connected_components(universities, distance=levenshtein, radius=2))
+    print('Connected components (%i):' % len(clusters), timer() - start)

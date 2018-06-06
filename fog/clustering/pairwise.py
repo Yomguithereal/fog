@@ -6,7 +6,9 @@
 # suitable clusters.
 #
 from collections import defaultdict
+from multiprocessing import Pool
 from phylactery import BitSet, UnionFind
+
 from fog.clustering.utils import make_similarity_function
 
 
@@ -110,7 +112,7 @@ def pairwise_leader(data, similarity=None, distance=None, radius=None,
 
 
 def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
-                            min_size=2, max_size=float('inf')):
+                            min_size=2, max_size=float('inf'), processes=1):
     """
     Function returning an iterator over found clusters using an algorithm
     yielding fuzzy clusters.
@@ -155,6 +157,7 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
             it to be considered viable. Defaults to 2.
         max_size (number, optional): maximum number of items in a cluster for
             it to be considered viable. Defaults to infinity.
+        processes (number, optional): number of processes to use. Defaults to 1.
 
     Yields:
         list: A viable cluster.
@@ -172,15 +175,19 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
     graph = defaultdict(list)
 
     # Computing similarities
-    for i in range(n):
-        A = data[i]
+    if processes == 1:
+        for i in range(n):
+            A = data[i]
 
-        for j in range(i + 1, n):
-            B = data[j]
+            for j in range(i + 1, n):
+                B = data[j]
 
-            if similarity(A, B):
-                graph[i].append(j)
-                graph[j].append(i)
+                if similarity(A, B):
+                    graph[i].append(j)
+                    graph[j].append(i)
+    else:
+        with Pool(processes=processes) as pool:
+            pass
 
     # Building clusters
     visited = BitSet(n)
