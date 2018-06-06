@@ -2,8 +2,8 @@
 # Fog Pairwise Clustering
 # =============================================================================
 #
-# Clustering algorithm computing every pairwise distance/similarity to find
-# suitable matches.
+# Clustering algorithm computing every pairwise distance/similarity to build
+# suitable clusters.
 #
 from collections import defaultdict
 from phylactery import BitSet, UnionFind
@@ -13,11 +13,34 @@ from fog.clustering.utils import make_similarity_function
 def pairwise_leader(data, similarity=None, distance=None, radius=None,
                     min_size=2, max_size=float('inf')):
     """
-    Function returning an iterator over found clusters using a naive
-    algorithm computing every pairwise distance/similarity calculations
-    to find matches.
+    Function returning an iterator over found clusters using the leader
+    algorithm.
 
-    Runs in O(n * (n - 1) / 2), i.e. O(n^2).
+    It works by assuming the similarity relation is transitive, meaning that
+    (A =~ B, B =~ C) leads to A =~ C, which is often quite correct.
+
+    Under the hood, each point will start in its own cluster and each time
+    two points are deemed similar, they are merged into the same cluster. Then,
+    the first item of the cluster, its leader if you will, is the only one
+    that will be used in subsequent similarity comparisons.
+
+    This means three things:
+        1) The radius of the produced clusters is sound.
+        2) The items' order can have an arbitrary influence on the produced
+           clusters.
+        3) One item CANNOT belong to more than one cluster.
+
+    This algorithm runs in O(n * (c - 1)), n being the number of items and c
+    being the number of clusters, i.e. O(n^2) in practice since for record
+    linkage most items will be alone in their clusters.
+
+    Example:
+        The following chain:
+            ('abc', 'bcd', 'cde', 'def', 'efg', 'ghi')
+        will produce the following levenshtein radius=2 clusters:
+            ('abc', 'bcd')
+            ('cde', 'def')
+            ('efg', 'ghi')
 
     Args:
         data (iterable): Arbitrary iterable containing data points to gather
@@ -86,11 +109,30 @@ def pairwise_leader(data, similarity=None, distance=None, radius=None,
 def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
                             min_size=2, max_size=float('inf')):
     """
-    Function returning an iterator over found clusters using a naive
-    algorithm computing every pairwise distance/similarity calculations
-    to find matches.
+    Function returning an iterator over found clusters using an algorithm
+    yielding fuzzy clusters.
 
-    Runs in O(n * (n - 1) / 2), i.e. O(n^2).
+    This algorithm is a compromise between the "leader" method and the
+    "connected components" one in that it won't produce clusters with a radius
+    larger that what's expected and will not attempt to cut clusters too
+    arbitrarily. To achieve that, this algorithm will yield fuzzy clusters.
+
+    This means three things:
+        1) The radius of the produced clusters is sound.
+        2) The items' order can have an arbitrary influence on the produced
+           clusters.
+        3) One item CAN belong to more than one cluster
+
+    This algorithm runs in O(n * (n - 1)), i.e. O(n^2).
+
+    Example:
+        The following chain:
+            ('abc', 'bcd', 'cde', 'def', 'efg', 'ghi')
+        will produce the following levenshtein radius=2 clusters:
+            ('abc', 'bcd')
+            ('cde', 'bcd', 'def')
+            ('efg', 'def', 'fgh')
+            ('ghi', 'fgh')
 
     Args:
         data (iterable): Arbitrary iterable containing data points to gather
@@ -155,11 +197,26 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
 def pairwise_connected_components(data, similarity=None, distance=None, radius=None,
                                   min_size=2, max_size=float('inf')):
     """
-    Function returning an iterator over found clusters using the "Leader"
-    method, relying on connected component of the computed distance graph.
+    Function returning an iterator over found clusters by computing a
+    similarity graph of given data and extracting its connected components.
 
-    Runs in O(c * (c - 1) / 2), i.e. O(c^2), c being the number of found
-    components.
+    It works by assuming the similarity relation is transitive, meaning that
+    (A =~ B, B =~ C) leads to A =~ C, which is often quite correct.
+
+    This means two things:
+        1) The produced clusters may have a larger radius that what's
+           intended.
+        2) One item cannot belong to more than one cluster.
+
+    This algorithm runs in O(n * (c - 1)), n being the number of items and c
+    being the number of connected components, i.e. O(n^2) in practice since for
+    record linkage most items will be alone in their clusters.
+
+    Example:
+        The following chain:
+            ('abc', 'bcd', 'cde', 'def', 'efg', 'ghi')
+        will produce the following levenshtein radius=2 cluster:
+            ('abc', 'bcd', 'cde', 'def', 'efg', 'ghi')
 
     Args:
         data (iterable): Arbitrary iterable containing data points to gather
@@ -214,6 +271,33 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
 
 
 def pairwise(data, mode='leader', **kwargs):
+    """
+    Function returning an iterator over found clusters by computing pairwise
+    similarity or distance.
+
+    Args:
+        data (iterable): Arbitrary iterable containing data points to gather
+            into clusters. Will be fully consumed.
+        mode (str): 'leader' or 'fuzzy_clusters' or 'connected_components'.
+            Defaults to 'leader'.
+        similarity (callable): If radius is specified, a function returning
+            the similarity between two points. Else, a function returning
+            whether two points should be deemed similar. Alternatively, one can
+            specify `distance` instead.
+        distance (callable): If radius is specified, a function returning
+            the distance between two points. Else, a function returning
+            whether two point should not be deemed similar. Alternatively, one
+            can specify `similarity` instead.
+        radius (number, optional): produced clusters' radius.
+        min_size (number, optional): minimum number of items in a cluster for
+            it to be considered viable. Defaults to 2.
+        max_size (number, optional): maximum number of items in a cluster for
+            it to be considered viable. Defaults to infinity.
+
+    Yields:
+        list: A viable cluster.
+
+    """
     if mode not in ['leader', 'fuzzy_clusters', 'connected_components']:
         raise TypeError('fog.clustering.pairwise: wrong mode "%s"' % mode)
 
