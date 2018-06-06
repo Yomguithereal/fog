@@ -2,7 +2,7 @@
 # Fog Pairwise Clustering
 # =============================================================================
 #
-# Clustering algorithm computing every pairwise distance/similarity to build
+# Clustering algorithms computing every pairwise distance/similarity to build
 # suitable clusters.
 #
 from collections import defaultdict

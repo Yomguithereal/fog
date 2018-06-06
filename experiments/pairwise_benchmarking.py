@@ -8,5 +8,5 @@ with open('./data/musicians.csv', 'r') as f:
 
     artists = set(line['artist'] for line in reader)
 
-    for cluster in pairwise_fuzzy_clusters(artists, distance=levenshtein, radius=2):
+    for cluster in key_collision(artists, key=lambda x: ' '.join(sorted(set(x.strip().lower().split(' '))))):
         print(cluster)
