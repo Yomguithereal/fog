@@ -34,6 +34,9 @@ def pairwise_leader(data, similarity=None, distance=None, radius=None,
     being the number of clusters, i.e. O(n^2) in practice since for record
     linkage most items will be alone in their clusters.
 
+    Note that this algorithm can work by storing only the current cluster in
+    memory.
+
     Example:
         The following chain:
             ('abc', 'bcd', 'cde', 'def', 'efg', 'ghi')
@@ -124,6 +127,8 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
         3) One item CAN belong to more than one cluster
 
     This algorithm runs in O(n * (n - 1)), i.e. O(n^2).
+
+    TODO: option to sort by degree
 
     Example:
         The following chain:
