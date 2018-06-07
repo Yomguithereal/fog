@@ -45,7 +45,7 @@ def vp_tree(data, distance, radius, min_size=2, max_size=float('inf')):
         if item in visited:
             continue
 
-        cluster = [neighbor for neighbor, _ in  tree.neighbors_in_radius(item, radius)]
+        cluster = [neighbor for neighbor, _ in tree.neighbors_in_radius(item, radius)]
 
         if len(cluster) < min_size or len(cluster) > max_size:
             continue
