@@ -5,4 +5,4 @@ twine==1.11.0
 
 # Dependencies
 dill==0.2.7.1
-phylactery==0.0.4
+phylactery==0.1.0

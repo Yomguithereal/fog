@@ -5,3 +5,4 @@ from fog.clustering.pairwise import (
     pairwise_fuzzy_clusters,
     pairwise_connected_components
 )
+from fog.clustering.vp_tree import vp_tree

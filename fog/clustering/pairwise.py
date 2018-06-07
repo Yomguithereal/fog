@@ -34,7 +34,7 @@ def pairwise_leader(data, similarity=None, distance=None, radius=None,
            clusters.
         3) One item CANNOT belong to more than one cluster.
 
-    This algorithm runs in O(n * (c - 1)), n being the number of items and c
+    This algorithm runs in O(n * (c - 1) / 2), n being the number of items and c
     being the number of clusters, i.e. O(n^2) in practice since for record
     linkage most items will be alone in their clusters.
 
@@ -156,7 +156,10 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
            clusters.
         3) One item CAN belong to more than one cluster
 
-    This algorithm runs in O(n * (n - 1)), i.e. O(n^2).
+    This algorithm runs in O(n * (n - 1) / 2), i.e. O(n^2).
+
+    Note that this algorithm can be parallelized and then run in
+    O (n * (n - 1) / 2 / p), p being the number of processes.
 
     TODO: option to sort by degree
 
@@ -264,9 +267,9 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
            intended.
         2) One item cannot belong to more than one cluster.
 
-    This algorithm runs in O(n * (c - 1)), n being the number of items and c
-    being the number of connected components, i.e. O(n^2) in practice since for
-    record linkage most items will be alone in their clusters.
+    This algorithm runs in O(n * (c - 1) / 2), n being the number of items and
+    c being the number of connected components, i.e. O(n^2) in practice since
+    for record linkage most items will be alone in their clusters.
 
     Example:
         The following chain:

@@ -25,3 +25,8 @@ print()
 print('Pairwise connected components')
 for cluster in pairwise_connected_components(data, distance=levenshtein, radius=2):
   print(cluster)
+
+print()
+print('VPTree')
+for cluster in vp_tree(data, distance=levenshtein, radius=2):
+  print(cluster)

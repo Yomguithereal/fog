@@ -18,6 +18,6 @@ setup(name='fog',
       package_data={'docs': ['README.md']},
       install_requires=[
             'dill==0.2.7.1',
-            'phylactery==0.0.4'
+            'phylactery==0.1.0'
       ],
       zip_safe=True)
