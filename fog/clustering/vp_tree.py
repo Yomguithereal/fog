@@ -8,6 +8,7 @@
 from phylactery import VPTree
 
 # TODO: better docs
+# TODO: sampling selection of pivot + mvp & variants
 
 
 def vp_tree(data, distance, radius, min_size=2, max_size=float('inf')):
@@ -47,6 +48,7 @@ def vp_tree(data, distance, radius, min_size=2, max_size=float('inf')):
 
         cluster = [neighbor for neighbor, _ in tree.neighbors_in_radius(item, radius)]
 
+        # TODO: with max_size we can use the knn version
         if len(cluster) < min_size or len(cluster) > max_size:
             continue
 
