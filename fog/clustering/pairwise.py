@@ -5,11 +5,13 @@
 # Clustering algorithms computing every pairwise distance/similarity to build
 # suitable clusters.
 #
+import dill
 from collections import defaultdict
 from multiprocessing import Pool
 from phylactery import UnionFind
 
 from fog.clustering.utils import make_similarity_function
+from fog.utils import upper_triangular_matrix_chunk_iter
 
 
 def pairwise_leader(data, similarity=None, distance=None, radius=None,
@@ -111,8 +113,34 @@ def pairwise_leader(data, similarity=None, distance=None, radius=None,
             yield cluster
 
 
+def pairwise_fuzzy_clusters_worker(payload):
+    """
+    Worker function used to compute pairwise fuzzy clusters over chunks
+    of the final matrix in parallel.
+
+    """
+    similarity, I, J, offset_i, offset_j = payload
+
+    similarity = dill.loads(similarity)
+    matches = []
+
+    diagonal_chunk = offset_i == offset_j
+
+    for i in range(len(I)):
+        A = I[i]
+
+        for j in range(0 if not diagonal_chunk else i + 1, len(J)):
+            B = J[j]
+
+            if similarity(A, B):
+                matches.append((offset_i + i, offset_j + j))
+
+    return matches
+
+
 def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
-                            min_size=2, max_size=float('inf'), processes=1):
+                            min_size=2, max_size=float('inf'), processes=1,
+                            chunk_size=100):
     """
     Function returning an iterator over found clusters using an algorithm
     yielding fuzzy clusters.
@@ -158,6 +186,8 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
         max_size (number, optional): maximum number of items in a cluster for
             it to be considered viable. Defaults to infinity.
         processes (number, optional): number of processes to use. Defaults to 1.
+        chunk_size (number, optional): size of matrix chunks to send to
+            subprocesses. Defaults to 100.
 
     Yields:
         list: A viable cluster.
@@ -186,8 +216,22 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
                     graph[i].append(j)
                     graph[j].append(i)
     else:
+
+        pickled_similarity = dill.dumps(similarity)
+
+        # Iterator
+        pool_iter = (
+            (pickled_similarity, I, J, offset_i, offset_j)
+            for I, J, offset_i, offset_j
+            in upper_triangular_matrix_chunk_iter(data, chunk_size)
+        )
+
+        # Pool
         with Pool(processes=processes) as pool:
-            pass
+            for matches in pool.imap_unordered(pairwise_fuzzy_clusters_worker, pool_iter):
+                for i, j in matches:
+                    graph[i].append(j)
+                    graph[j].append(i)
 
     # Building clusters
     visited = set()
