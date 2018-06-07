@@ -1,6 +1,7 @@
 __pycache__
 .DS_Store
 .pytest_cache
+.ipynb_checkpoints
 *.pyx
 *.fog.egg-info
 
