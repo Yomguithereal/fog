@@ -23,7 +23,10 @@ def key_collision(data, key=None, keys=None, min_size=2, max_size=float('inf'),
 
     Note that the key function can return more than one key for the string.
     In that case, buckets can be merged or not and produce slightly different
-    clusters.
+    clusters. When using multiple keys per item, if the key space is dense, you
+    should definitely merge buckets or you will end up with a large number
+    of very similar clusters. If key space is sparse, you can avoid merging
+    as an optimization strategy.
 
     Note also that falsey key are dropped.
 

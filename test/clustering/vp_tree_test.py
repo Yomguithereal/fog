@@ -28,7 +28,7 @@ MIN_FUZZY_CLUSTERS = set([
 ])
 
 
-class TestPairwiseClustering(object):
+class TestVPTreeClustering(object):
     def test_basics(self):
         clusters = list(vp_tree(DATA, distance=levenshtein, radius=2))
         clusters = set(tuple(sorted(c)) for c in clusters)
