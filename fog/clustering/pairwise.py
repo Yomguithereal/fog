@@ -10,8 +10,10 @@ from collections import defaultdict
 from multiprocessing import Pool
 from phylactery import UnionFind
 
-from fog.clustering.utils import make_similarity_function
-from fog.utils import upper_triangular_matrix_chunk_iter
+from fog.clustering.utils import (
+    make_similarity_function,
+    upper_triangular_matrix_chunk_iter
+)
 
 
 def pairwise_leader(data, similarity=None, distance=None, radius=None,
