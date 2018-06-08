@@ -8,7 +8,7 @@
 from phylactery import VPTree
 
 # TODO: better docs
-# TODO: sampling selection of pivot + mvp & variants
+# TODO: using the spread version yields faster results
 
 
 def vp_tree(data, distance, radius, min_size=2, max_size=float('inf')):
