@@ -2,24 +2,26 @@
 # Fog Vantage Point Tree Clustering
 # =============================================================================
 #
-# Clustering algorithm leveraging a Vantage Point Tree to find suitable
-# clusters.
+# Clustering algorithm leveraging a Vantage Point Tree to avoid needing to
+# compute pairwise distances. In practice, it means that the number of
+# distance computations needed per point will be sublinear. Therefore,
+# parallelization of the brute-force algorithm often yields better results.
 #
 from phylactery import VPTree
-
-# TODO: better docs
-# TODO: using the spread version yields faster results
 
 
 def vp_tree(data, distance, radius, min_size=2, max_size=float('inf')):
     """
     Function returning an iterator over found clusters.
 
-    It works by leveraging a Vantage point tree and returning, for each
-    point not yet in a cluster, the set of its neighbors sitting in a
-    given range.
+    It works by indexing given items into a Vantage Point Tree and then
+    querying the tree once per items to find clusters.
 
-    It runs in O(n log n).
+    It runs in O(n log n * m), m being the number of matches or leaves to
+    traverse in the tree when querying. In practice this is lower than
+    O(n^2) but will tend towards it as soon as the number of items becomes too
+    large (intuitively, this is because the dimensionality of the queried
+    space becomes really high and we hit the curse of high-dimensionality).
 
     Args:
         data (iterable): Arbitrary iterable containing data points to gather
@@ -38,7 +40,7 @@ def vp_tree(data, distance, radius, min_size=2, max_size=float('inf')):
     if type(data) is not list:
         data = list(data)
 
-    tree = VPTree(data, distance)
+    tree = VPTree(data, distance, selection='spread')
 
     visited = set()
 
