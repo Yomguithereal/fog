@@ -7,6 +7,11 @@ from fog.tokenizers import (
     ngrams_fingerprint_tokenizer
 )
 
+from fog.key import (
+    fingerprint,
+    ngrams_fingerprint
+)
+
 TESTS = [
     ('', ''),
     ('hello', 'hello'),
@@ -29,8 +34,9 @@ NGRAMS_TESTS = [
 class TestFingerprintTokenizer(object):
     def test_basics(self):
 
-        for string, fingerprint in TESTS:
-            assert ' '.join(fingerprint_tokenizer(string)) == fingerprint
+        for string, key in TESTS:
+            assert ' '.join(fingerprint_tokenizer(string)) == key
+            assert fingerprint(string) == key
 
     def test_stopwords(self):
         tokenizer = create_fingerprint_tokenizer(stopwords=['de'])
@@ -54,5 +60,6 @@ class TestFingerprintTokenizer(object):
 
     def test_ngrams(self):
 
-        for n, string, fingerprint in NGRAMS_TESTS:
-            assert ''.join(ngrams_fingerprint_tokenizer(n, string)) == fingerprint
+        for n, string, key in NGRAMS_TESTS:
+            assert ''.join(ngrams_fingerprint_tokenizer(n, string)) == key
+            assert ngrams_fingerprint(n, string) == key
