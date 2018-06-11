@@ -2,6 +2,7 @@ import csv
 from timeit import default_timer as timer
 from fog.clustering import *
 from fog.tokenizers import ngrams
+from fog.key import fingerprint
 from Levenshtein import distance as levenshtein
 
 with open('./data/universities.csv', 'r') as f:
@@ -38,6 +39,10 @@ with open('./data/musicians.csv', 'r') as f:
     start = timer()
     clusters = list(key_collision(artists, keys=lambda x: ngrams(12, x), merge=True))
     print('12-grams key collision (%i)' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(key_collision(artists, key=fingerprint))
+    print('Fingerprint key collision (%i)' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(pairwise_fuzzy_clusters(artists, distance=levenshtein, radius=2, processes=6))
