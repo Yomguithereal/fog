@@ -128,6 +128,9 @@ def pairwise_fuzzy_clusters_worker(payload):
 
     diagonal_chunk = offset_i == offset_j
 
+    if diagonal_chunk:
+        J = I
+
     for i in range(len(I)):
         A = I[i]
 

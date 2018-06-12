@@ -50,7 +50,7 @@ def upper_triangular_matrix_chunk_iter(data, chunk_size):
 
             yield (
                 data[i_offset:i_limit],
-                data[j_offset:j_limit],
+                data[j_offset:j_limit] if i_offset != j_offset else [],
                 i_offset,
                 j_offset
             )

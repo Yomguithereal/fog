@@ -9,3 +9,6 @@ class Clusters(object):
 
     def __eq__(self, other):
         return self.groups == other.groups
+
+    def __repr__(self):
+        return 'Clusters(%s)' % self.groups.__repr__()
