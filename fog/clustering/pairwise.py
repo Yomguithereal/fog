@@ -229,8 +229,8 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
 
         # Iterator
         pool_iter = (
-            (pickled_similarity, I, J, offset_i, offset_j)
-            for I, J, offset_i, offset_j
+            (pickled_similarity, ) + chunk
+            for chunk
             in upper_triangular_matrix_chunk_iter(data, chunk_size)
         )
 
