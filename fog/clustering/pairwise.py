@@ -117,8 +117,8 @@ def pairwise_leader(data, similarity=None, distance=None, radius=None,
 
 def pairwise_fuzzy_clusters_worker(payload):
     """
-    Worker function used to compute pairwise fuzzy clusters over chunks
-    of the final matrix in parallel.
+    Worker function used to compute pairwise fuzzy clusters over chunks of
+    an upper triangular matrix in parallel.
 
     """
     similarity, I, J, offset_i, offset_j = payload
