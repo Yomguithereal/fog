@@ -59,12 +59,13 @@ class LSBMinHash(object):
 
         for s in range(self.precision):
             integer = 0
+            offset = s * 64
 
             for i in range(64):
                 min_hash = NEXT_PRIME
 
                 for token in crc32_set:
-                    h = (A[s * 64 + i] * token + B[s * 64 + i]) % NEXT_PRIME
+                    h = (A[offset + i] * token + B[offset + i]) % NEXT_PRIME
 
                     if h < min_hash:
                         min_hash = h
