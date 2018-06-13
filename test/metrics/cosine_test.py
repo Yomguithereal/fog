@@ -24,7 +24,7 @@ def norm(S):
 class TestSparseCosineSimilarity(object):
     def test_basics(self):
         for A, B, similarity in BASIC_TESTS:
-            assert sparse_cosine_similarity(A, B) == approx(similarity, 1e-2)
+            assert sparse_cosine_similarity(A, B) == approx(similarity, abs=1e-2)
 
     def test_dotproduct(self):
         for A, B, similarity in BASIC_TESTS:
@@ -37,4 +37,4 @@ class TestSparseCosineSimilarity(object):
             if A_norm != 0 and B_norm != 0:
                 cosine = dotproduct / (A_norm * B_norm)
 
-            assert cosine == approx(similarity, 1e-2)
+            assert cosine == approx(similarity, abs=1e-2)
