@@ -50,11 +50,14 @@ class LSBMinHash(object):
         A = self.A
         B = self.B
 
-        crc32_set = set(crc32(token) for token in tokens)
+        if type(tokens) is str:
+            tokens = set(ord(token) for token in tokens)
+        else:
+            tokens = set(crc32(token) for token in tokens)
 
         signature = [0] * self.precision
 
-        if len(crc32_set) == 0:
+        if len(tokens) == 0:
             return signature
 
         for s in range(self.precision):
@@ -64,7 +67,7 @@ class LSBMinHash(object):
             for i in range(64):
                 min_hash = NEXT_PRIME
 
-                for token in crc32_set:
+                for token in tokens:
                     h = (A[offset + i] * token + B[offset + i]) % NEXT_PRIME
 
                     if h < min_hash:

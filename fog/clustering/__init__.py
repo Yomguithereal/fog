@@ -1,4 +1,5 @@
 from fog.clustering.key_collision import key_collision
+from fog.clustering.minhash import minhash
 from fog.clustering.pairwise import (
     pairwise,
     pairwise_leader,
