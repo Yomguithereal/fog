@@ -31,7 +31,7 @@ def make_similarity_function(similarity=None, distance=None, radius=None):
 
     if radius:
         if similarity:
-            return lambda A, B: similarity(A, B) <= radius
+            return lambda A, B: similarity(A, B) >= radius
         else:
             return lambda A, B: distance(A, B) <= radius
     else:

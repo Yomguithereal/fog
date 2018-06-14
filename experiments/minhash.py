@@ -1,7 +1,7 @@
 import csv
 import numpy as np
 from timeit import default_timer as timer
-from fog.clustering import minhash
+from fog.clustering import minhash, pairwise
 from fog.metrics import jaccard_similarity
 from fog.tokenizers import ngrams
 
@@ -16,7 +16,7 @@ with open('./data/musicians.csv', 'r') as f:
 
     start = timer()
 
-    clusters = list(minhash(artists, key=key, radius=0.6))
+    clusters = list(minhash(artists, key=key))
     time = timer() - start
 
     ds = []
@@ -30,3 +30,10 @@ with open('./data/musicians.csv', 'r') as f:
         print('Median', np.median(ds))
         print('Min', min(ds))
     print('Clusters', len(clusters))
+
+    # clusters = list(pairwise((list(key(a)) for a in artists), processes=8, similarity=jaccard_similarity, radius=0.6))
+
+    # for cluster in clusters:
+    #     print(cluster)
+
+    # print(len(clusters))

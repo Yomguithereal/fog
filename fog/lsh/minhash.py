@@ -28,6 +28,7 @@ def crc32(x):
 class LSBMinHash(object):
 
     def __init__(self, seed=None, precision=8):
+        # TODO: weighted
 
         rng = Random(seed)
 

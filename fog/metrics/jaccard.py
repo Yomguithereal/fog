@@ -13,6 +13,8 @@ def jaccard_similarity(A, B):
     Function computing the Jaccard similarity. That is to say the intersection
     of input sets divided by their union.
 
+    Runs in O(n), n being the size of the smallest set.
+
     Args:
         A (iterable): First sequence.
         B (iterable): Second sequence.
