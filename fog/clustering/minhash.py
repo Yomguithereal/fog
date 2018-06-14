@@ -5,15 +5,26 @@
 # Clustering algorithm leveraging MinHash LSH to produce suitable clusters.
 #
 from collections import defaultdict
+import math
 
 from fog.clustering.utils import merge_buckets_into_clusters
 from fog.lsh.minhash import LSBMinHash
 
 
-def minhash(data, precision=4, key=None, rows=1):
+def needed_rows_for_radius(precision, radius):
+    d = 1.0 - radius
 
-    N = precision * 64
-    assert N % rows == 0
+    r = math.log(1.0 / precision) / math.log(d)
+
+    return math.ceil(r)
+
+
+# TODO: double_check with jaccard or minhash, sub similarity or true radius
+
+
+def minhash(data, precision=4, key=None, radius=0.75):
+
+    rows = needed_rows_for_radius(precision, radius)
     bands = 64 // rows
 
     mh = LSBMinHash(precision=precision)
