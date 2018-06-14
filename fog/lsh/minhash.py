@@ -51,7 +51,7 @@ class LSBMinHash(object):
         B = self.B
 
         if type(tokens) is str:
-            tokens = set(ord(token) for token in tokens)
+            tokens = set(ord(c) for c in tokens)
         else:
             tokens = set(crc32(token) for token in tokens)
 

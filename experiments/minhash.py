@@ -1,6 +1,8 @@
 import csv
 from timeit import default_timer as timer
 from fog.clustering import minhash
+from fog.metrics import jaccard_similarity
+from fog.tokenizers import ngrams
 
 with open('./data/musicians.csv', 'r') as f:
     reader = csv.DictReader(f)
@@ -9,10 +11,12 @@ with open('./data/musicians.csv', 'r') as f:
 
     print('%i artists' % len(artists))
 
+    key = lambda x: x
+
     start = timer()
 
-    clusters = list(minhash(artists, precision=1))
-    print(timer() - start)
+    clusters = list(minhash(artists, key=key))
+    print('MinHash (%i)' % len(clusters), timer() - start)
 
     for cluster in clusters:
-        print(cluster)
+        print(cluster, jaccard_similarity(key(cluster[0]), key(cluster[1])))
