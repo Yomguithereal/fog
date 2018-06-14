@@ -6,6 +6,8 @@
 #
 from collections import defaultdict
 
+from fog.clustering.utils import merge_buckets_into_clusters
+
 
 def key_collision(data, key=None, keys=None, min_size=2, max_size=float('inf'),
                   merge=False):
@@ -67,35 +69,7 @@ def key_collision(data, key=None, keys=None, min_size=2, max_size=float('inf'),
 
     # Merging clusters
     if merge:
-        graph = defaultdict(set)
-
-        for bucket in buckets.values():
-            n = len(bucket)
-
-            for i in range(n):
-                A = bucket[i]
-
-                for j in range(i + 1, n):
-                    B = bucket[j]
-
-                    graph[A].add(B)
-                    graph[B].add(A)
-
-        visited = set()
-
-        for item, neighbors in graph.items():
-            if item in visited:
-                continue
-
-            if len(neighbors) + 1 < min_size:
-                continue
-            if len(neighbors) + 1 > max_size:
-                continue
-
-            visited.update(neighbors)
-
-            cluster = [item] + list(neighbors)
-            yield cluster
+        yield from merge_buckets_into_clusters(buckets.values())
 
     # Buckets as clusters
     else:
