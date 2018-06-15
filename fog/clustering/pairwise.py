@@ -259,7 +259,7 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
 
 
 def pairwise_connected_components(data, similarity=None, distance=None, radius=None,
-                                  min_size=2, max_size=float('inf')):
+                                  min_size=2, max_size=float('inf'), key=None):
     """
     Function returning an iterator over found clusters by computing a
     similarity graph of given data and extracting its connected components.
@@ -298,6 +298,8 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
             it to be considered viable. Defaults to 2.
         max_size (number, optional): maximum number of items in a cluster for
             it to be considered viable. Defaults to infinity.
+        key (callable, optional): function returning an item's key.
+            Defaults to None.
 
     Yields:
         list: A viable cluster.
@@ -311,17 +313,22 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
     if type(data) is not list:
         data = list(data)
 
+    if key is not None:
+        keys = list(key(item) for item in data)
+    else:
+        keys = data
+
     n = len(data)
     sets = UnionFind(n)
 
     # Computing pairwise distances
     for i in range(n):
-        A = data[i]
+        A = keys[i]
 
         # NOTE: if one adds a cardinality test hear, we get the leader algo
 
         for j in range(i + 1, n):
-            B = data[j]
+            B = keys[j]
 
             if sets.connected(i, j):
                 continue

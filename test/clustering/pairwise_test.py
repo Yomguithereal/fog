@@ -62,3 +62,10 @@ class TestPairwiseClustering(object):
         clusters = Clusters(pairwise_connected_components(DATA, distance=levenshtein, radius=2))
 
         assert clusters == Clusters([DATA])
+
+        # Using custom keys
+        keyed_data = [(1.0, d) for d in DATA]
+
+        clusters = Clusters(pairwise_connected_components(keyed_data, distance=levenshtein, radius=2, key=lambda x: x[1]))
+
+        assert clusters == Clusters([keyed_data])

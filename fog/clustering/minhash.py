@@ -49,7 +49,7 @@ def minhash(data, precision=4, key=None, threshold=0.7):
 
             i = 0
             for row in range(0, 64, bands):
-                band = '%i§%s' % (i, binary[row:row + bands])
+                band = (i, binary[row:row + bands])
 
                 buckets[band].append(item)
                 i += 1
