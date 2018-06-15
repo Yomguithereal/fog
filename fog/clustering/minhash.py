@@ -23,9 +23,11 @@ def needed_rows_for_threshold(precision, threshold):
 
 # TODO: double_check with jaccard or minhash, sub similarity or true radius
 # TODO: compute on 64 * precision to avoid modulo issues and filtering out
+# TODO: need to think in bands ^ not bands = precision
 # TODO: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4431368/
 
-def minhash(data, precision=4, key=None, threshold=0.6):
+
+def minhash(data, precision=4, key=None, threshold=0.7):
 
     rows = needed_rows_for_threshold(precision, threshold)
     bands = 64 // rows
@@ -52,4 +54,4 @@ def minhash(data, precision=4, key=None, threshold=0.6):
                 buckets[band].append(item)
                 i += 1
 
-    yield from merge_buckets_into_clusters(buckets.values())
+    yield from merge_buckets_into_clusters(buckets.values(), mode='connected_components')

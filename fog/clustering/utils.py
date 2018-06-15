@@ -29,7 +29,7 @@ def make_similarity_function(similarity=None, distance=None, radius=None):
     if similarity is None and distance is None:
         raise TypeError('fog.clustering: need at least a similarity or distance function.')
 
-    if radius:
+    if radius is not None:
         if similarity:
             return lambda A, B: similarity(A, B) >= radius
         else:
@@ -41,7 +41,8 @@ def make_similarity_function(similarity=None, distance=None, radius=None):
             return lambda A, B: not distance(A, B)
 
 
-def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf')):
+def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
+                                mode='fuzzy_clusters'):
     """
     Function merging buckets into fuzzy clusters. Each bucket will create
     relations in an undirected graph that is later solved to compose clusters.
@@ -51,6 +52,8 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf')):
         min_size (int, optional): Minimum size of clusters, defaults to 2.
         max_size (int, optional): Maximum size of clusters, defaults to
             infinity.
+        mode (string, optional): 'fuzzy_clusters' or 'connected_components'.
+            Defaults to 'fuzzy_clusters'.
 
     Yields:
         list: A viable cluster.
@@ -70,21 +73,49 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf')):
                 graph[A].add(B)
                 graph[B].add(A)
 
-    visited = set()
+    if mode == 'fuzzy_clusters':
+        visited = set()
 
-    for item, neighbors in graph.items():
-        if item in visited:
-            continue
+        for item, neighbors in graph.items():
+            if item in visited:
+                continue
 
-        if len(neighbors) + 1 < min_size:
-            continue
-        if len(neighbors) + 1 > max_size:
-            continue
+            if len(neighbors) + 1 < min_size:
+                continue
+            if len(neighbors) + 1 > max_size:
+                continue
 
-        visited.update(neighbors)
+            visited.update(neighbors)
 
-        cluster = [item] + list(neighbors)
-        yield cluster
+            cluster = [item] + list(neighbors)
+            yield cluster
+    else:
+        visited = set()
+        stack = []
+
+        for item, neighbors in graph.items():
+            if item in visited:
+                continue
+
+            visited.add(item)
+
+            cluster = [item]
+
+            stack.extend(neighbors)
+
+            while len(stack) != 0:
+                neighbor = stack.pop()
+
+                if neighbor in visited:
+                    continue
+
+                cluster.append(neighbor)
+                visited.add(neighbor)
+
+                stack.extend(graph[neighbor])
+
+            if len(cluster) >= min_size and len(cluster) <= max_size:
+                yield cluster
 
 
 def upper_triangular_matrix_chunk_iter(data, chunk_size):
