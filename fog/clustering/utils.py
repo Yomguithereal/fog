@@ -66,6 +66,9 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
     for bucket in buckets:
         n = len(bucket)
 
+        if n < 2:
+            continue
+
         for i in range(n):
             A = bucket[i]
 
