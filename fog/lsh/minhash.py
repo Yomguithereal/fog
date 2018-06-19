@@ -62,7 +62,7 @@ class MinHash(object):
 
         # TODO: numpy?
         for s in range(self.h):
-            min_hash = NEXT_PRIME
+            min_hash = MAX_UINT32
 
             for token in tokens:
                 h = (A[s] * token + B[s]) % NEXT_PRIME
@@ -129,7 +129,7 @@ class LSBMinHash(object):
             offset = s * 64
 
             for i in range(64):
-                min_hash = NEXT_PRIME
+                min_hash = MAX_UINT32
 
                 for token in tokens:
                     h = (A[offset + i] * token + B[offset + i]) % NEXT_PRIME

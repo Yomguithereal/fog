@@ -23,6 +23,8 @@ from fog.metrics.jaccard import jaccard_similarity
 #   * double_check with minhash or jaccard or sub similarity even
 #   * superminhash to generate signature faster
 #   * cheap_hashes
+#   * make precision experiments
+#   * make scalability experiments (compute ground truth)
 
 
 def match_probability(h, bands, similarity):
