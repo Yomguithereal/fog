@@ -1,1 +1,1 @@
-from fog.lsh.minhash import LSBMinHash
+from fog.lsh.minhash import MinHash, LSBMinHash
