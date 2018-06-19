@@ -53,12 +53,21 @@ with open('./data/universities.csv', 'r') as f:
 
     print('%i universities' % len(universities))
 
-    key = lambda x: list(ngrams(3, x))
+    key = lambda x: list(ngrams(5, x))
 
-    clusters = list(minhash(universities, h=256, radius=0.8, key=key))
+    RADIUS = 0.80
 
+    clusters = list(minhash(universities, h=240, threshold=RADIUS, key=key))
+
+    c = 0
     for cluster in clusters:
-        print(cluster)
+        j = jaccard_similarity(key(cluster[0]), key(cluster[1]))
+
+        if j >= RADIUS:
+            c += 1
+        print(cluster, j)
+
+    print('Count', c)
 
     # for cluster in clusters:
     #     print(cluster)
@@ -66,9 +75,11 @@ with open('./data/universities.csv', 'r') as f:
     # TODO: Compare found items, use ngrams also
     print(distinct_values(clusters))
 
-    clusters = list(pairwise(universities, mode='connected_components', similarity=jaccard_similarity, radius=0.8, key=key))
+    clusters = list(pairwise(universities, mode='connected_components', similarity=jaccard_similarity, radius=RADIUS, key=key))
 
     print(distinct_values(clusters))
 
     for cluster in clusters:
         print(cluster)
+
+    print('Count', len(clusters))

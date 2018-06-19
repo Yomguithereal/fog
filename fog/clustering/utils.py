@@ -42,7 +42,7 @@ def make_similarity_function(similarity=None, distance=None, radius=None):
 
 
 def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
-                                mode='fuzzy_clusters'):
+                                mode='fuzzy_clusters', similarity=None):
     """
     Function merging buckets into fuzzy clusters. Each bucket will create
     relations in an undirected graph that is later solved to compose clusters.
@@ -54,6 +54,8 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
             infinity.
         mode (string, optional): 'fuzzy_clusters' or 'connected_components'.
             Defaults to 'fuzzy_clusters'.
+        similarity (callable, optional)= similarity function to use to validate
+            matches from buckets.
 
     Yields:
         list: A viable cluster.
@@ -70,8 +72,9 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
             for j in range(i + 1, n):
                 B = bucket[j]
 
-                graph[A].add(B)
-                graph[B].add(A)
+                if similarity is None or similarity(A, B):
+                    graph[A].add(B)
+                    graph[B].add(A)
 
     # TODO: leader mode
     if mode == 'fuzzy_clusters':
