@@ -55,7 +55,7 @@ with open('./data/universities.csv', 'r') as f:
 
     key = lambda x: list(ngrams(3, x))
 
-    clusters = list(minhash(universities, precision=8, radius=0.8, key=key))
+    clusters = list(minhash(universities, h=256, radius=0.8, key=key))
 
     for cluster in clusters:
         print(cluster)
