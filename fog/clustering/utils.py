@@ -73,6 +73,7 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
                 graph[A].add(B)
                 graph[B].add(A)
 
+    # TODO: leader mode
     if mode == 'fuzzy_clusters':
         visited = set()
 

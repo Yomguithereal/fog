@@ -21,7 +21,7 @@ class TestLSBMinHash(object):
         m = LSBMinHash(precision=16, seed=123)
 
         for A, B, j in TESTS:
-            sA = m.hash(A)
-            sB = m.hash(B)
+            sA = m.create_signature(A)
+            sB = m.create_signature(B)
 
             assert m.similarity(sA, sB) == approx(j, abs=1e-1)

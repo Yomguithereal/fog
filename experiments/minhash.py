@@ -55,7 +55,10 @@ with open('./data/universities.csv', 'r') as f:
 
     key = lambda x: list(ngrams(3, x))
 
-    clusters = list(minhash(universities, precision=4, threshold=0.8, key=key))
+    clusters = list(minhash(universities, precision=8, radius=0.8, key=key))
+
+    for cluster in clusters:
+        print(cluster)
 
     # for cluster in clusters:
     #     print(cluster)
@@ -67,5 +70,5 @@ with open('./data/universities.csv', 'r') as f:
 
     print(distinct_values(clusters))
 
-    # for cluster in clusters:
-    #     print(cluster)
+    for cluster in clusters:
+        print(cluster)

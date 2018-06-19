@@ -22,13 +22,14 @@ NEXT_PRIME = 4294967311
 
 
 def crc32(x):
-    return binascii.crc32(x.encode())
+    return binascii.crc32(x.encode()) & 0xFFFFFFFF
 
 
 class LSBMinHash(object):
 
     def __init__(self, seed=None, precision=8):
         # TODO: weighted
+        # TODO: cheap_hashes
 
         rng = Random(seed)
 
@@ -47,7 +48,7 @@ class LSBMinHash(object):
 
         self.precision = precision
 
-    def hash(self, tokens):
+    def create_signature(self, tokens):
         A = self.A
         B = self.B
 
@@ -61,6 +62,7 @@ class LSBMinHash(object):
         if len(tokens) == 0:
             return signature
 
+        # TODO: numpy?
         for s in range(self.precision):
             integer = 0
             offset = s * 64
@@ -74,8 +76,7 @@ class LSBMinHash(object):
                     if h < min_hash:
                         min_hash = h
 
-                if min_hash & 0x1 > 0:
-                    integer |= (1 << i)
+                integer |= ((min_hash & 0x1) << i)
 
             signature[s] = integer
 
