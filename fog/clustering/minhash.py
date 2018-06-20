@@ -73,7 +73,7 @@ def minhash(data, h=256, key=None, radius=0.8, bands=None):
             buckets[band_key].append(item)
 
     def double_check(A, B):
-        if k is not None:
+        if key is not None:
             return jaccard_similarity(key(A), key(B)) >= radius
 
         return jaccard_similarity(A, B) >= radius
