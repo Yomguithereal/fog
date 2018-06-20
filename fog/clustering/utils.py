@@ -52,8 +52,8 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
         min_size (int, optional): Minimum size of clusters, defaults to 2.
         max_size (int, optional): Maximum size of clusters, defaults to
             infinity.
-        mode (string, optional): 'fuzzy_clusters' or 'connected_components'.
-            Defaults to 'fuzzy_clusters'.
+        mode (string, optional): 'fuzzy_clusters', 'connected_components' or
+            'leader'. Defaults to 'fuzzy_clusters'.
         similarity (callable, optional)= similarity function to use to validate
             matches from buckets.
 
@@ -79,7 +79,6 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
                     graph[A].add(B)
                     graph[B].add(A)
 
-    # TODO: leader mode
     if mode == 'fuzzy_clusters':
         visited = set()
 
@@ -96,7 +95,21 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
 
             cluster = [item] + list(neighbors)
             yield cluster
-    else:
+
+    elif mode == 'leader':
+        visited = set()
+
+        for item, neighbors in graph.items():
+            if item in visited:
+                continue
+
+            if len(neighbors) >= min_size - 1 and len(neighbors) <= max_size - 1:
+                cluster = [item] + list(neighbors)
+                visited.update(cluster)
+
+                yield cluster
+
+    elif mode == 'connected_components':
         visited = set()
         stack = []
 
@@ -123,6 +136,8 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
 
             if len(cluster) >= min_size and len(cluster) <= max_size:
                 yield cluster
+    else:
+        raise TypeError('fog.clustering: unknown mode "%s"' % mode)
 
 
 def upper_triangular_matrix_chunk_iter(data, chunk_size):

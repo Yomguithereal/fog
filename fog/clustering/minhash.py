@@ -25,6 +25,7 @@ from fog.metrics.jaccard import jaccard_similarity
 #   * cheap_hashes
 #   * make precision experiments
 #   * make scalability experiments (compute ground truth)
+#   * possibility to use one dict per band + sum the integers
 
 
 def match_probability(h, bands, similarity):

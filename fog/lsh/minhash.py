@@ -30,6 +30,8 @@ class MinHash(object):
     def __init__(self, h=256, seed=None):
         # TODO: weighted
         # TODO: cheap_hashes
+        # TODO: lsb
+        # TODO: superminhash
 
         rng = Random(seed)
 
