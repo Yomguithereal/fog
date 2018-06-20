@@ -4,3 +4,4 @@ from fog.key.fingerprint import (
     fingerprint,
     ngrams_fingerprint
 )
+from fog.key.rusalka import rusalka
