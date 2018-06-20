@@ -2,7 +2,7 @@
 # Fog MinHash LSH Unit Tests
 # =============================================================================
 from pytest import approx
-from fog.lsh import MinHash, LSBMinHash
+from fog.lsh import MinHash, LSBMinHash, SuperMinHash
 
 TESTS = [
     ('abc', '', 0),
@@ -28,6 +28,15 @@ class TestLSBMinHash(object):
 
     def test_lsb(self):
         m = LSBMinHash(precision=16, seed=123)
+
+        for A, B, j in TESTS:
+            sA = m.create_signature(A)
+            sB = m.create_signature(B)
+
+            assert m.similarity(sA, sB) == approx(j, abs=1e-1)
+
+    def test_super_minhash(self):
+        m = SuperMinHash(512)
 
         for A, B, j in TESTS:
             sA = m.create_signature(A)

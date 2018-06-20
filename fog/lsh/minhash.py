@@ -4,15 +4,20 @@
 #
 # Classes & functions related to the MinHash Local Sensitivity Hashing scheme.
 #
-# [Url]:
+# [Urls]:
 # https://en.wikipedia.org/wiki/MinHash
+# https://arxiv.org/abs/1706.05698
 #
 # [Reference]:
 # Broder, Andrei Z. (1997), "On the resemblance and containment of documents",
 # Compression and Complexity of Sequences: Proceedings, Positano,
 # Amalfitan Coast, Salerno, Italy, June 11-13, 1997.
 #
+# Ertl, Otmar. « SuperMinHash - A New Minwise Hashing Algorithm for Jaccard
+# Similarity Estimation ». arXiv:1706.05698 [cs], 18 juin 2017.
+#
 import binascii
+import math
 from random import Random
 
 from fog.lsh.utils import popcount
@@ -48,14 +53,14 @@ class MinHash(object):
 
         self.h = h
 
-    def create_signature(self, tokens):
+    def create_signature(self, sequence):
         A = self.A
         B = self.B
 
-        if type(tokens) is str:
-            tokens = set(ord(c) for c in tokens)
+        if type(sequence) is str:
+            tokens = set(ord(c) for c in sequence)
         else:
-            tokens = set(crc32(token) for token in tokens)
+            tokens = set(crc32(token) for token in sequence)
 
         signature = [0] * self.h
 
@@ -75,6 +80,78 @@ class MinHash(object):
             signature[s] = min_hash
 
         return signature
+
+    def similarity(self, signatureA, signatureB):
+
+        hamming = 0
+        h = len(signatureA)
+
+        for i in range(h):
+            if signatureA[i] != signatureB[i]:
+                hamming += 1
+
+        return 1.0 - hamming / h
+
+
+class SuperMinHash(object):
+
+    def __init__(self, h=256):
+        self.h = h
+        self.rng = Random()
+
+    def create_signature(self, sequence):
+
+        if type(sequence) is str:
+            tokens = set(ord(c) for c in sequence)
+        else:
+            tokens = set(crc32(token) for token in sequence)
+
+        m = self.h
+        rng = self.rng
+
+        h = [m + 1] * m
+        p = [0] * m
+        q = [-1] * m
+        b = [0] * m
+
+        b[-1] = m
+
+        a = m - 1
+
+        for i, token in enumerate(tokens):
+            rng.seed(token)
+            j = 0
+
+            while j <= a:
+                r = rng.random()
+                k = rng.randint(j, m - 1)
+
+                if q[j] != i:
+                    q[j] = i
+                    p[j] = j
+
+                if q[k] != i:
+                    q[k] = i
+                    p[k] = k
+
+                tmp = p[j]
+                p[j] = p[k]
+                p[k] = tmp
+
+                if r + j < h[p[j]]:
+                    j2 = min(math.floor(h[p[j]]), m - 1)
+                    h[p[j]] = r + j
+
+                    if j < j2:
+                        b[j2] -= 1
+                        b[j] += 1
+
+                        while b[a] == 0:
+                            a -= 1
+
+                j += 1
+
+        return [int(i) for i in h]
 
     def similarity(self, signatureA, signatureB):
 
@@ -111,14 +188,14 @@ class LSBMinHash(object):
 
         self.precision = precision
 
-    def create_signature(self, tokens):
+    def create_signature(self, sequence):
         A = self.A
         B = self.B
 
-        if type(tokens) is str:
-            tokens = set(ord(c) for c in tokens)
+        if type(sequence) is str:
+            tokens = set(ord(c) for c in sequence)
         else:
-            tokens = set(crc32(token) for token in tokens)
+            tokens = set(crc32(token) for token in sequence)
 
         signature = [0] * self.precision
 

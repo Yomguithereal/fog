@@ -13,11 +13,11 @@ VOWELS = re.compile(r'[aeiouy]')
 
 RULES = [
     (r'i[jy]$', ''),
-    (r'[fvw]', 'f'),
+    (r'[fvw]|ph', 'f'),
+    (r'^[jy]?e', 'J'),
     (r'[dt]?[cs]h|tz', 'ʃ'),
     (r'[dt]?(?:zh|j)', 'ʒ'),
     (r'ks', 'x'),
-    (r'^y?e', 'j'),
     (r'^y(?=[aeiou])|iou', 'j'),
     (r'[cg]', 'k'),
     (r'h', '')
@@ -43,6 +43,7 @@ def rusalka(name):
 
     # Deduplication
     name = re.sub(DUPLICATED, r'\1', name)
+    name = name.lower()
 
     first_letter = name[0]
     rest = name[1:]

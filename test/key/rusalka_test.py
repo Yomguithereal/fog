@@ -5,12 +5,12 @@ from pytest import approx
 from fog.key import rusalka
 
 TESTS = [
-    (('Tchekov', 'Chekhow', 'Tchekof', 'Tchekoff'), 'ʃkf'),
+    (('Tchekov', 'Chekhow', 'Tchekof', 'Tchekoff', 'Chekkoph'), 'ʃkf'),
     (('Dzhugashvili', 'Dzhougachvili', 'Djougachvili'), 'ʒkʃfl'),
     (('Dimitrij', 'Dimitri', 'Dimitry', 'Dimitriy', 'Dmitri', 'D\'mitr', 'Dmitr'), 'dmtr'),
     (('Alexei', 'Alexey'), 'alx'),
     (('Sergei', 'Sergey'), 'srk'),
-    (('Ekaterina', 'Yekaterina'), 'jktrn'),
+    (('Ekaterina', 'Yekaterina', 'Jekaterina'), 'jktrn'),
     (('Moussorgsky', 'Musorkgski', 'mousorgskiy', 'Moußorgsky'), 'msrksk'),
     (('Manovich', 'Manovitz', 'Manovitch'), 'mnfʃ'),
     (('Yeltsin', 'Eltsine'), 'jltsn'),
@@ -36,4 +36,4 @@ class TestRusalka(object):
 
         for names, key in TESTS:
             for name in names:
-                assert rusalka(name) == key
+                assert rusalka(name) == key, '%s => %s' % (name, key)
