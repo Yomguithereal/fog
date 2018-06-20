@@ -11,7 +11,7 @@ from collections import defaultdict
 import math
 
 from fog.clustering.utils import merge_buckets_into_clusters
-from fog.lsh.minhash import LSBMinHash, MinHash
+from fog.lsh.minhash import MinHash
 from fog.metrics.jaccard import jaccard_similarity
 
 

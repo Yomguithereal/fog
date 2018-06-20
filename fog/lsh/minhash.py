@@ -33,10 +33,8 @@ def crc32(x):
 class MinHash(object):
 
     def __init__(self, h=256, seed=None):
-        # TODO: weighted
         # TODO: cheap_hashes
         # TODO: lsb
-        # TODO: superminhash
 
         rng = Random(seed)
 
@@ -124,7 +122,7 @@ class SuperMinHash(object):
 
             while j <= a:
                 r = rng.random()
-                k = rng.randint(j, m - 1)
+                k = j + math.floor(r * (m - j))
 
                 if q[j] != i:
                     q[j] = i
