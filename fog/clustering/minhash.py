@@ -50,10 +50,10 @@ def guess_bands(h, threshold):
     return bands
 
 
-def minhash(data, h=256, key=None, threshold=0.8, bands=None):
+def minhash(data, h=256, key=None, radius=0.8, bands=None):
 
     if bands is None:
-        bands = guess_bands(h, threshold)
+        bands = guess_bands(h, radius)
 
     rows = h // bands
     h_upper_bound = bands * rows
@@ -76,9 +76,9 @@ def minhash(data, h=256, key=None, threshold=0.8, bands=None):
 
     def double_check(A, B):
         if k is not None:
-            return jaccard_similarity(key(A), key(B)) >= threshold
+            return jaccard_similarity(key(A), key(B)) >= radius
 
-        return jaccard_similarity(A, B) >= threshold
+        return jaccard_similarity(A, B) >= radius
 
     yield from merge_buckets_into_clusters(
         buckets.values(),
