@@ -144,8 +144,8 @@ def pairwise_fuzzy_clusters_worker(payload):
 
 
 def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
-                            min_size=2, max_size=float('inf'), processes=1,
-                            chunk_size=100):
+                            min_size=2, max_size=float('inf'), key=None,
+                            processes=1, chunk_size=100):
     """
     Function returning an iterator over found clusters using an algorithm
     yielding fuzzy clusters.
@@ -193,6 +193,8 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
             it to be considered viable. Defaults to 2.
         max_size (number, optional): maximum number of items in a cluster for
             it to be considered viable. Defaults to infinity.
+        key (callable, optional): function returning an item's key.
+            Defaults to None.
         processes (number, optional): number of processes to use. Defaults to 1.
         chunk_size (number, optional): size of matrix chunks to send to
             subprocesses. Defaults to 100.
@@ -209,16 +211,21 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
     if type(data) is not list:
         data = list(data)
 
+    if key is not None:
+        keys = list(key(item) for item in data)
+    else:
+        keys = data
+
     n = len(data)
     graph = defaultdict(list)
 
     # Computing similarities
     if processes == 1:
         for i in range(n):
-            A = data[i]
+            A = keys[i]
 
             for j in range(i + 1, n):
-                B = data[j]
+                B = keys[j]
 
                 if similarity(A, B):
                     graph[i].append(j)
@@ -231,7 +238,7 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
         pool_iter = (
             (pickled_similarity, ) + chunk
             for chunk
-            in upper_triangular_matrix_chunk_iter(data, chunk_size)
+            in upper_triangular_matrix_chunk_iter(keys, chunk_size)
         )
 
         # Pool

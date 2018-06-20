@@ -17,14 +17,12 @@ from fog.metrics.jaccard import jaccard_similarity
 
 # TODO:
 #   * Parallelize
-#   * use threshold to find bands (works better) similarity just bring more
 #   * possibility to hash the band key
 #   * note that we allow uneven bands for fine grained results
 #   * double_check with minhash or jaccard or sub similarity even
 #   * superminhash to generate signature faster
 #   * cheap_hashes
-#   * make precision experiments
-#   * make scalability experiments (compute ground truth)
+#   * docs
 #   * possibility to use one dict per band + sum the integers
 
 
