@@ -36,6 +36,28 @@ def crc32(x):
     return binascii.crc32(x.encode()) & UINT32_MASK
 
 
+def minhash_similarity(A, B):
+    hamming = 0
+    h = len(A)
+
+    for i in range(h):
+        if A[i] != B[i]:
+            hamming += 1
+
+    return 1.0 - hamming / h
+
+
+def lsb_minhash_similarity(A, B):
+    hamming = 0
+    L = len(A)
+    h = L * 64.0
+
+    for i in range(L):
+        hamming += popcount(A[i] ^ B[i])
+
+    return 1.0 - 2.0 * hamming / h
+
+
 class MinHash(object):
 
     __slots__ = ('A', 'B', 'params', 'h', 'numpy')
@@ -117,17 +139,6 @@ class MinHash(object):
 
         return signature
 
-    def similarity(self, signatureA, signatureB):
-
-        hamming = 0
-        h = len(signatureA)
-
-        for i in range(h):
-            if signatureA[i] != signatureB[i]:
-                hamming += 1
-
-        return 1.0 - hamming / h
-
 
 class SuperMinHash(object):
 
@@ -189,17 +200,6 @@ class SuperMinHash(object):
 
         return [int(i) for i in h]
 
-    def similarity(self, signatureA, signatureB):
-
-        hamming = 0
-        h = len(signatureA)
-
-        for i in range(h):
-            if signatureA[i] != signatureB[i]:
-                hamming += 1
-
-        return 1.0 - hamming / h
-
 
 class LSBMinHash(object):
 
@@ -254,14 +254,3 @@ class LSBMinHash(object):
             signature[s] = integer
 
         return signature
-
-    def similarity(self, signatureA, signatureB):
-
-        hamming = 0
-        L = len(signatureA)
-        h = L * 64.0
-
-        for i in range(L):
-            hamming += popcount(signatureA[i] ^ signatureB[i])
-
-        return 1.0 - 2.0 * hamming / h

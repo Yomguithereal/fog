@@ -3,7 +3,13 @@
 # =============================================================================
 import numpy as np
 from pytest import approx
-from fog.lsh import MinHash, LSBMinHash, SuperMinHash
+from fog.lsh import (
+    MinHash,
+    LSBMinHash,
+    SuperMinHash,
+    minhash_similarity,
+    lsb_minhash_similarity
+)
 
 TESTS = [
     ('abc', '', 0),
@@ -25,7 +31,7 @@ class TestLSBMinHash(object):
             sA = m.create_signature(A)
             sB = m.create_signature(B)
 
-            assert m.similarity(sA, sB) == approx(j, abs=1e-1)
+            assert minhash_similarity(sA, sB) == approx(j, abs=1e-1)
 
     def test_numpy(self):
         m = MinHash(512, seed=123, use_numpy=True)
@@ -37,7 +43,7 @@ class TestLSBMinHash(object):
             assert sA.shape == (512, )
             assert sA.dtype == np.uint32
 
-            assert m.similarity(sA, sB) == approx(j, abs=1e-1)
+            assert minhash_similarity(sA, sB) == approx(j, abs=1e-1)
 
     def test_lsb(self):
         m = LSBMinHash(precision=16, seed=123)
@@ -46,7 +52,7 @@ class TestLSBMinHash(object):
             sA = m.create_signature(A)
             sB = m.create_signature(B)
 
-            assert m.similarity(sA, sB) == approx(j, abs=1e-1)
+            assert lsb_minhash_similarity(sA, sB) == approx(j, abs=1e-1)
 
     def test_super_minhash(self):
         m = SuperMinHash(512)
@@ -55,4 +61,4 @@ class TestLSBMinHash(object):
             sA = m.create_signature(A)
             sB = m.create_signature(B)
 
-            assert m.similarity(sA, sB) == approx(j, abs=1e-1)
+            assert minhash_similarity(sA, sB) == approx(j, abs=1e-1)
