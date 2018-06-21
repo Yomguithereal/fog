@@ -5,3 +5,8 @@ from fog.lsh.minhash import (
     minhash_similarity,
     lsb_minhash_similarity
 )
+from fog.lsh.simhash import (
+    simhash,
+    simhash_distance,
+    simhash_similarity
+)
