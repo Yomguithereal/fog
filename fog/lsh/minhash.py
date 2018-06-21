@@ -23,11 +23,12 @@ from random import Random
 from fog.lsh.utils import popcount
 
 MAX_UINT32 = (2 ** 32) - 1
+UINT32_MASK = 0xFFFFFFFF
 NEXT_PRIME = 4294967311
 
 
 def crc32(x):
-    return binascii.crc32(x.encode()) & 0xFFFFFFFF
+    return binascii.crc32(x.encode()) & UINT32_MASK
 
 
 class MinHash(object):
@@ -38,22 +39,19 @@ class MinHash(object):
 
         rng = Random(seed)
 
-        A = set()
-        B = set()
+        params = set()
 
-        while len(A) < h:
-            A.add(rng.randint(0, MAX_UINT32))
-        while len(B) < h:
-            B.add(rng.randint(0, MAX_UINT32))
+        while len(params) < h:
+            params.add((
+                rng.randint(1, MAX_UINT32),
+                rng.randint(0, MAX_UINT32)
+            ))
 
-        self.A = list(A)
-        self.B = list(B)
-
+        self.params = list(params)
         self.h = h
 
     def create_signature(self, sequence):
-        A = self.A
-        B = self.B
+        params = self.params
 
         if type(sequence) is str:
             tokens = set(ord(c) for c in sequence)
@@ -68,9 +66,10 @@ class MinHash(object):
         # TODO: numpy?
         for s in range(self.h):
             min_hash = MAX_UINT32
+            a, b = params[s]
 
             for token in tokens:
-                h = (A[s] * token + B[s]) % NEXT_PRIME
+                h = (a * token + b) % NEXT_PRIME
 
                 if h < min_hash:
                     min_hash = h
@@ -166,29 +165,25 @@ class SuperMinHash(object):
 class LSBMinHash(object):
 
     def __init__(self, precision=8, seed=None):
-        # TODO: weighted
         # TODO: cheap_hashes
 
         rng = Random(seed)
 
         h = precision * 64
 
-        A = set()
-        B = set()
+        params = set()
 
-        while len(A) < h:
-            A.add(rng.randint(0, MAX_UINT32))
-        while len(B) < h:
-            B.add(rng.randint(0, MAX_UINT32))
+        while len(params) < h:
+            params.add((
+                rng.randint(1, MAX_UINT32),
+                rng.randint(0, MAX_UINT32)
+            ))
 
-        self.A = list(A)
-        self.B = list(B)
-
+        self.params = list(params)
         self.precision = precision
 
     def create_signature(self, sequence):
-        A = self.A
-        B = self.B
+        params = self.params
 
         if type(sequence) is str:
             tokens = set(ord(c) for c in sequence)
@@ -207,9 +202,10 @@ class LSBMinHash(object):
 
             for i in range(64):
                 min_hash = MAX_UINT32
+                a, b = params[offset + i]
 
                 for token in tokens:
-                    h = (A[offset + i] * token + B[offset + i]) % NEXT_PRIME
+                    h = (a * token + b) % NEXT_PRIME
 
                     if h < min_hash:
                         min_hash = h
