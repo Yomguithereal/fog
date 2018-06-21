@@ -4,6 +4,7 @@
 #
 # Functions computing the cosine similarity.
 #
+from collections import Counter
 import math
 
 
@@ -83,3 +84,25 @@ def sparse_dotproduct(A, B):
             product += w1 * w2
 
     return product
+
+
+def cosine_similarity(A, B):
+    """
+    Function computing the cosine similarity of the given sequences.
+
+    Runs in O(n), n being the sum of A & B's sizes.
+
+    Args:
+        A (iterable): First sequence.
+        B (iterable): Second sequence.
+
+    Returns:
+        float: Cosine similarity between A & B.
+
+    """
+
+    # Computing frequencies
+    A = Counter(A)
+    B = Counter(B)
+
+    return sparse_cosine_similarity(A, B)

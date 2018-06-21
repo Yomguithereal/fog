@@ -1,6 +1,6 @@
 import csv
 from fog.lsh import simhash, simhash_similarity
-from fog.metrics import sparse_cosine_similarity
+from fog.metrics import cosine_similarity
 from fog.tokenizers import ngrams
 from collections import defaultdict, Counter
 
@@ -51,7 +51,7 @@ for university, neighbors in graph.items():
         if count > m - k:
             candidates += 1
 
-            if sparse_cosine_similarity(Counter(ngrams(5, university)), Counter(ngrams(5, neighbor))) >= radius:
+            if cosine_similarity(ngrams(5, university), ngrams(5, neighbor)) >= radius:
                 cluster.append(neighbor)
 
     visited.update(cluster)
