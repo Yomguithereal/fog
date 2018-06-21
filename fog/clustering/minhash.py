@@ -92,6 +92,14 @@ def minhash(data, h=256, key=None, radius=0.8, bands=None, use_numpy=False):
     Function returning an iterator over clusters found using the minhash
     clustering method.
 
+    The idea is to compute minhash signatures for every item and divide the
+    resulting signature matrix in bands of n rows so that if two items share
+    the exact same rows in a band, they are likely to be similar.
+
+    It runs in O(nh), n being the number of items, h the number of integers to
+    use as minhash signature. Note that since usually h << n, it practically
+    runs in O(n).
+
     Args:
         data (iterable): Items to cluster.
         h (int, optional): Number of integers to use as the minhash signature.
