@@ -1,6 +1,7 @@
 # =============================================================================
 # Fog MinHash LSH Unit Tests
 # =============================================================================
+import numpy as np
 from pytest import approx
 from fog.lsh import MinHash, LSBMinHash, SuperMinHash
 
@@ -23,6 +24,18 @@ class TestLSBMinHash(object):
         for A, B, j in TESTS:
             sA = m.create_signature(A)
             sB = m.create_signature(B)
+
+            assert m.similarity(sA, sB) == approx(j, abs=1e-1)
+
+    def test_numpy(self):
+        m = MinHash(512, seed=123, use_numpy=True)
+
+        for A, B, j in TESTS:
+            sA = m.create_signature(A)
+            sB = m.create_signature(B)
+
+            assert sA.shape == (512, )
+            assert sA.dtype == np.uint32
 
             assert m.similarity(sA, sB) == approx(j, abs=1e-1)
 
