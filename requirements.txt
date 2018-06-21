@@ -2,6 +2,7 @@
 pycodestyle==2.4.0
 pytest==3.5.1
 python-Levenshtein==0.12.0
+numpy==1.14.3
 twine==1.11.0
 
 # Dependencies

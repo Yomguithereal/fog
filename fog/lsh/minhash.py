@@ -20,6 +20,11 @@ import binascii
 import math
 from random import Random
 
+try:
+    import numpy as np
+except:
+    np = None
+
 from fog.lsh.utils import popcount
 
 MAX_UINT32 = (2 ** 32) - 1
@@ -33,37 +38,71 @@ def crc32(x):
 
 class MinHash(object):
 
-    def __init__(self, h=256, seed=None):
-        # TODO: cheap_hashes
-        # TODO: lsb
+    __slots__ = ('A', 'B', 'params', 'h', 'numpy')
 
-        rng = Random(seed)
+    def __init__(self, h=256, seed=None, use_numpy=False):
 
-        params = set()
+        # Properties
+        self.A = None
+        self.B = None
+        self.params = None
 
-        while len(params) < h:
-            params.add((
-                rng.randint(1, MAX_UINT32),
-                rng.randint(0, MAX_UINT32)
-            ))
+        if use_numpy:
+            assert np is not None, 'numpy is not installed'
 
-        self.params = list(params)
+            np.random.seed(seed)
+
+            self.A = np.random.randint(1, MAX_UINT32, size=h, dtype='uint32')
+            self.B = np.random.randint(0, MAX_UINT32, size=h, dtype='uint32')
+
+            self.numpy = True
+        else:
+
+            rng = Random(seed)
+
+            params = set()
+
+            while len(params) < h:
+                params.add((
+                    rng.randint(1, MAX_UINT32),
+                    rng.randint(0, MAX_UINT32)
+                ))
+
+            self.params = list(params)
+            self.numpy = False
+
         self.h = h
 
     def create_signature(self, sequence):
-        params = self.params
 
         if type(sequence) is str:
             tokens = set(ord(c) for c in sequence)
         else:
             tokens = set(crc32(token) for token in sequence)
 
+        # Using numpy
+        if self.numpy:
+
+            if len(tokens) == 0:
+                return np.zeros(self.h, dtype=np.uint32)
+
+            signature = np.repeat(list(tokens), self.h).astype(np.uint32, copy=False)
+            signature.shape = (len(tokens), self.h)
+
+            # Universal hash
+            signature *= self.A
+            signature += self.B
+            signature %= NEXT_PRIME
+
+            return signature.min(axis=0)
+
+        # Standard routine
+        params = self.params
         signature = [0] * self.h
 
         if len(tokens) == 0:
             return signature
 
-        # TODO: numpy?
         for s in range(self.h):
             min_hash = MAX_UINT32
             a, b = params[s]
