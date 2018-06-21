@@ -4,6 +4,13 @@
 #
 # Miscellaneous helper functions used by the LSH module.
 #
+import binascii
+
+UINT32_MASK = 0xFFFFFFFF
+
+
+def crc32(x):
+    return binascii.crc32(x.encode()) & UINT32_MASK
 
 
 def popcount(x):

@@ -1,5 +1,5 @@
 # =============================================================================
-# Fog MinHash LSH
+# Fog MinHash
 # =============================================================================
 #
 # Classes & functions related to the MinHash Local Sensitivity Hashing scheme.
@@ -16,7 +16,6 @@
 # Ertl, Otmar. « SuperMinHash - A New Minwise Hashing Algorithm for Jaccard
 # Similarity Estimation ». arXiv:1706.05698 [cs], 18 juin 2017.
 #
-import binascii
 import math
 from random import Random
 
@@ -25,15 +24,10 @@ try:
 except:
     np = None
 
-from fog.lsh.utils import popcount
+from fog.lsh.utils import crc32, popcount
 
 MAX_UINT32 = (2 ** 32) - 1
-UINT32_MASK = 0xFFFFFFFF
 NEXT_PRIME = 4294967311
-
-
-def crc32(x):
-    return binascii.crc32(x.encode()) & UINT32_MASK
 
 
 def minhash_similarity(A, B):

@@ -11,7 +11,14 @@ FILTER = re.compile(r'[^a-z]')
 DUPLICATED = re.compile(r'(.)\1+')
 VOWELS = re.compile(r'[aeiouy]')
 
+PHONETIC_NOTATION_RULES = [
+    (r'[čšŝ]', 'ch'),
+    (r'û', 'iou'),
+    (r'ž', 'zh')
+]
+
 RULES = [
+    (r'cz', 'ts'),
     (r'i[jy]$', ''),
     (r'[fvw]|ph', 'f'),
     (r'^[jy]?e', 'J'),
@@ -30,6 +37,10 @@ def rusalka(name):
 
     # Lower case
     name = name.lower()
+
+    # Applying phonetic notation rules
+    for pattern, replacement in PHONETIC_NOTATION_RULES:
+        name = re.sub(pattern, replacement, name)
 
     # Unidecode
     name = unidecode(name)

@@ -5,7 +5,7 @@ from pytest import approx
 from fog.key import rusalka
 
 TESTS = [
-    (('Tchekov', 'Chekhow', 'Tchekof', 'Tchekoff', 'Chekkoph'), 'ʃkf'),
+    (('Tchekov', 'Chekhow', 'Tchekof', 'Tchekoff', 'Chekkoph', 'čekov'), 'ʃkf'),
     (('Dzhugashvili', 'Dzhougachvili', 'Djougachvili'), 'ʒkʃfl'),
     (('Dimitrij', 'Dimitri', 'Dimitry', 'Dimitriy', 'Dmitri', 'D\'mitr', 'Dmitr'), 'dmtr'),
     (('Alexei', 'Alexey'), 'alx'),
@@ -26,8 +26,14 @@ TESTS = [
     (('Mikhail', ), 'mkl'),
     (('Onéguine', 'Oniéguine', 'Onegin'), 'ankn'),
     (('Bakhtin', ), 'bktn'),
-    (('Youri', 'Yuri', 'Iouri'), 'jr'),
-    (('Aleksandr', 'Alexander'), 'alxndr')
+    (('Youri', 'Yuri', 'Iouri', 'ûri'), 'jr'),
+    (('Aleksandr', 'Alexander'), 'alxndr'),
+    (('žanna', ), 'ʒn'),
+    (('Chaliapine', 'Chaliapin', 'šalâpin'), 'ʃlpn'),
+    (('ŝedrij', ), 'ʃdr'),
+    (('ŝerbakov', 'Chtcherbakov'), 'ʃrbkf'),
+    (('Růžena', ), 'rʒn'),
+    (('Czarevna', 'Tsarevna'), 'tsrfn')
 ]
 
 
