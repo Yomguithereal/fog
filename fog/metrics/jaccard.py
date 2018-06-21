@@ -4,6 +4,13 @@
 #
 # Functions computing the Jaccard similarity
 #
+# [Url]:
+# https://en.wikipedia.org/wiki/Jaccard_index
+#
+# [Reference]:
+# Jaccard, Paul (1912), “The distribution of the flora in the alpine zone”,
+# New Phytologist 11: 37–50
+#
 
 ACCEPTABLE_TYPES = (set, frozenset, dict)
 
