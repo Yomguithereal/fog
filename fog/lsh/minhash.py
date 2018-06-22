@@ -24,7 +24,7 @@ try:
 except:
     np = None
 
-from fog.lsh.utils import crc32, popcount
+from fog.lsh.utils import crc32, popcount64
 
 MAX_UINT32 = (2 ** 32) - 1
 NEXT_PRIME = 4294967311
@@ -47,7 +47,7 @@ def lsb_minhash_similarity(A, B):
     h = L * 64.0
 
     for i in range(L):
-        hamming += popcount(A[i] ^ B[i])
+        hamming += popcount64(A[i] ^ B[i])
 
     return 1.0 - 2.0 * hamming / h
 

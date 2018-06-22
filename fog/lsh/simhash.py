@@ -14,42 +14,51 @@
 #
 import hashlib
 
-from fog.lsh.utils import popcount
+from fog.lsh.utils import is_power_of_two, popcount, popcount64
 
 
-def simhash(tokens):
-    histogram = [0] * 128
+def simhash(tokens, f=128):
+    assert f <= 512 and not is_power_of_two(f), 'fog.lsh.simhash: f should be a power of 2 <= 512'
+
+    histogram = [0] * f
+
+    l = f >> 2
+    hash_func = hashlib.md5
+
+    if f == 256:
+        hash_func = hashlib.sha256
+
+    elif f == 512:
+        hash_func = hashlib.sha512
 
     for token in tokens:
-        h = hashlib.md5()
+        h = hash_func()
         h.update(token.encode())
-        h = int(h.hexdigest(), 16)
+        h = int(h.hexdigest()[0:l], 16)
 
-        for i in range(128):
-            if (h >> i) & 1 == 1:
-                histogram[i] += 1
-            else:
-                histogram[i] -= 1
+        for i in range(f):
+            r = ((h >> i) & 1)
+            histogram[i] += r - (r ^ 1)
 
     signature = 0
 
-    for i in range(128):
+    for i in range(f):
         if histogram[i] > 0:
             signature |= (1 << i)
 
     return signature
 
 
-def simhash_distance(A, B):
-    return popcount(A ^ B) / 128
+def simhash_distance(A, B, f=128):
+    return popcount(A ^ B) / f
 
 
-def simhash_similarity(A, B):
-    return 1.0 - popcount(A ^ B) / 128
+def simhash_similarity(A, B, f=128):
+    return 1.0 - popcount(A ^ B) / f
 
 
 if __name__ == '__main__':
-    from fog.metrics import sparse_cosine_similarity
+    from fog.metrics import cosine_similarity
     from fog.tokenizers import ngrams
     from collections import Counter
 
@@ -63,6 +72,10 @@ if __name__ == '__main__':
             'whatever floats your moat'
         ),
         (
+            'hello darkness my old friend',
+            'goodbye darkness my old friends'
+        ),
+        (
             'aaabbc',
             'zzzyyx'
         )
@@ -74,10 +87,12 @@ if __name__ == '__main__':
         s1 = list(ngrams(2, s1))
         s2 = list(ngrams(2, s2))
 
-        sm1 = simhash(s1)
-        sm2 = simhash(s2)
+        for i in [32, 64, 128, 256, 512]:
+            sm1 = simhash(s1, f=i)
+            sm2 = simhash(s2, f=i)
 
-        print(sm1, sm2)
-        print(sparse_cosine_similarity(Counter(s1), Counter(s2)))
-        print(simhash_similarity(sm1, sm2))
-        print()
+            print(i)
+            print(sm1, sm2)
+            print(cosine_similarity(s1, s2))
+            print(simhash_similarity(sm1, sm2, f=i))
+            print()

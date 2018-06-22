@@ -13,6 +13,8 @@ graph = defaultdict(Counter)
 sh = lambda x: simhash(ngrams(5, x))
 
 for university in artists:
+
+    # TODO: don't need to get bin since we can slice the number's bits
     h = bin(sh(university))[2:]
 
     radius = 0.8
@@ -22,6 +24,7 @@ for university in artists:
     k = 25
 
     # TODO: find equation to optimize r & m
+    # b must be a power of two < f and b - k > 0 (smallest b possible than is over k)
     # TODO: what if k does not divide 128
     # TODO: try a 64 bits version also with f parameter
     r = 16
