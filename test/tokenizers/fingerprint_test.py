@@ -19,7 +19,8 @@ TESTS = [
     ('The mouse is a mouse', 'a is mouse the'),
     ('électricité', 'electricite'),
     ('\x00Hello', 'hello'),
-    ('Hello?', 'hello')
+    ('Hello?', 'hello'),
+    ('« très bien ! »', 'bien tres')
 ]
 
 NGRAMS_TESTS = [

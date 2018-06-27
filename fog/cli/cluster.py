@@ -8,20 +8,25 @@
 import csv
 from collections import defaultdict
 
+from fog.cli.ui.cluster import ClusteringUI
+
 from fog.clustering import (
     key_collision
 )
-
 from fog.key import fingerprint
 
 
 def fingerprint_collision(data):
-    for cluster in key_collision(data, key=fingerprint):
-        print(cluster)
+    clusters = key_collision(data, key=fingerprint)
+
+    return list(clusters)
 
 
 CLUSTERING_ROUTINES = {
-    'fingerprint_collision': fingerprint_collision
+    'fingerprint_collision': {
+        'name': 'Fingerpint collision',
+        'fn': fingerprint_collision
+    }
 }
 
 
@@ -36,4 +41,7 @@ def cluster_action(namespace):
         for line in reader:
             rows[line[namespace.column]].append(line)
 
-    routine(rows.keys())
+    clusters = routine['fn'](rows.keys())
+
+    ui = ClusteringUI(rows, clusters)
+    ui.run()

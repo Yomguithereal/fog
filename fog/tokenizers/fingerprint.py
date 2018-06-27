@@ -11,7 +11,7 @@ from fog.tokenizers.ngrams import ngrams
 # TODO: better docs
 WHITESPACE_RE = re.compile('\\s+')
 DIGITS_RE = re.compile('\\d+')
-PUNCTUATION_CONTROL_RE = re.compile('[\\u2000-\\u206F\\u2E00-\\u2E7F\'!"#$%&()*+,\\-.\\/:;<=>?@\\[\\]^_`{|}~\\x00-\\x08\\x0A-\\x1F\\x7F]')
+BLACKLIST_RE = re.compile('[^a-z0-9\\s]')
 
 
 def create_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
@@ -68,11 +68,11 @@ def create_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
         if MIN_TOKEN_SIZE_RE:
             string = re.sub(MIN_TOKEN_SIZE_RE, '', string)
 
-        # Dropping punctuation & control characters
-        string = re.sub(PUNCTUATION_CONTROL_RE, '', string)
-
         # Deburring
         string = unidecode(string)
+
+        # Only keeping letters
+        string = re.sub(BLACKLIST_RE, '', string)
 
         # Trimming
         string = string.strip()
@@ -145,11 +145,11 @@ def create_ngrams_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
         if MIN_TOKEN_SIZE_RE:
             string = re.sub(MIN_TOKEN_SIZE_RE, '', string)
 
-        # Dropping punctuation & control characters
-        string = re.sub(PUNCTUATION_CONTROL_RE, '', string)
-
         # Deburring
         string = unidecode(string)
+
+        # Only keeping letters
+        string = re.sub(BLACKLIST_RE, '', string)
 
         # Trimming
         string = string.strip()
