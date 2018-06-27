@@ -6,7 +6,7 @@ from pytest import approx
 from fog.metrics import (
     cosine_similarity,
     sparse_cosine_similarity,
-    sparse_dotproduct
+    sparse_dot_product
 )
 
 BASIC_TESTS = [
@@ -45,7 +45,7 @@ class TestSparseCosineSimilarity(object):
 
     def test_dotproduct(self):
         for A, B, similarity in BASIC_TESTS:
-            dotproduct = sparse_dotproduct(A, B)
+            dotproduct = sparse_dot_product(A, B)
             A_norm = norm(A)
             B_norm = norm(B)
 

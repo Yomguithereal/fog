@@ -55,7 +55,7 @@ def sparse_cosine_similarity(A, B):
     return xy / math.sqrt(xx * yy)
 
 
-def sparse_dotproduct(A, B):
+def sparse_dot_product(A, B):
     """
     Function used to compute the dotproduct of sparse weighted sets represented
     by python dicts.
