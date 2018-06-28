@@ -27,14 +27,14 @@ CLUSTERING_ROUTINES = {
 }
 
 
-def escape_quote(string):
-    return string.replace('\'', '\\\'')
+def escape_string(string):
+    return string.replace('"', '\\"').replace('\n', '\\n')
 
 
 def print_toml_report(meta, values, clusters):
     print('[info]')
     print('date = %s' % meta['date'].isoformat().split('.')[0])
-    print('algorithm = \'%s\'' % meta['algorithm'])
+    print('algorithm = "%s"' % meta['algorithm'])
     print()
     print('[stats]')
     print('lines = %i' % meta['lines'])
@@ -52,11 +52,11 @@ def print_toml_report(meta, values, clusters):
         sorted_values = sorted(cluster, key=lambda v: values[v], reverse=True)
         max_length = len(max(cluster, key=len))
 
-        print('harmonized = \'%s\'' % escape_quote(sorted_values[0]))
+        print('harmonized = "%s"' % escape_string(sorted_values[0]))
         print('values =  [')
         for value in sorted_values:
-            print('  [\'%s\',%s %i],' % (
-                escape_quote(value),
+            print('  [["%s"],%s [%i]],' % (
+                escape_string(value),
                 ' ' * (max_length - len(value)),
                 values[value]
             ))
