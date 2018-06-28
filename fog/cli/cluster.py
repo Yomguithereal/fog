@@ -20,7 +20,7 @@ CLUSTERING_ROUTINES = {
     'fingerprint_collision': {
         'name': 'Fingerpint collision',
         'fn': key_collision,
-        'args': {
+        'kwargs': {
             'key': fingerprint
         }
     }
@@ -82,7 +82,7 @@ def cluster_action(namespace):
             values[line[namespace.column]] += 1
 
     start = timer()
-    clusters = routine['fn'](values.keys(), **routine['args'])
+    clusters = routine['fn'](values.keys(), **routine['kwargs'])
     end = timer() - start
 
     meta = {
