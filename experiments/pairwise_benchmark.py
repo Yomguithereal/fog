@@ -45,8 +45,12 @@ with open('./data/musicians.csv', 'r') as f:
     print('Fingerprint key collision (%i)' % len(clusters), timer() - start)
 
     start = timer()
-    clusters = list(pairwise_fuzzy_clusters(artists, distance=levenshtein, radius=2, processes=6))
+    clusters = list(pairwise_fuzzy_clusters(artists, distance=levenshtein, radius=2, processes=8))
     print('Parallel Fuzzy clusters (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(pairwise_connected_components(artists, distance=levenshtein, radius=2, processes=8))
+    print('Parallel connected components (%i):' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(vp_tree(artists, distance=levenshtein, radius=2))

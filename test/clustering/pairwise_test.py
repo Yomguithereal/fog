@@ -54,6 +54,7 @@ class TestPairwiseClustering(object):
 
         assert min_clusters == MIN_FUZZY_CLUSTERS
 
+        # Parallelized
         parallel_clusters = Clusters(pairwise_fuzzy_clusters(DATA, distance=levenshtein, radius=2, processes=2, chunk_size=3))
 
         assert parallel_clusters == FUZZY_CLUSTERS
@@ -69,6 +70,11 @@ class TestPairwiseClustering(object):
         clusters = Clusters(pairwise_connected_components(DATA, distance=levenshtein, radius=2))
 
         assert clusters == Clusters([DATA])
+
+        # Parallelized
+        parallel_clusters = Clusters(pairwise_connected_components(DATA, distance=levenshtein, radius=2, processes=2, chunk_size=3))
+
+        assert parallel_clusters == Clusters([DATA])
 
         # Using custom keys
         keyed_data = [(1.0, d) for d in DATA]

@@ -120,6 +120,9 @@ def pairwise_fuzzy_clusters_worker(payload):
     Worker function used to compute pairwise fuzzy clusters over chunks of
     an upper triangular matrix in parallel.
 
+    Note that the exact same worker can be used by the connected components
+    routine.
+
     """
     similarity, I, J, offset_i, offset_j = payload
 
@@ -266,7 +269,8 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
 
 
 def pairwise_connected_components(data, similarity=None, distance=None, radius=None,
-                                  min_size=2, max_size=float('inf'), key=None):
+                                  min_size=2, max_size=float('inf'), key=None,
+                                  processes=1, chunk_size=100):
     """
     Function returning an iterator over found clusters by computing a
     similarity graph of given data and extracting its connected components.
@@ -307,6 +311,9 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
             it to be considered viable. Defaults to infinity.
         key (callable, optional): function returning an item's key.
             Defaults to None.
+        processes (number, optional): number of processes to use. Defaults to 1.
+        chunk_size (number, optional): size of matrix chunks to send to
+            subprocesses. Defaults to 100.
 
     Yields:
         list: A viable cluster.
@@ -329,19 +336,35 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
     sets = UnionFind(n)
 
     # Computing pairwise distances
-    for i in range(n):
-        A = keys[i]
+    if processes == 1:
+        for i in range(n):
+            A = keys[i]
 
-        # NOTE: if one adds a cardinality test hear, we get the leader algo
+            # NOTE: if one adds a cardinality test hear, we get the leader algo
 
-        for j in range(i + 1, n):
-            B = keys[j]
+            for j in range(i + 1, n):
+                B = keys[j]
 
-            if sets.connected(i, j):
-                continue
+                if sets.connected(i, j):
+                    continue
 
-            if similarity(A, B):
-                sets.union(i, j)
+                if similarity(A, B):
+                    sets.union(i, j)
+    else:
+        pickled_similarity = dill.dumps(similarity)
+
+        # Iterator
+        pool_iter = (
+            (pickled_similarity, ) + chunk
+            for chunk
+            in upper_triangular_matrix_chunk_iter(keys, chunk_size)
+        )
+
+        # Pool
+        with Pool(processes=processes) as pool:
+            for matches in pool.imap(pairwise_fuzzy_clusters_worker, pool_iter):
+                for i, j in matches:
+                    sets.union(i, j)
 
     # Iterating over components
     for component in sets.components(min_size=min_size, max_size=max_size):
