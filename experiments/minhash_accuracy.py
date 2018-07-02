@@ -1,6 +1,6 @@
 import csv
 from experiments.utils import Timer
-from fog.clustering import minhash, pairwise
+from fog.clustering import minhash, pairwise, jaccard_intersection_index
 from fog.metrics import jaccard_similarity
 from fog.tokenizers import ngrams
 
@@ -41,6 +41,24 @@ for radius in TESTS:
     print()
 
     STATS[radius] = distinct_values(clusters)
+
+print()
+
+print('Jaccard Intersection Index')
+print('-------')
+for radius in TESTS:
+
+    print('Radius: ', radius)
+    with Timer():
+        clusters = list(jaccard_intersection_index(universities, radius=radius, key=key))
+
+    print('Distinct values:', distinct_values(clusters))
+    print('Clusters:', len(clusters))
+    print('Precision:', distinct_values(clusters) / STATS[radius])
+    print('Sample clusters:')
+    for c in k_min_clusters(3, clusters):
+        print('  ', c)
+    print()
 
 print()
 

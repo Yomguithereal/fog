@@ -1,6 +1,6 @@
 import csv
 from experiments.utils import Timer
-from fog.clustering import minhash
+from fog.clustering import minhash, jaccard_intersection_index
 from fog.tokenizers import ngrams
 
 GROUND_TRUTH = 15
@@ -29,11 +29,25 @@ print('Artists:', len(artists))
 key = lambda x: list(ngrams(5, x))
 radius = 0.8
 
+print()
+print('Minhash')
 with Timer():
-    clusters = list(minhash(artists, key=key, radius=radius))
+    clusters = list(minhash(artists, key=key, radius=radius, use_numpy=True))
 
 for cluster in clusters:
     print(cluster)
 
 print('Clusters:', len(clusters))
 print('Precision:', len(clusters) / GROUND_TRUTH)
+
+print()
+print('Jaccard Intersection Index')
+with Timer():
+    clusters = list(jaccard_intersection_index(artists, key=key, radius=radius))
+
+for cluster in clusters:
+    print(cluster)
+
+print('Clusters:', len(clusters))
+print('Precision:', len(clusters) / GROUND_TRUTH)
+
