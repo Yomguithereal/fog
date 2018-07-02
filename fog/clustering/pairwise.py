@@ -367,6 +367,25 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
                     sets.union(i, j)
 
     # Iterating over components
+    cindex = {}
+
+    # TODO: add this as a sparse option to phylactery
+    # for i, parent in enumerate(sets.parents):
+    #     p = sets[i]
+
+    #     if sets.cardinalities[p] < min_size:
+    #         continue
+
+    #     c = cindex.get(p)
+
+    #     if c is None:
+    #         cindex[p] = [data[i]]
+    #     else:
+    #         c.append(data[i])
+
+    # for cluster in cindex.values():
+    #     yield cluster
+
     for component in sets.components(min_size=min_size, max_size=max_size):
         yield [data[i] for i in component]
 
