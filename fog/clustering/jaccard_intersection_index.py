@@ -30,13 +30,12 @@ def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
     Args:
         data (iterable): Arbitrary iterable containing data points to gather
             into clusters. Will be fully consumed.
-        key (callable): A function returning an item's key.
-        keys (callable): A function returning an item's keys.
+        radius (number): Jaccard similarity radius.
+        key (callable, optional): Function returning an item's key.
         min_size (number, optional): minimum number of items in a cluster for
             it to be considered viable. Defaults to 2.
         max_size (number, optional): maximum number of items in a cluster for
             it to be considered viable. Defaults to infinity.
-        merge (bool, optional): whether to merge the buckets to form clusters.
 
     Yield:
         list: A viable cluster.
@@ -62,16 +61,12 @@ def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
 
             for j in bucket:
                 intersections[i][j] += 1
-                intersections[j][i] += 1
 
             bucket.append(i)
 
-    visited = set()
     graph = defaultdict(list)
 
     for i, neighbors in intersections.items():
-        if i in visited:
-            continue
 
         for j, I in neighbors.items():
             U = sizes[i] + sizes[j] - I
@@ -80,20 +75,29 @@ def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
                 graph[i].append(j)
                 graph[j].append(i)
 
-                visited.add(j)
-
     visited = set()
+    stack = []
 
     for i, neighbors in graph.items():
         if i in visited:
             continue
 
-        if len(neighbors) + 1 < min_size:
-            continue
-        if len(neighbors) + 1 > max_size:
-            continue
+        visited.add(i)
 
-        visited.update(neighbors)
+        cluster = [data[i]]
 
-        cluster = [data[i]] + [data[j] for j in neighbors]
+        stack.extend(neighbors)
+
+        while len(stack) != 0:
+            j = stack.pop()
+
+            if j in visited:
+                continue
+
+            cluster.append(data[j])
+            visited.add(j)
+
+            if j in graph:
+                stack.extend(graph[j])
+
         yield cluster
