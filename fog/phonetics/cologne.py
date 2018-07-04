@@ -114,7 +114,7 @@ def cologne(name):
 
         # Handling X
         elif letter == 'X':
-            code.append('8' if name[i - 1] in X else '48')
+            code.append('8' if i > 0 and name[i - 1] in X else '48')
 
     # Squeezing and dropping not leading 0
     rest = squeeze(''.join(code[1:])).replace('0', '')
