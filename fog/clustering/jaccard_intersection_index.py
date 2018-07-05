@@ -7,7 +7,7 @@
 from collections import defaultdict, Counter
 
 # TODO: online tf-idf cutoff by automatically cutting down large buckets over
-# a given threshold
+# a given threshold. call it burst and erase already set counters
 
 
 def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
