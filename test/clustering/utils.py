@@ -11,7 +11,10 @@ class Clusters(object):
         return self.groups == other.groups
 
     def __iter__(self):
-        return self.groups.values()
+        return iter(self.groups)
+
+    def __len__(self):
+        return len(self.groups)
 
     def __repr__(self):
         return 'Clusters(%s)' % self.groups.__repr__()

@@ -61,6 +61,10 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
         list: A viable cluster.
 
     """
+
+    # TODO: option to tell if buckets can or cannot be fuzzy to optimize
+    # TODO: if buckets are fuzzy we can avoid recomputing similarities
+    # sometimes if similarity was already computed
     graph = defaultdict(set)
 
     for bucket in buckets:

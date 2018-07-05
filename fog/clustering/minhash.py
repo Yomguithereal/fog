@@ -24,6 +24,10 @@ from fog.metrics.jaccard import jaccard_similarity
 #   * cheap_hashes
 #   * possibility to use one dict per band + sum the integers
 
+# TODO: compute similarities online + edge list -> connected components
+# TODO: keep edge list in set of tuples with sorted comp not to compute
+# n times the same similarity
+
 
 def match_probability(h, bands, similarity):
     """
@@ -87,7 +91,8 @@ def guess_bands(h, threshold):
     return bands
 
 
-def minhash(data, h=256, key=None, radius=0.8, bands=None, use_numpy=False):
+def minhash(data, h=256, key=None, radius=0.8, bands=None, use_numpy=False,
+            seed=None):
     """
     Function returning an iterator over clusters found using the minhash
     clustering method.
@@ -113,6 +118,7 @@ def minhash(data, h=256, key=None, radius=0.8, bands=None, use_numpy=False):
             number of bands by yourself.
         use_numpy (bool, optional): whether to use numpy to speed up minhash
             signatures computations. Defaults to False.
+        seed (int, optional): rng seed.
 
     """
 
@@ -122,7 +128,7 @@ def minhash(data, h=256, key=None, radius=0.8, bands=None, use_numpy=False):
     rows = h // bands
     h_upper_bound = bands * rows
 
-    mh = MinHash(h, use_numpy=use_numpy)
+    mh = MinHash(h, use_numpy=use_numpy, seed=seed)
 
     buckets = defaultdict(list)
 
