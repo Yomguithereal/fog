@@ -3,7 +3,7 @@ from functools import partial
 from timeit import default_timer as timer
 from fog.clustering import *
 from fog.tokenizers import ngrams
-from fog.key import fingerprint, omission_key
+from fog.key import fingerprint, omission_key, skeleton_key
 from Levenshtein import distance as levenshtein
 
 with open('./data/universities.csv', 'r') as f:
@@ -37,6 +37,10 @@ with open('./data/universities.csv', 'r') as f:
     clusters = list(sorted_neighborhood(universities, key=omission_key, distance=levenshtein, radius=2))
     print('SNM Omission (%i):' % len(clusters), timer() - start)
 
+    start = timer()
+    clusters = list(sorted_neighborhood(universities, key=skeleton_key, distance=levenshtein, radius=2))
+    print('SNM Skeleton (%i):' % len(clusters), timer() - start)
+
 print()
 with open('./data/musicians.csv', 'r') as f:
     reader = csv.DictReader(f)
@@ -60,6 +64,10 @@ with open('./data/musicians.csv', 'r') as f:
     start = timer()
     clusters = list(sorted_neighborhood(artists, key=omission_key, distance=levenshtein, radius=2))
     print('SNM Omission (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(sorted_neighborhood(artists, key=skeleton_key, distance=levenshtein, radius=2))
+    print('SNM Skeleton (%i):' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(pairwise_fuzzy_clusters(artists, distance=levenshtein, radius=2, processes=8))
