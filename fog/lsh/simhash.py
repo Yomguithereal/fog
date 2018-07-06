@@ -16,6 +16,13 @@ import hashlib
 
 from fog.lsh.utils import is_power_of_two, popcount, popcount64
 
+# TODO: reimplement soundly by following:
+# https://github.com/reubano/changanya/blob/master/changanya/simhash.py
+# Note: Simhash clustering methods I could find are two slow (mozilla's one)
+# and even Hamming space indexation ones.
+# I should try again to use the same lsh method used by minhash to see if it
+# yields similar results
+
 
 def simhash(tokens, f=128):
     assert f <= 512 and not is_power_of_two(f), 'fog.lsh.simhash: f should be a power of 2 <= 512'
