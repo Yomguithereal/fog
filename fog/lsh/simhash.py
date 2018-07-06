@@ -23,6 +23,13 @@ from fog.lsh.utils import is_power_of_two, popcount, popcount64
 # I should try again to use the same lsh method used by minhash to see if it
 # yields similar results
 
+# TODO: reference papers
+# https://github.com/leonsim/simhash/blob/master/simhash/__init__.py#L116-L208
+# https://github.com/scrapinghub/python-simhash
+# http://www.wwwconference.org/www2007/papers/paper215.pdf
+# https://github.com/seomoz/simhash-cpp/tree/e7aacb1642f406ff0815cf402e909d2002473812
+# https://ir.library.dc-uoit.ca/bitstream/10155/475/1/Rodriguez%20Reina_Ernesto.pdf
+
 
 def simhash(tokens, f=128):
     assert f <= 512 and not is_power_of_two(f), 'fog.lsh.simhash: f should be a power of 2 <= 512'
