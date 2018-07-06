@@ -19,8 +19,6 @@ UNDESIRABLES_RE = re.compile(r'[^A-Z]')
 CONSONANTS = 'JKQXZVWYBFMGPDHCLNTSR'
 VOWELS = set('AEIOU')
 
-# TODO: omission/skeleton key clustering for distance = 1
-
 
 def omission_key(string):
     """

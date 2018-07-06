@@ -1,10 +1,10 @@
 # =============================================================================
-# Fog Blocking Unit Tests
+# Fog Sorted Neighborhood Unit Tests
 # =============================================================================
 import csv
 from test.clustering.utils import Clusters
 from Levenshtein import distance as levenshtein
-from fog.clustering import blocking
+from fog.clustering import sorted_neighborhood
 
 DATA = [
     'Abelard',
@@ -22,18 +22,10 @@ CLUSTERS = Clusters([
 ])
 
 
-class TestBlocking(object):
+class TestSortedNeighborhood(object):
     def test_basics(self):
 
-        # Blocking on first letter
-        clusters = Clusters(blocking(DATA, blocks=lambda x: x[0], distance=levenshtein, radius=1))
-
-        assert clusters == CLUSTERS
-
-    def test_duplicate_blocks(self):
-        def blocks(x):
-            return [x[0], x[0]]
-
-        clusters = Clusters(blocking(DATA, blocks=blocks, distance=levenshtein, radius=1))
+        # Sorting alphabetically
+        clusters = Clusters(sorted_neighborhood(DATA, distance=levenshtein, radius=1, window=1))
 
         assert clusters == CLUSTERS

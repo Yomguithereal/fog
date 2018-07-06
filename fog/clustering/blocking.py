@@ -44,8 +44,8 @@ def blocking_worker(payload):
 def blocking(data, block=None, blocks=None, similarity=None, distance=None,
              radius=None, min_size=2, max_size=float('inf'), processes=1):
     """
-    Function returning an iterator over found clusters using the leader
-    algorithm.
+    Function returning an iterator over found clusters using the blocking
+    method.
 
     It works by dispatching given items into one or more buckets before
     computing pairwise comparisons on each bucket.
