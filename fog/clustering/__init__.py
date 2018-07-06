@@ -1,3 +1,4 @@
+from fog.clustering.blocking import blocking
 from fog.clustering.jaccard_intersection_index import (
     jaccard_intersection_index
 )

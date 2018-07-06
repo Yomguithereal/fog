@@ -1,4 +1,5 @@
 import csv
+from functools import partial
 from timeit import default_timer as timer
 from fog.clustering import *
 from fog.tokenizers import ngrams
@@ -28,6 +29,10 @@ with open('./data/universities.csv', 'r') as f:
     clusters = list(vp_tree(universities, distance=levenshtein, radius=2))
     print('VPTree (%i):' % len(clusters), timer() - start)
 
+    start = timer()
+    clusters = list(blocking(universities, blocks=partial(ngrams, 6), distance=levenshtein, radius=2))
+    print('Blocking (%i):' % len(clusters), timer() - start)
+
 print()
 with open('./data/musicians.csv', 'r') as f:
     reader = csv.DictReader(f)
@@ -43,6 +48,10 @@ with open('./data/musicians.csv', 'r') as f:
     start = timer()
     clusters = list(key_collision(artists, key=fingerprint))
     print('Fingerprint key collision (%i)' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(blocking(artists, blocks=partial(ngrams, 6), distance=levenshtein, radius=2, processes=8))
+    print('Blocking (%i):' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(pairwise_fuzzy_clusters(artists, distance=levenshtein, radius=2, processes=8))

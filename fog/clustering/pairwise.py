@@ -246,7 +246,7 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
 
         # Pool
         with Pool(processes=processes) as pool:
-            for matches in pool.imap(pairwise_fuzzy_clusters_worker, pool_iter):
+            for matches in pool.imap_unordered(pairwise_fuzzy_clusters_worker, pool_iter):
                 for i, j in matches:
                     graph[i].append(j)
                     graph[j].append(i)
@@ -362,7 +362,7 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
 
         # Pool
         with Pool(processes=processes) as pool:
-            for matches in pool.imap(pairwise_fuzzy_clusters_worker, pool_iter):
+            for matches in pool.imap_unordered(pairwise_fuzzy_clusters_worker, pool_iter):
                 for i, j in matches:
                     sets.union(i, j)
 
