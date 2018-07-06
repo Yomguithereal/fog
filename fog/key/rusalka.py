@@ -7,6 +7,28 @@
 import re
 from unidecode import unidecode
 
+# Notes
+# skaïa skaia skaja
+# Doïstoievski
+# Alexeïevitch Alexeievitch
+# Shchedrin Ščedrin Schtschedrin Chtchedrine Szczedrin Sxedrín Sjtjedrin Scsedrin Sjtsjedrin Șcedrin Štšedrin
+# Yevgeniy Eugene
+# Pjotr
+# Tatiana Tatjana
+# Feodor Fyodor Fjodor
+# Růžena Maturová
+
+# j between vowels y
+
+# http://intranet.library.arizona.edu/users/brewerm/sil/lib/transprimer.html
+# http://intranet.library.arizona.edu/users/brewerm/sil/lib/transcription.html
+# http://intranet.library.arizona.edu/users/brewerm/sil/lib/transbib.html
+
+# http://usefulenglish.ru/vocabulary/russian-names-in-english-en
+
+# â -> ja
+# Khokhloma -> hohloma
+
 FILTER = re.compile(r'[^a-z]')
 DUPLICATED = re.compile(r'(.)\1+')
 VOWELS = re.compile(r'[aeiouy]')
