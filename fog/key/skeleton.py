@@ -1,8 +1,8 @@
 # =============================================================================
-# Fog Omission Key
+# Fog Skeleton Key
 # =============================================================================
 #
-# The omission key by Pollock and Zamora.
+# The skeleton key by Pollock and Zamora.
 #
 # [Urls]:
 # http://dl.acm.org/citation.cfm?id=358048
@@ -16,17 +16,15 @@ import re
 from unidecode import unidecode
 
 UNDESIRABLES_RE = re.compile(r'[^A-Z]')
-CONSONANTS = 'JKQXZVWYBFMGPDHCLNTSR'
 VOWELS = set('AEIOU')
 
 
-def omission_key(string):
+def skeleton_key(string):
     """
-    Function returning a string's omission key which is constructed thusly:
-        1) First we record the string's set of consonant in an order
-        where most frequently mispelled consonants will be last.
-        2) Then we record the string's set of vowels in the order of
-        first appearance.
+    Function returning a string's skeleton key which is constructed thusly:
+        1) The first letter of the string
+        2) Unique consonants in order of appearance
+        3) Unique vowels in order of appearance
 
     This key is very useful when searching for mispelled strings because
     if sorted using this key, similar strings will be next to each other.
@@ -35,7 +33,7 @@ def omission_key(string):
         string (str): The string to encode.
 
     Returns:
-        string: The string's omission key.
+        string: The string's skeleton key.
 
     """
 
@@ -48,24 +46,29 @@ def omission_key(string):
     # Dropping useless characters
     string = re.sub(UNDESIRABLES_RE, '', string)
 
+    # Composing the key
     if not string:
         return ''
 
-    # Composing the key
-    letters = set()
-    consonants = []
-    vowels = []
+    first_letter = string[0]
+    key = [first_letter]
 
-    # Adding vowels in order they appeared
-    for letter in string:
-        if letter in VOWELS and letter not in vowels:
-            vowels.append(letter)
+    consonants = set()
+    vowels = set()
+
+    for i in range(1, len(string)):
+        letter = string[i]
+
+        if letter == first_letter:
+            continue
+
+        if letter in VOWELS:
+            if letter not in vowels:
+                vowels.add(letter)
+                key.append(letter)
         else:
-            letters.add(letter)
+            if letter not in consonants:
+                consonants.add(letter)
+                key.insert(len(key) - len(vowels), letter)
 
-    # Adding consonants in order
-    for consonant in CONSONANTS:
-        if consonant in letters:
-            consonants.append(consonant)
-
-    return ''.join(consonants + vowels)
+    return ''.join(key)
