@@ -81,14 +81,12 @@ def blocking(data, block=None, blocks=None, similarity=None, distance=None,
 
     # Single block or blocks?
     if blocks is None:
-        buckets = defaultdict(list)
         graph = defaultdict(list)
         worker_graph = None
 
         def add(x, y):
             x.append(y)
     else:
-        buckets = defaultdict(set)
         graph = defaultdict(set)
         worker_graph = graph
 
@@ -96,11 +94,16 @@ def blocking(data, block=None, blocks=None, similarity=None, distance=None,
             x.add(y)
 
     # Grouping items into buckets
-    for item in data:
-        bs = blocks(item) if blocks is not None else [block(item)]
+    buckets = defaultdict(list)
 
-        for b in bs:
-            add(buckets[b], item)
+    for item in data:
+        if blocks is None:
+            buckets[block(item)].append(item)
+        else:
+            bs = set(blocks(item))
+
+            for b in bs:
+                buckets[b].append(item)
 
     # Fuzzy clustering
     if processes == 1:

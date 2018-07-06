@@ -30,3 +30,11 @@ class TestBlocking(object):
         clusters = Clusters(blocking(DATA, blocks=lambda x: x[0], distance=levenshtein, radius=1))
 
         assert clusters == CLUSTERS
+
+    def test_duplicate_blocks(self):
+        def blocks(x):
+            return [x[0], x[0]]
+
+        clusters = Clusters(blocking(DATA, blocks=blocks, distance=levenshtein, radius=1))
+
+        assert clusters == CLUSTERS
