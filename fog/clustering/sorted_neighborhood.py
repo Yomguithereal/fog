@@ -60,7 +60,7 @@ def sorted_neighborhood(data, key=None, similarity=None, distance=None,
     for i in range(n):
         A = S[i]
 
-        for j in range(i + 1, min(n, i + window + 1)):
+        for j in range(i + 1, min(n, i + window)):
             B = S[j]
 
             if similarity(A, B):

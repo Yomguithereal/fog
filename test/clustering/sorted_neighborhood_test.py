@@ -26,6 +26,6 @@ class TestSortedNeighborhood(object):
     def test_basics(self):
 
         # Sorting alphabetically
-        clusters = Clusters(sorted_neighborhood(DATA, distance=levenshtein, radius=1, window=1))
+        clusters = Clusters(sorted_neighborhood(DATA, distance=levenshtein, radius=1, window=2))
 
         assert clusters == CLUSTERS
