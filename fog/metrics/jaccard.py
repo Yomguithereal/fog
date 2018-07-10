@@ -4,12 +4,15 @@
 #
 # Functions computing the Jaccard similarity
 #
-# [Url]:
+# [Urls]:
 # https://en.wikipedia.org/wiki/Jaccard_index
+# https://pdfs.semanticscholar.org/74be/e1ebf204dba4b2da0399a25a5ac9253a824e.pdf
 #
-# [Reference]:
+# [References]:
 # Jaccard, Paul (1912), “The distribution of the flora in the alpine zone”,
 # New Phytologist 11: 37–50
+#
+# Ioffe, "Improved Consistent Sampling, Weighted Minhash and L1 Sketching".
 #
 
 ACCEPTABLE_TYPES = (set, frozenset, dict)
@@ -62,12 +65,6 @@ def jaccard_similarity(A, B):
 def weighted_jaccard_similarity(A, B):
     """
     Function computing the weighted Jaccard similarity.
-
-    [Reference]:
-    Ioffe, "Improved Consistent Sampling, Weighted Minhash and L1 Sketching".
-
-    [Url]:
-    https://pdfs.semanticscholar.org/74be/e1ebf204dba4b2da0399a25a5ac9253a824e.pdf
 
     Runs in O(n), n being the sum of A & B's sizes.
 

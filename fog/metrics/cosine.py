@@ -4,6 +4,9 @@
 #
 # Functions computing the cosine similarity.
 #
+# [Url]:
+# https://en.wikipedia.org/wiki/Cosine_similarity
+#
 from collections import Counter
 import math
 

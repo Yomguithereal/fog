@@ -17,6 +17,7 @@ def blocking_worker(payload):
     """
     Worker function used compute pairwise distance/similarity over a whole
     block.
+
     """
     similarity, block, serialized, graph = payload
 

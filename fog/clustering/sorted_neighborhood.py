@@ -4,8 +4,22 @@
 #
 # Implementation of the Sorted Neighborhood method.
 #
+# [References]:
+# Mauricio A. Hernandez and Salvatore J. Stolfo. The merge/purge problem for
+# large databases. In Proceedings of the ACM International Conference on
+# Management of Data (SIGMOD), 1995.
+#
+# Mauricio A. Hernandez and Salvatore J. Stolfo. Real-world data is dirty:
+# Data cleansing and the merge/purge problem. Data Mining and Knowledge
+# Discovery, 2(1), 1998
+#
+# [Urls]:
+# https://hpi.de/fileadmin/user_upload/fachgebiete/naumann/folien/SS13/DPDC/DPDC_14_SNM.pdf
+#
 from collections import defaultdict
 from fog.clustering.utils import make_similarity_function
+
+# TODO: multi-pass, adaptive etc.
 
 
 def sorted_neighborhood(data, key=None, similarity=None, distance=None,
@@ -22,6 +36,9 @@ def sorted_neighborhood(data, key=None, similarity=None, distance=None,
 
     Omission key & skeleton keys by Pollock & Zamora are a good choice of
     sorting key if you try to find mispellings, for instance.
+
+    Note that the sorted neighboorhood method usually runs faster than blocking
+    but also misses much more true positives.
 
     Args:
         data (iterable): Arbitrary iterable containing data points to gather

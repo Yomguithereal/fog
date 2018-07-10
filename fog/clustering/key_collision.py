@@ -4,6 +4,9 @@
 #
 # Clustering algorithm grouping items by key collision.
 #
+# [Url]:
+# http://openrefine.org/
+#
 from collections import defaultdict
 
 from fog.clustering.utils import merge_buckets_into_clusters
@@ -68,7 +71,7 @@ def key_collision(data, key=None, keys=None, min_size=2, max_size=float('inf'),
                     buckets[k].append(item)
 
     # Merging clusters
-    if merge:
+    if merge and key is None:
         yield from merge_buckets_into_clusters(buckets.values())
 
     # Buckets as clusters

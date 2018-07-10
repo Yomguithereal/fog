@@ -24,11 +24,11 @@ def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
     document will collide often because they will naturally share a lot of
     letters.
 
-    As such, note that it would be possible to make this method faster by
-    leveraging Zipf's law in some cases.
+    As such, note that it is possible to make this method faster by leveraging
+    Zipf's law in some cases.
 
-    Note also that this algorithm has perfect precision in that it does not
-    try to approximate and will return the exact same result as a pairwise run.
+    Note also that this algorithm is on par with pairwise methods in that it
+    does not try to approximate and will return all the existing pairs.
 
     Args:
         data (iterable): Arbitrary iterable containing data points to gather

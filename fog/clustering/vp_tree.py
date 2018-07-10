@@ -7,6 +7,10 @@
 # distance computations needed per point will be sublinear. Therefore,
 # parallelization of the brute-force algorithm often yields better results.
 #
+# [Reference]:
+# Data Structures and Algorithms for Nearest Neighbor Search in General
+# Metric Space. Peter N. Yianilos.
+#
 from phylactery import VPTree
 
 

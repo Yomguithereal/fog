@@ -4,6 +4,9 @@
 #
 # Functions for creating custom fingerprint tokenizers.
 #
+# [Url]:
+# http://openrefine.org/
+#
 import re
 from unidecode import unidecode
 from fog.tokenizers.ngrams import ngrams

@@ -41,6 +41,90 @@ def make_similarity_function(similarity=None, distance=None, radius=None):
             return lambda A, B: not distance(A, B)
 
 
+def pairs_to_clusters(pairs, min_size=2, max_size=float('inf'),
+                      mode='connected_components', fuzzy=False):
+    """
+    Function consuming an iterator of similar pairs and merging them
+    according to the desired strategy to yield valid clusters.
+
+    Args:
+        pairs (iterable): Similar pairs.
+        min_size (int, optional): Minimum size of clusters, defaults to 2.
+        max_size (int, optional): Maximum size of clusters, defaults to
+            infinity.
+        mode (string, optional): 'fuzzy_clusters', 'connected_components'.
+            Defaults to 'fuzzy_clusters'.
+
+    Yields:
+        list: A viable cluster.
+
+    """
+
+    container = set if fuzzy else list
+
+    if fuzzy:
+        def add(c, x):
+            c.add(x)
+    else:
+        def add(c, x):
+            c.append(x)
+
+    # TODO: later, we'll be able to use SparseSet rather than the graph
+    graph = defaultdict(container)
+
+    for A, B in pairs:
+        add(graph[A], B)
+        add(graph[B], A)
+
+    if mode == 'fuzzy_clusters':
+        visited = set()
+
+        for item, neighbors in graph.items():
+            if item in visited:
+                continue
+
+            if len(neighbors) + 1 < min_size:
+                continue
+            if len(neighbors) + 1 > max_size:
+                continue
+
+            visited.update(neighbors)
+
+            cluster = [item] + (list(neighbors) if fuzzy else neighbors)
+            yield cluster
+
+    elif mode == 'connected_components':
+        visited = set()
+        stack = []
+
+        for item, neighbors in graph.items():
+            if item in visited:
+                continue
+
+            visited.add(item)
+
+            cluster = [item]
+
+            stack.extend(neighbors)
+
+            while len(stack) != 0:
+                neighbor = stack.pop()
+
+                if neighbor in visited:
+                    continue
+
+                cluster.append(neighbor)
+                visited.add(neighbor)
+
+                stack.extend(graph[neighbor])
+
+            if len(cluster) >= min_size and len(cluster) <= max_size:
+                yield cluster
+
+    else:
+        raise TypeError('fog.clustering: unknown mode "%s"' % mode)
+
+
 def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
                                 mode='fuzzy_clusters', similarity=None):
     """
