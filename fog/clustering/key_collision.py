@@ -13,7 +13,7 @@ from fog.clustering.utils import merge_buckets_into_clusters
 
 
 def key_collision(data, key=None, keys=None, min_size=2, max_size=float('inf'),
-                  merge=False):
+                  merge=True):
     """
     Function returning an iterator over found clusters.
 
@@ -45,6 +45,7 @@ def key_collision(data, key=None, keys=None, min_size=2, max_size=float('inf'),
         max_size (number, optional): maximum number of items in a cluster for
             it to be considered viable. Defaults to infinity.
         merge (bool, optional): whether to merge the buckets to form clusters.
+            Defaults to True.
 
     Yield:
         list: A viable cluster.

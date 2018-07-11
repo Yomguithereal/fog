@@ -49,11 +49,11 @@ class TestKeyCollisionClustering(object):
         assert clusters == CLUSTERS
 
     def test_multiple_key(self):
-        clusters = Clusters(key_collision(NAMES, keys=lambda x: ngrams(5, x)))
+        clusters = Clusters(key_collision(NAMES, keys=lambda x: ngrams(5, x), merge=False))
 
         assert clusters == NAMES_CLUSTERS
 
     def test_multiple_keys_merged(self):
-        clusters = Clusters(key_collision(NAMES, keys=lambda x: ngrams(5, x), merge=True))
+        clusters = Clusters(key_collision(NAMES, keys=lambda x: ngrams(5, x)))
 
         assert clusters == MERGED_NAMES_CLUSTERS
