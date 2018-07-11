@@ -25,7 +25,7 @@ def blocking_worker(payload):
     if serialized:
         similarity = dill.loads(similarity)
 
-    matches = []
+    pairs = []
     n = len(block)
 
     for i in range(n):
@@ -38,9 +38,9 @@ def blocking_worker(payload):
                 continue
 
             if similarity(A, B):
-                matches.append((A, B))
+                pairs.append((A, B))
 
-    return matches
+    return pairs
 
 
 def blocking(data, block=None, blocks=None, similarity=None, distance=None,
@@ -133,8 +133,8 @@ def blocking(data, block=None, blocks=None, similarity=None, distance=None,
             )
 
             with Pool(processes=processes) as pool:
-                for matches in pool.imap_unordered(blocking_worker, pool_iter):
-                    yield from matches
+                for pairs in pool.imap_unordered(blocking_worker, pool_iter):
+                    yield from pairs
 
     yield from clusters_from_pairs(
         clustering(),

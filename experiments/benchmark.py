@@ -74,7 +74,7 @@ with open('./data/musicians.csv', 'r') as f:
     print('SNM Skeleton (%i):' % len(clusters), timer() - start)
 
     start = timer()
-    clusters = list(quickjoin(artists, distance=levenshtein, radius=2))
+    clusters = list(quickjoin(artists, distance=levenshtein, radius=2, processes=8))
     print('QuickJoin (%i):' % len(clusters), timer() - start)
 
     start = timer()

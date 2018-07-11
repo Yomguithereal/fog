@@ -39,3 +39,7 @@ class TestQuickJoin(object):
         clusters = Clusters(quickjoin(UNIVERSITIES, distance=levenshtein, radius=1))
 
         assert clusters == UNIVERSITY_CLUSTERS
+
+        parallel_clusters = Clusters(quickjoin(UNIVERSITIES, distance=levenshtein, radius=1, processes=2))
+
+        assert parallel_clusters == UNIVERSITY_CLUSTERS

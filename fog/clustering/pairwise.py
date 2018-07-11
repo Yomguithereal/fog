@@ -124,7 +124,7 @@ def pairwise_worker(payload):
     similarity, I, J, offset_i, offset_j = payload
 
     similarity = dill.loads(similarity)
-    matches = []
+    pairs = []
 
     diagonal_chunk = offset_i == offset_j
 
@@ -138,9 +138,9 @@ def pairwise_worker(payload):
             B = J[j]
 
             if similarity(A, B):
-                matches.append((offset_i + i, offset_j + j))
+                pairs.append((offset_i + i, offset_j + j))
 
-    return matches
+    return pairs
 
 
 def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
