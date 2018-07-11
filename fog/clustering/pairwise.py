@@ -115,13 +115,10 @@ def pairwise_leader(data, similarity=None, distance=None, radius=None,
             yield cluster
 
 
-def pairwise_fuzzy_clusters_worker(payload):
+def pairwise_worker(payload):
     """
-    Worker function used to compute pairwise fuzzy clusters over chunks of
+    Worker function used to compute pairwise computations over chunks of
     an upper triangular matrix in parallel.
-
-    Note that the exact same worker can be used by the connected components
-    routine.
 
     """
     similarity, I, J, offset_i, offset_j = payload
@@ -246,7 +243,7 @@ def pairwise_fuzzy_clusters(data, similarity=None, distance=None, radius=None,
 
         # Pool
         with Pool(processes=processes) as pool:
-            for matches in pool.imap(pairwise_fuzzy_clusters_worker, pool_iter):
+            for matches in pool.imap(pairwise_worker, pool_iter):
                 for i, j in matches:
                     graph[i].append(j)
                     graph[j].append(i)
@@ -362,29 +359,9 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
 
         # Pool
         with Pool(processes=processes) as pool:
-            for matches in pool.imap_unordered(pairwise_fuzzy_clusters_worker, pool_iter):
+            for matches in pool.imap_unordered(pairwise_worker, pool_iter):
                 for i, j in matches:
                     sets.union(i, j)
-
-    # Iterating over components
-    cindex = {}
-
-    # TODO: add this as a sparse option to phylactery
-    # for i, parent in enumerate(sets.parents):
-    #     p = sets[i]
-
-    #     if sets.cardinalities[p] < min_size:
-    #         continue
-
-    #     c = cindex.get(p)
-
-    #     if c is None:
-    #         cindex[p] = [data[i]]
-    #     else:
-    #         c.append(data[i])
-
-    # for cluster in cindex.values():
-    #     yield cluster
 
     for component in sets.components(min_size=min_size, max_size=max_size):
         yield [data[i] for i in component]

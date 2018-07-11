@@ -53,7 +53,8 @@ def pairs_to_clusters(pairs, min_size=2, max_size=float('inf'),
         max_size (int, optional): Maximum size of clusters, defaults to
             infinity.
         mode (string, optional): 'fuzzy_clusters', 'connected_components'.
-            Defaults to 'fuzzy_clusters'.
+            Defaults to 'connected_components'.
+        fuzzy (bool, optional): whether a same pair can arrive twice or not.
 
     Yields:
         list: A viable cluster.
