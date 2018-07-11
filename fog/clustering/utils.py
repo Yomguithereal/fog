@@ -55,6 +55,7 @@ def pairs_to_clusters(pairs, min_size=2, max_size=float('inf'),
         mode (string, optional): 'fuzzy_clusters', 'connected_components'.
             Defaults to 'connected_components'.
         fuzzy (bool, optional): whether a same pair can arrive twice or not.
+            Defaults to False.
 
     Yields:
         list: A viable cluster.
@@ -126,8 +127,26 @@ def pairs_to_clusters(pairs, min_size=2, max_size=float('inf'),
         raise TypeError('fog.clustering: unknown mode "%s"' % mode)
 
 
+def pairs_from_buckets(buckets):
+    """
+    Function yielding similarity pairs from buckets.
+
+    """
+    for bucket in buckets:
+        n = len(bucket)
+
+        for i in range(n):
+            A = bucket[i]
+
+            for j in range(i + 1, n):
+                B = bucket[j]
+
+                yield (A, B)
+
+
 def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
-                                mode='fuzzy_clusters', similarity=None):
+                                mode='fuzzy_clusters', similarity=None,
+                                fuzzy=False):
     """
     Function merging buckets into fuzzy clusters. Each bucket will create
     relations in an undirected graph that is later solved to compose clusters.
@@ -141,92 +160,28 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
             'leader'. Defaults to 'fuzzy_clusters'.
         similarity (callable, optional)= similarity function to use to validate
             matches from buckets.
+        fuzzy (bool, optional): whether a same pair can arrive twice or not.
+            Defaults to False.
 
     Yields:
         list: A viable cluster.
 
     """
 
-    # TODO: option to tell if buckets can or cannot be fuzzy to optimize
-    # TODO: if buckets are fuzzy we can avoid recomputing similarities
-    # sometimes if similarity was already computed
-    graph = defaultdict(set)
+    pairs = (
+        pair
+        for pair
+        in pairs_from_buckets(buckets)
+        if similarity is None or similarity(pair[0], pair[1])
+    )
 
-    for bucket in buckets:
-        n = len(bucket)
-
-        if n < 2:
-            continue
-
-        for i in range(n):
-            A = bucket[i]
-
-            for j in range(i + 1, n):
-                B = bucket[j]
-
-                if similarity is None or similarity(A, B):
-                    graph[A].add(B)
-                    graph[B].add(A)
-
-    if mode == 'fuzzy_clusters':
-        visited = set()
-
-        for item, neighbors in graph.items():
-            if item in visited:
-                continue
-
-            if len(neighbors) + 1 < min_size:
-                continue
-            if len(neighbors) + 1 > max_size:
-                continue
-
-            visited.update(neighbors)
-
-            cluster = [item] + list(neighbors)
-            yield cluster
-
-    elif mode == 'leader':
-        visited = set()
-
-        for item, neighbors in graph.items():
-            if item in visited:
-                continue
-
-            if len(neighbors) >= min_size - 1 and len(neighbors) <= max_size - 1:
-                cluster = [item] + list(neighbors)
-                visited.update(cluster)
-
-                yield cluster
-
-    elif mode == 'connected_components':
-        visited = set()
-        stack = []
-
-        for item, neighbors in graph.items():
-            if item in visited:
-                continue
-
-            visited.add(item)
-
-            cluster = [item]
-
-            stack.extend(neighbors)
-
-            while len(stack) != 0:
-                neighbor = stack.pop()
-
-                if neighbor in visited:
-                    continue
-
-                cluster.append(neighbor)
-                visited.add(neighbor)
-
-                stack.extend(graph[neighbor])
-
-            if len(cluster) >= min_size and len(cluster) <= max_size:
-                yield cluster
-    else:
-        raise TypeError('fog.clustering: unknown mode "%s"' % mode)
+    yield from pairs_to_clusters(
+        pairs,
+        min_size=min_size,
+        max_size=max_size,
+        mode=mode,
+        fuzzy=fuzzy
+    )
 
 
 def upper_triangular_matrix_chunk_iter(data, chunk_size):
