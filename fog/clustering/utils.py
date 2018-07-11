@@ -41,8 +41,8 @@ def make_similarity_function(similarity=None, distance=None, radius=None):
             return lambda A, B: not distance(A, B)
 
 
-def pairs_to_clusters(pairs, min_size=2, max_size=float('inf'),
-                      mode='connected_components', fuzzy=False):
+def clusters_from_pairs(pairs, min_size=2, max_size=float('inf'),
+                        mode='connected_components', fuzzy=False):
     """
     Function consuming an iterator of similar pairs and merging them
     according to the desired strategy to yield valid clusters.
@@ -144,9 +144,9 @@ def pairs_from_buckets(buckets):
                 yield (A, B)
 
 
-def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
-                                mode='fuzzy_clusters', similarity=None,
-                                fuzzy=False):
+def clusters_from_buckets(buckets, min_size=2, max_size=float('inf'),
+                          mode='connected_components', similarity=None,
+                          fuzzy=False):
     """
     Function merging buckets into fuzzy clusters. Each bucket will create
     relations in an undirected graph that is later solved to compose clusters.
@@ -157,7 +157,7 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
         max_size (int, optional): Maximum size of clusters, defaults to
             infinity.
         mode (string, optional): 'fuzzy_clusters', 'connected_components' or
-            'leader'. Defaults to 'fuzzy_clusters'.
+            'leader'. Defaults to 'connected_components'.
         similarity (callable, optional)= similarity function to use to validate
             matches from buckets.
         fuzzy (bool, optional): whether a same pair can arrive twice or not.
@@ -175,7 +175,7 @@ def merge_buckets_into_clusters(buckets, min_size=2, max_size=float('inf'),
         if similarity is None or similarity(pair[0], pair[1])
     )
 
-    yield from pairs_to_clusters(
+    yield from clusters_from_pairs(
         pairs,
         min_size=min_size,
         max_size=max_size,

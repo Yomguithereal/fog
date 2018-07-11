@@ -10,7 +10,7 @@
 from collections import defaultdict
 import math
 
-from fog.clustering.utils import merge_buckets_into_clusters
+from fog.clustering.utils import clusters_from_buckets
 from fog.lsh.minhash import MinHash
 from fog.metrics.jaccard import jaccard_similarity
 
@@ -150,7 +150,7 @@ def minhash(data, h=256, key=None, radius=0.8, bands=None, use_numpy=False,
 
         return jaccard_similarity(A, B) >= radius
 
-    yield from merge_buckets_into_clusters(
+    yield from clusters_from_buckets(
         buckets.values(),
         mode='connected_components',
         similarity=double_check

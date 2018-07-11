@@ -8,7 +8,7 @@
 import dill
 from collections import defaultdict
 from multiprocessing import Pool
-from fog.clustering.utils import make_similarity_function
+from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 
 # TODO: max_block_size to avoid ngrams with high DF
 
@@ -43,7 +43,8 @@ def blocking_worker(payload):
 
 
 def blocking(data, block=None, blocks=None, similarity=None, distance=None,
-             radius=None, min_size=2, max_size=float('inf'), processes=1):
+             radius=None, min_size=2, max_size=float('inf'), processes=1,
+             mode='connected_components'):
     """
     Function returning an iterator over found clusters using the blocking
     method.
@@ -71,6 +72,8 @@ def blocking(data, block=None, blocks=None, similarity=None, distance=None,
             it to be considered viable. Defaults to infinity.
         processes (number, optional): number of processes to use.
             Defaults to 1.
+        mode (string, optional): 'fuzzy_clusters', 'connected_components'.
+            Defaults to 'connected_components'.
 
     Yields:
         list: A viable cluster.
@@ -106,47 +109,36 @@ def blocking(data, block=None, blocks=None, similarity=None, distance=None,
             for b in bs:
                 buckets[b].append(item)
 
-    # Fuzzy clustering
-    if processes == 1:
-        for bucket in buckets.values():
-            if len(bucket) < 2:
-                continue
+    # Actual clustering
+    def clustering():
+        if processes == 1:
+            for bucket in buckets.values():
+                if len(bucket) < 2:
+                    continue
 
-            if type(bucket) is not list:
-                bucket = list(bucket)
+                if type(bucket) is not list:
+                    bucket = list(bucket)
 
-            for A, B in blocking_worker((similarity, bucket, False, worker_graph)):
-                add(graph[A], B)
-                add(graph[B], A)
-    else:
+                yield from blocking_worker((similarity, bucket, False, worker_graph))
+        else:
 
-        pickled_similarity = dill.dumps(similarity)
+            pickled_similarity = dill.dumps(similarity)
 
-        pool_iter = (
-            (pickled_similarity, bucket if type(bucket) is list else list(bucket), True, None)
-            for bucket
-            in buckets.values()
-            if len(bucket) > 1
-        )
+            pool_iter = (
+                (pickled_similarity, bucket if type(bucket) is list else list(bucket), True, None)
+                for bucket
+                in buckets.values()
+                if len(bucket) > 1
+            )
 
-        with Pool(processes=processes) as pool:
-            for matches in pool.imap_unordered(blocking_worker, pool_iter):
-                for A, B in matches:
-                    add(graph[A], B)
-                    add(graph[B], A)
+            with Pool(processes=processes) as pool:
+                for matches in pool.imap_unordered(blocking_worker, pool_iter):
+                    yield from matches
 
-    # Building clusters
-    visited = set()
-    for A, neighbors in graph.items():
-        if A in visited:
-            continue
-
-        if len(neighbors) + 1 < min_size:
-            continue
-        if len(neighbors) + 1 > max_size:
-            continue
-
-        visited.update(neighbors)
-
-        cluster = [A] + (neighbors if type(neighbors) is list else list(neighbors))
-        yield cluster
+    yield from clusters_from_pairs(
+        clustering(),
+        fuzzy=blocks is not None,
+        min_size=min_size,
+        max_size=max_size,
+        mode=mode
+    )

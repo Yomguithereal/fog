@@ -9,7 +9,7 @@
 #
 from collections import defaultdict
 
-from fog.clustering.utils import merge_buckets_into_clusters
+from fog.clustering.utils import clusters_from_buckets
 
 
 def key_collision(data, key=None, keys=None, min_size=2, max_size=float('inf'),
@@ -73,7 +73,7 @@ def key_collision(data, key=None, keys=None, min_size=2, max_size=float('inf'),
 
     # Merging clusters
     if merge and key is None:
-        yield from merge_buckets_into_clusters(buckets.values(), fuzzy=True)
+        yield from clusters_from_buckets(buckets.values(), fuzzy=True)
 
     # Buckets as clusters
     else:

@@ -17,13 +17,14 @@
 # https://hpi.de/fileadmin/user_upload/fachgebiete/naumann/folien/SS13/DPDC/DPDC_14_SNM.pdf
 #
 from collections import defaultdict
-from fog.clustering.utils import make_similarity_function
+from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 
 # TODO: multi-pass, adaptive etc.
 
 
 def sorted_neighborhood(data, key=None, similarity=None, distance=None,
-                        radius=None, window=10, min_size=2, max_size=float('inf')):
+                        radius=None, window=10, min_size=2, max_size=float('inf'),
+                        mode='connected_components'):
     """
     Function returning an iterator over found clusters using the sorted
     neighborhood method.
@@ -59,6 +60,8 @@ def sorted_neighborhood(data, key=None, similarity=None, distance=None,
             it to be considered viable. Defaults to 2.
         max_size (number, optional): maximum number of items in a cluster for
             it to be considered viable. Defaults to infinity.
+        mode (string, optional): 'fuzzy_clusters', 'connected_components'.
+            Defaults to 'connected_components'.
 
     Yields:
         list: A viable cluster.
@@ -74,28 +77,20 @@ def sorted_neighborhood(data, key=None, similarity=None, distance=None,
 
     graph = defaultdict(list)
 
-    for i in range(n):
-        A = S[i]
+    def clustering():
+        for i in range(n):
+            A = S[i]
 
-        for j in range(i + 1, min(n, i + window)):
-            B = S[j]
+            for j in range(i + 1, min(n, i + window)):
+                B = S[j]
 
-            if similarity(A, B):
-                graph[i].append(j)
-                graph[j].append(i)
+                if similarity(A, B):
+                    yield (A, B)
 
     # Building clusters
-    visited = set()
-    for i, neighbors in graph.items():
-        if i in visited:
-            continue
-
-        if len(neighbors) + 1 < min_size:
-            continue
-        if len(neighbors) + 1 > max_size:
-            continue
-
-        visited.update(neighbors)
-
-        cluster = [S[i]] + [S[j] for j in neighbors]
-        yield cluster
+    yield from clusters_from_pairs(
+        clustering(),
+        min_size=min_size,
+        max_size=max_size,
+        mode=mode
+    )
