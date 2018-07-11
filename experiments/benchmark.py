@@ -30,6 +30,10 @@ with open('./data/universities.csv', 'r') as f:
     print('VPTree (%i):' % len(clusters), timer() - start)
 
     start = timer()
+    clusters = list(quickjoin(universities, distance=levenshtein, radius=2))
+    print('QuickJoin (%i):' % len(clusters), timer() - start)
+
+    start = timer()
     clusters = list(blocking(universities, blocks=partial(ngrams, 6), distance=levenshtein, radius=2))
     print('Blocking (%i):' % len(clusters), timer() - start)
 
@@ -68,6 +72,10 @@ with open('./data/musicians.csv', 'r') as f:
     start = timer()
     clusters = list(sorted_neighborhood(artists, key=skeleton_key, distance=levenshtein, radius=2))
     print('SNM Skeleton (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(quickjoin(artists, distance=levenshtein, radius=2))
+    print('QuickJoin (%i):' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(pairwise_fuzzy_clusters(artists, distance=levenshtein, radius=2, processes=8))

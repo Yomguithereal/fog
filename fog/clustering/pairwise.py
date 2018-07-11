@@ -363,6 +363,7 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
                 for i, j in matches:
                     sets.union(i, j)
 
+    # TODO: Should really be using the sparse version
     for component in sets.components(min_size=min_size, max_size=max_size):
         yield [data[i] for i in component]
 

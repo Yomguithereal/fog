@@ -11,6 +11,7 @@ from multiprocessing import Pool
 from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 
 # TODO: max_block_size to avoid ngrams with high DF
+# TODO: worker using a VPTree
 
 
 def blocking_worker(payload):
