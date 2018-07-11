@@ -172,6 +172,5 @@ def quickjoin(data, distance, radius, block_size=500,
         clustering(),
         min_size=min_size,
         max_size=max_size,
-        mode=mode,
-        fuzzy=True  # TODO: Reconsider when using SparseSets
+        mode=mode
     )
