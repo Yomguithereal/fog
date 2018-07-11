@@ -78,6 +78,14 @@ with open('./data/musicians.csv', 'r') as f:
     print('QuickJoin (%i):' % len(clusters), timer() - start)
 
     start = timer()
+    clusters = list(minhash(artists, radius=0.8, key=lambda x: list(ngrams(5, x)), use_numpy=True))
+    print('MinHash (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(jaccard_intersection_index(artists, radius=0.8, key=lambda x: list(ngrams(5, x))))
+    print('Jaccard Intersection Index (%i):' % len(clusters), timer() - start)
+
+    start = timer()
     clusters = list(pairwise_fuzzy_clusters(artists, distance=levenshtein, radius=2, processes=8))
     print('Parallel Fuzzy clusters (%i):' % len(clusters), timer() - start)
 
