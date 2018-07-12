@@ -23,6 +23,7 @@ from multiprocessing import Pool
 from fog.clustering.utils import clusters_from_pairs
 
 # TODO: using vp_tree
+# TODO: implement quickjoin+ with ß param
 
 
 def partition(S, distance, p, radius, rho):
