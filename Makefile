@@ -16,7 +16,7 @@ lint:
 
 unit:
 	@echo Running unit tests...
-	pytest -s
+	PYTHONHASHSEED=0 && pytest -s
 	@echo
 
 upload:

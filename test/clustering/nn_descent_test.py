@@ -26,7 +26,7 @@ UNIVERSITY_CLUSTERS = Clusters([
 ])
 
 with open('./data/universities.csv', 'r') as f:
-    UNIVERSITIES = set([line['university'] for line in csv.DictReader(f)])
+    UNIVERSITIES = sorted(set([line['university'] for line in csv.DictReader(f)]))
 
 
 class TestNNDescent(object):
@@ -39,7 +39,3 @@ class TestNNDescent(object):
         clusters = Clusters(nn_descent(UNIVERSITIES, distance=levenshtein, radius=1, seed=123))
 
         assert clusters == UNIVERSITY_CLUSTERS
-
-        parallel_clusters = Clusters(nn_descent(UNIVERSITIES, distance=levenshtein, radius=1, seed=123))
-
-        assert parallel_clusters == UNIVERSITY_CLUSTERS
