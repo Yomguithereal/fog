@@ -9,6 +9,8 @@ from collections import defaultdict, Counter
 # TODO: online tf-idf cutoff by automatically cutting down large buckets over
 # a given threshold. call it burst and erase already set counters
 
+# TODO: use clusters_from_pairs
+
 
 def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
                                max_size=float('inf')):

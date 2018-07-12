@@ -27,6 +27,7 @@ from fog.metrics.jaccard import jaccard_similarity
 # TODO: compute similarities online + edge list -> connected components
 # TODO: keep edge list in set of tuples with sorted comp not to compute
 # n times the same similarity
+# TODO: use pairs
 
 
 def match_probability(h, bands, similarity):
