@@ -19,10 +19,10 @@
 from collections import defaultdict
 from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 
-# TODO: multi-pass, adaptive etc.
+# TODO: adaptive etc.
 
 
-def sorted_neighborhood(data, key=None, similarity=None, distance=None,
+def sorted_neighborhood(data, key=None, keys=None, similarity=None, distance=None,
                         radius=None, window=10, min_size=2, max_size=float('inf'),
                         mode='connected_components'):
     """
@@ -45,6 +45,8 @@ def sorted_neighborhood(data, key=None, similarity=None, distance=None,
         data (iterable): Arbitrary iterable containing data points to gather
             into clusters. Will be fully consumed.
         key (callable, optional): key on which to sort the data.
+        keys (iterable, optional): list of keys on which to sort for multipass
+            sorted neighborhood method.
         similarity (callable): If radius is specified, a function returning
             the similarity between two points. Else, a function returning
             whether two points should be deemed similar. Alternatively, one can
@@ -72,25 +74,27 @@ def sorted_neighborhood(data, key=None, similarity=None, distance=None,
     similarity = make_similarity_function(similarity=similarity, distance=distance, radius=radius)
 
     # Iterating over sorted data
-    S = sorted(data, key=key)
-    n = len(S)
-
-    graph = defaultdict(list)
-
     def clustering():
-        for i in range(n):
-            A = S[i]
+        multipass_keys = keys if keys is not None else [key]
 
-            for j in range(i + 1, min(n, i + window)):
-                B = S[j]
+        for k in multipass_keys:
+            S = sorted(data, key=k)
+            n = len(S)
 
-                if similarity(A, B):
-                    yield (A, B)
+            for i in range(n):
+                A = S[i]
+
+                for j in range(i + 1, min(n, i + window)):
+                    B = S[j]
+
+                    if similarity(A, B):
+                        yield (A, B)
 
     # Building clusters
     yield from clusters_from_pairs(
         clustering(),
         min_size=min_size,
         max_size=max_size,
-        mode=mode
+        mode=mode,
+        fuzzy=keys is not None
     )

@@ -50,6 +50,10 @@ with open('./data/universities.csv', 'r') as f:
     clusters = list(sorted_neighborhood(universities, key=skeleton_key, distance=levenshtein, radius=2))
     print('SNM Skeleton (%i):' % len(clusters), timer() - start)
 
+    start = timer()
+    clusters = list(sorted_neighborhood(universities, keys=[omission_key, skeleton_key], distance=levenshtein, radius=2))
+    print('SNM Omission + Skeleton (%i):' % len(clusters), timer() - start)
+
 print()
 with open('./data/musicians.csv', 'r') as f:
     reader = csv.DictReader(f)
@@ -77,6 +81,10 @@ with open('./data/musicians.csv', 'r') as f:
     start = timer()
     clusters = list(sorted_neighborhood(artists, key=skeleton_key, distance=levenshtein, radius=2))
     print('SNM Skeleton (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(sorted_neighborhood(artists, keys=[omission_key, skeleton_key], distance=levenshtein, radius=2))
+    print('SNM Omission + Skeleton (%i):' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(quickjoin(artists, distance=levenshtein, radius=2, processes=8))
