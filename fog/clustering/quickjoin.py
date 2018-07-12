@@ -22,6 +22,8 @@ from multiprocessing import Pool
 
 from fog.clustering.utils import clusters_from_pairs
 
+# TODO: using vp_tree
+
 
 def partition(S, distance, p, radius, rho):
     L = []
@@ -91,6 +93,9 @@ def quickjoin(data, distance, radius, block_size=500,
     """
     Function returning an iterator over found clusters using the QuickJoin
     algorithm.
+
+    Note that this algorithm returns the same result as pairwise computations
+    would.
 
     Args:
         data (iterable): Arbitrary iterable containing data points to gather
@@ -207,6 +212,7 @@ def quickjoin(data, distance, radius, block_size=500,
             for pairs in pool.imap_unordered(worker, pool_iter):
                 yield from pairs
 
+    # TODO: I thinks we need to have `fuzzy=True` here but cannot be sure
     yield from clusters_from_pairs(
         clustering() if processes == 1 else clustering_parallel(),
         min_size=min_size,

@@ -2,6 +2,7 @@ import csv
 from functools import partial
 from timeit import default_timer as timer
 from fog.clustering import *
+from fog.metrics import jaccard_similarity
 from fog.tokenizers import ngrams
 from fog.key import fingerprint, omission_key, skeleton_key
 from Levenshtein import distance as levenshtein
@@ -32,6 +33,10 @@ with open('./data/universities.csv', 'r') as f:
     start = timer()
     clusters = list(quickjoin(universities, distance=levenshtein, radius=2))
     print('QuickJoin (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(nn_descent(universities, distance=levenshtein, radius=2))
+    print('NN-Descent (%i):' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(blocking(universities, blocks=partial(ngrams, 6), distance=levenshtein, radius=2))
@@ -76,6 +81,10 @@ with open('./data/musicians.csv', 'r') as f:
     start = timer()
     clusters = list(quickjoin(artists, distance=levenshtein, radius=2, processes=8))
     print('QuickJoin (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(nn_descent(artists, distance=levenshtein, radius=2))
+    print('NN-Descent (%i):' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(minhash(artists, radius=0.8, key=lambda x: list(ngrams(5, x)), use_numpy=True))
