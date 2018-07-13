@@ -23,7 +23,7 @@ from multiprocessing import Pool
 from fog.clustering.utils import clusters_from_pairs
 
 # TODO: using vp_tree
-# TODO: implement quickjoin+ with ß param
+# TODO: implement the eta parameter
 
 
 def partition(S, distance, p, radius, rho):
@@ -90,7 +90,7 @@ def worker(payload):
 def quickjoin(data, distance, radius, block_size=500,
               min_size=2, max_size=float('inf'),
               mode='connected_components',
-              seed=None, processes=1):
+              seed=None, processes=1, beta=1.0):
     """
     Function returning an iterator over found clusters using the QuickJoin
     algorithm.
@@ -115,6 +115,8 @@ def quickjoin(data, distance, radius, block_size=500,
         seed (number, optional): Seed for RNG. Defaults to None.
         processes (number, optional): Number of processes to use.
             Defaults to 1.
+        beta (number, optional): Balancing parameter from Fredriksson &
+            Braithwaite. Defaults to no-op 1.0.
 
     Yields:
         list: A viable cluster.
@@ -154,7 +156,7 @@ def quickjoin(data, distance, radius, block_size=500,
                 p1 = S[p1]
                 p2 = S[p2]
 
-                rho = distance(p1, p2)
+                rho = beta * distance(p1, p2)
 
                 L, G, Lw, Gw = partition(S, distance, p1, radius, rho)
 
@@ -182,7 +184,7 @@ def quickjoin(data, distance, radius, block_size=500,
                 p1 = S1[p1] if p1 < N1 else S2[p1 - N1]
                 p2 = S1[p2] if p2 < N1 else S2[p2 - N1]
 
-                rho = distance(p1, p2)
+                rho = beta * distance(p1, p2)
 
                 L1, G1, Lw1, Gw1 = partition(S1, distance, p1, radius, rho)
                 L2, G2, Lw2, Gw2 = partition(S2, distance, p1, radius, rho)
