@@ -72,6 +72,7 @@ def clusters_from_pairs(pairs, min_size=2, max_size=float('inf'),
             c.append(x)
 
     # TODO: later, we'll be able to use SparseSet rather than the graph
+    # TODO: in the connected component case, we don't need mutual links
     graph = defaultdict(container)
 
     for A, B in pairs:
