@@ -22,7 +22,7 @@ from multiprocessing import Pool
 
 from fog.clustering.utils import clusters_from_pairs
 
-# TODO: using vp_tree
+# TODO: using vp_tree & investigate 5, 6, 7
 # TODO: implement the eta parameter
 
 

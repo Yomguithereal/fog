@@ -3,7 +3,6 @@ from fog.clustering.jaccard_intersection_index import (
     jaccard_intersection_index
 )
 from fog.clustering.key_collision import key_collision
-from fog.clustering.levenshtein_trie import levenshtein_trie
 from fog.clustering.minhash import minhash
 from fog.clustering.nn_descent import nn_descent
 from fog.clustering.pairwise import (
