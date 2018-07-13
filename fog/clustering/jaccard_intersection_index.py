@@ -5,15 +5,14 @@
 # Clustering routine leveraging an intersection index to find similar items.
 #
 from collections import defaultdict, Counter
+from fog.clustering.utils import clusters_from_pairs
 
 # TODO: online tf-idf cutoff by automatically cutting down large buckets over
 # a given threshold. call it burst and erase already set counters
 
-# TODO: use clusters_from_pairs
-
 
 def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
-                               max_size=float('inf')):
+                               max_size=float('inf'), mode='connected_components'):
     """
     Function returning an iterator over found clusters.
 
@@ -41,6 +40,8 @@ def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
             it to be considered viable. Defaults to 2.
         max_size (number, optional): maximum number of items in a cluster for
             it to be considered viable. Defaults to infinity.
+        mode (string, optional): 'fuzzy_clusters', 'connected_components'.
+            Defaults to 'connected_components'.
 
     Yield:
         list: A viable cluster.
@@ -69,40 +70,21 @@ def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
 
             bucket.append(i)
 
-    graph = defaultdict(list)
+    def clustering():
+        for i, neighbors in intersections.items():
 
-    for i, neighbors in intersections.items():
+            for j, I in neighbors.items():
+                U = sizes[i] + sizes[j] - I
 
-        for j, I in neighbors.items():
-            U = sizes[i] + sizes[j] - I
+                if I / U >= radius:
+                    yield (i, j)
 
-            if I / U >= radius:
-                graph[i].append(j)
-                graph[j].append(i)
+    gen = clusters_from_pairs(
+        clustering(),
+        min_size=min_size,
+        max_size=max_size,
+        mode=mode
+    )
 
-    visited = set()
-    stack = []
-
-    for i, neighbors in graph.items():
-        if i in visited:
-            continue
-
-        visited.add(i)
-
-        cluster = [data[i]]
-
-        stack.extend(neighbors)
-
-        while len(stack) != 0:
-            j = stack.pop()
-
-            if j in visited:
-                continue
-
-            cluster.append(data[j])
-            visited.add(j)
-
-            if j in graph:
-                stack.extend(graph[j])
-
-        yield cluster
+    for cluster in gen:
+        yield [data[i] for i in cluster]
