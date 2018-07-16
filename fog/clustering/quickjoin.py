@@ -23,7 +23,7 @@ from phylactery import VPTree
 
 from fog.clustering.utils import clusters_from_pairs
 
-# TODO: using vp_tree & investigate 5, 6, 7
+# TODO: investigate 5, 6, 7
 # TODO: implement the eta parameter
 
 
@@ -83,23 +83,37 @@ def quickjoin_vptree(S1, S2, distance, radius):
     if len(S1) > len(S2):
         S1, S2 = S2, S1
 
-    tree = VPTree(S1, distance)
+    if len(S1) == 1:
+        B = S1[0]
 
-    for A in S2:
-        for B in tree.neighbors_in_radius(A, radius):
-            yield (A, B)
+        for A in S2:
+            if distance(A, B) <= radius:
+                yield (A, B)
+    else:
+        tree = VPTree(S1, distance)
+
+        for A in S2:
+            for B, d in tree.neighbors_in_radius(A, radius):
+                yield (A, B)
 
 
 def quickjoin_self_vptree(S, distance, radius):
+
+    if len(S) == 1:
+        return
+
     tree = VPTree(S, distance)
 
     for A in S:
-        for B in tree.neighbors_in_radius(A, radius):
+        for B, d in tree.neighbors_in_radius(A, radius):
+            if A == B:
+                continue
+
             if id(A) < id(B):
                 yield (A, B)
 
 
-def select_bruteforce_functions(vp_tree):
+def select_block_functions(vp_tree):
     if vp_tree:
         return quickjoin_vptree, quickjoin_self_vptree
 
@@ -111,7 +125,7 @@ def worker(payload):
 
     distance = dill.loads(distance)
 
-    BF, SBF = select_bruteforce_functions(vp_tree)
+    BF, SBF = select_block_functions(vp_tree)
 
     if S2 is None:
         return list(SBF(S1, distance, radius))
@@ -149,6 +163,8 @@ def quickjoin(data, distance, radius, block_size=500,
             Defaults to 1.
         beta (number, optional): Balancing parameter from Fredriksson &
             Braithwaite. Defaults to no-op 1.0.
+        vp_tree (bool, optional): Whether to use Vantage Point Trees to solve
+            blocks. Defaults to False.
 
     Yields:
         list: A viable cluster.
@@ -211,6 +227,7 @@ def quickjoin(data, distance, radius, block_size=500,
                     yield (S1, S2)
                     continue
 
+                # Randomly selecting pivots. They must be different
                 p1 = rng.randint(0, N - 1)
                 p2 = None
 
@@ -233,7 +250,7 @@ def quickjoin(data, distance, radius, block_size=500,
     # Iterator performing bruteforce distance computation over found blocks
     def clustering():
 
-        BF, SBF = select_bruteforce_functions(vp_tree)
+        BF, SBF = select_block_functions(vp_tree)
 
         for S1, S2 in blocks():
             if S2 is None:
