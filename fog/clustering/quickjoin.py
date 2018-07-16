@@ -150,7 +150,7 @@ def quickjoin_join_pivots(S1, S2, distance, radius):
             f = False
 
             for l in range(k):
-                if P[l * N2 + j] - D[l] > radius:
+                if abs(P[l * N2 + j] - D[l]) > radius:
                     f = True
                     break
 
