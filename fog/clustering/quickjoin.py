@@ -16,6 +16,17 @@
 # Applications. SISAP 2013. Lecture Notes in Computer Science, vol 8199.
 # Springer, Berlin, Heidelberg
 #
+# [Notes]:
+# From what I could gather right now, Fredriksson K., Braithwaite B. methods
+# to improve the algorithm don't really work with my use-case. For instance,
+# the book-keeping of the join_pivots methods takes more time than the
+# saved distance computations, even with a eta parameter set to a high value.
+# I will need to test examples where the distance is more expensive (e.g.,
+# testing with quite tiny strings, the Levensthein distance is not really
+# prohibitive right now).
+#
+# Using a Vantage Point Tree does not yield faster results neither.
+#
 import dill
 import random
 from multiprocessing import Pool
