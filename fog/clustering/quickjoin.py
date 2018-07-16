@@ -113,6 +113,51 @@ def quickjoin_self_vptree(S, distance, radius):
                 yield (A, B)
 
 
+def quickjoin_join_pivots(S1, S2, distance, radius):
+    """
+    From Fredriksson & Braithwaite. Algorithm 5.
+
+    """
+
+    N1 = len(S1)
+    N2 = len(S2)
+
+    k = max(1, min(16, N1 // 8))
+
+    P = [0] * N2 * k
+
+    for i in range(k):
+        A = S1[i]
+
+        for j in range(N2):
+            B = S2[j]
+            d = distance(A, B)
+            P[i * N2 + j] = d
+
+            if d <= radius:
+                yield (A, B)
+
+    D = [0] * k
+
+    for i in range(k, N1):
+        A = S1[i]
+
+        for l in range(k):
+            D[l] = distance(S1[l], A)
+
+        for j in range(N2):
+            B = S2[j]
+            f = False
+
+            for l in range(k):
+                if P[l * N2 + j] - D[l] > radius:
+                    f = True
+                    break
+
+            if not f and distance(A, B) <= radius:
+                yield (A, B)
+
+
 def select_block_functions(vp_tree):
     if vp_tree:
         return quickjoin_vptree, quickjoin_self_vptree
