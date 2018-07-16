@@ -19,6 +19,7 @@
 import dill
 import random
 from multiprocessing import Pool
+from phylactery import VPTree
 
 from fog.clustering.utils import clusters_from_pairs
 
@@ -76,21 +77,52 @@ def quickjoin_self_bruteforce(S, distance, radius):
                 yield (A, B)
 
 
+def quickjoin_vptree(S1, S2, distance, radius):
+
+    # Indexing the smallest set
+    if len(S1) > len(S2):
+        S1, S2 = S2, S1
+
+    tree = VPTree(S1, distance)
+
+    for A in S2:
+        for B in tree.neighbors_in_radius(A, radius):
+            yield (A, B)
+
+
+def quickjoin_self_vptree(S, distance, radius):
+    tree = VPTree(S, distance)
+
+    for A in S:
+        for B in tree.neighbors_in_radius(A, radius):
+            if id(A) < id(B):
+                yield (A, B)
+
+
+def select_bruteforce_functions(vp_tree):
+    if vp_tree:
+        return quickjoin_vptree, quickjoin_self_vptree
+
+    return quickjoin_bruteforce, quickjoin_self_bruteforce
+
+
 def worker(payload):
-    distance, radius, S1, S2 = payload
+    distance, radius, S1, S2, vp_tree = payload
 
     distance = dill.loads(distance)
 
-    if S2 is None:
-        return list(quickjoin_self_bruteforce(S1, distance, radius))
+    BF, SBF = select_bruteforce_functions(vp_tree)
 
-    return list(quickjoin_bruteforce(S1, S2, distance, radius))
+    if S2 is None:
+        return list(SBF(S1, distance, radius))
+
+    return list(BF(S1, S2, distance, radius))
 
 
 def quickjoin(data, distance, radius, block_size=500,
               min_size=2, max_size=float('inf'),
               mode='connected_components',
-              seed=None, processes=1, beta=1.0):
+              seed=None, processes=1, beta=1.0, vp_tree=False):
     """
     Function returning an iterator over found clusters using the QuickJoin
     algorithm.
@@ -172,6 +204,10 @@ def quickjoin(data, distance, radius, block_size=500,
                 N = N1 + N2
 
                 if N <= block_size:
+
+                    if N1 == 0 or N2 == 0:
+                        continue
+
                     yield (S1, S2)
                     continue
 
@@ -197,28 +233,30 @@ def quickjoin(data, distance, radius, block_size=500,
     # Iterator performing bruteforce distance computation over found blocks
     def clustering():
 
+        BF, SBF = select_bruteforce_functions(vp_tree)
+
         for S1, S2 in blocks():
             if S2 is None:
-                yield from quickjoin_self_bruteforce(S1, distance, radius)
+                yield from SBF(S1, distance, radius)
             else:
-                yield from quickjoin_bruteforce(S1, S2, distance, radius)
+                yield from BF(S1, S2, distance, radius)
 
     def clustering_parallel():
         with Pool(processes=processes) as pool:
             pickled_distance = dill.dumps(distance)
 
             pool_iter = (
-                (pickled_distance, radius, S1, S2)
+                (pickled_distance, radius, S1, S2, vp_tree)
                 for S1, S2 in blocks()
             )
 
             for pairs in pool.imap_unordered(worker, pool_iter):
                 yield from pairs
 
-    # TODO: I thinks we need to have `fuzzy=True` here but cannot be sure
     yield from clusters_from_pairs(
         clustering() if processes == 1 else clustering_parallel(),
         min_size=min_size,
         max_size=max_size,
-        mode=mode
+        mode=mode,
+        fuzzy=True
     )
