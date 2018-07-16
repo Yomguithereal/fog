@@ -10,6 +10,11 @@
 # Construction for Generic Similarity Measures », 577. ACM Press, 2011.
 # https://doi.org/10.1145/1963405.1963487.
 #
+# [Notes]:
+# Recall is a function of the k parameter. k is also intimately related
+# to the data's intrisic's dimensionality. One should increase k to increase
+# recall, at the cost of poorer performance.
+#
 import heapq
 import random
 from fog.clustering.utils import make_similarity_function, clusters_from_pairs
@@ -104,9 +109,6 @@ def nn_descent(data, similarity=None, distance=None, k=5, radius=None,
     V = data
     B = []
     N = len(V)
-
-    def min_similarity_key(x):
-        return x[1][1]
 
     # Initial samples
     for i, item in enumerate(V):
