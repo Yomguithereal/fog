@@ -4,7 +4,7 @@ from fog.clustering.jaccard_intersection_index import (
 )
 from fog.clustering.key_collision import key_collision
 from fog.clustering.minhash import minhash
-from fog.clustering.nn_descent import nn_descent
+from fog.clustering.nn_descent import nn_descent, nn_descent_full
 from fog.clustering.pairwise import (
     pairwise,
     pairwise_leader,

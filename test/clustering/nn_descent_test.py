@@ -4,7 +4,7 @@
 import csv
 from test.clustering.utils import Clusters
 from Levenshtein import distance as levenshtein
-from fog.clustering import nn_descent
+from fog.clustering import nn_descent, nn_descent_full
 
 DATA = [
     'Mister Hyde',
@@ -35,7 +35,15 @@ class TestNNDescent(object):
 
         assert clusters == CLUSTERS
 
+        clusters = Clusters(nn_descent_full(DATA, k=1, distance=levenshtein, radius=1, seed=123))
+
+        assert clusters == CLUSTERS
+
     def test_universities(self):
         clusters = Clusters(nn_descent(UNIVERSITIES, distance=levenshtein, radius=1, seed=123))
+
+        assert clusters == UNIVERSITY_CLUSTERS
+
+        clusters = Clusters(nn_descent_full(UNIVERSITIES, distance=levenshtein, radius=1, seed=123))
 
         assert clusters == UNIVERSITY_CLUSTERS

@@ -35,6 +35,7 @@ from phylactery import VPTree
 from fog.clustering.utils import clusters_from_pairs
 
 # TODO: implement the eta parameter
+# TODO: implement for similarity
 
 
 def partition(S, distance, p, radius, rho):
