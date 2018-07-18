@@ -16,10 +16,10 @@
 # recall, at the cost of poorer performance. Chosing log2(n) as k seems to
 # be a generally good compromise.
 #
-import heapq
 import math
 import random
 from functools import total_ordering
+from heapq import heapify, heapreplace
 from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 
 # TODO: parallelize nn_descent_full
@@ -117,7 +117,7 @@ def nn_descent(data, similarity=None, distance=None, k=None, radius=None,
     # Initial samples
     for i, item in enumerate(V):
         neighbors = [(similarity(item, V[j]), j) for j in sample(rng, N, k, i)]
-        heapq.heapify(neighbors)
+        heapify(neighbors)
         B.append(neighbors)
 
     c = 1
@@ -149,7 +149,7 @@ def nn_descent(data, similarity=None, distance=None, k=None, radius=None,
 
                     if s > B[i][0][0]:
                         c += 1
-                        heapq.heapreplace(B[i], (s, jj))
+                        heapreplace(B[i], (s, jj))
 
     def clustering():
         for i, neighbors in enumerate(B):
@@ -285,7 +285,7 @@ def nn_descent_full(data, similarity=None, distance=None, k=None, radius=None,
     # Initial samples
     for i, item in enumerate(V):
         neighbors = [(similarity(item, V[j]), j, True) for j in sample(rng, N, k, i)]
-        heapq.heapify(neighbors)
+        heapify(neighbors)
         B.append(neighbors)
 
     c = NK
@@ -336,11 +336,11 @@ def nn_descent_full(data, similarity=None, distance=None, k=None, radius=None,
 
                     if s > B[u1][0][0]:
                         c += 1
-                        heapq.heapreplace(B[u1], (s, u2, True))
+                        heapreplace(B[u1], (s, u2, True))
 
                     if s > B[u2][0][0]:
                         c += 1
-                        heapq.heapreplace(B[u2], (s, u1, True))
+                        heapreplace(B[u2], (s, u1, True))
 
                 for u2 in o:
 
@@ -351,11 +351,11 @@ def nn_descent_full(data, similarity=None, distance=None, k=None, radius=None,
 
                     if s > B[u1][0][0]:
                         c += 1
-                        heapq.heapreplace(B[u1], (s, u2, True))
+                        heapreplace(B[u1], (s, u2, True))
 
                     if s > B[u2][0][0]:
                         c += 1
-                        heapq.heapreplace(B[u2], (s, u1, True))
+                        heapreplace(B[u2], (s, u1, True))
 
     def clustering():
         for i, neighbors in enumerate(B):
