@@ -1,4 +1,5 @@
 from setuptools import setup, find_packages
+from Cython.Build import cythonize
 
 with open('./README.md', 'r') as f:
     long_description = f.read()
@@ -15,6 +16,7 @@ setup(name='fog',
     keywords='fuzzy',
     python_requires='>=3',
     packages=find_packages(exclude=['experiments', 'test']),
+    ext_modules=cythonize('fog/metrics/*.pyx'),
     package_data={'docs': ['README.md']},
     install_requires=[
         'dill==0.2.7.1',

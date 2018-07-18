@@ -19,12 +19,17 @@
 #   - Loop unrolling optimizations (Gustaf Andersson).
 #   - Prefix-Suffix trimming (Guillaume Plique).
 #
-# Note that it's way slower than the C implementation you can find in
-# python-Levensthein, for instance.
-#
+import cython
+from libc.stdlib cimport malloc, free
 
 
-def min_cost(d0, d1, d2, bx, ay):
+cdef unsigned int min_cost(
+    unsigned int d0,
+    unsigned int d1,
+    unsigned int d2,
+    unsigned char bx,
+    unsigned char ay
+):
     if d0 < d1 or d2 < d1:
         if d0 > d2:
             return d2 + 1
@@ -37,21 +42,23 @@ def min_cost(d0, d1, d2, bx, ay):
             return d1 + 1
 
 
-def levenshtein_distance(A, B):
+@cython.boundscheck(False)
+def levenshtein_distance(str A, str B):
     if A is B or A == B:
         return 0
 
-    if len(A) > len(B):
-        A, B = B, A
+    cdef unsigned int LA = len(A)
+    cdef unsigned int LB = len(B)
 
-    LA = len(A)
-    LB = len(B)
+    if LA > LB:
+        A, B = B, A
+        LA, LB = LB, LA
 
     while LA > 0 and A[LA - 1] == B[LB - 1]:
         LA -= 1
         LB -= 1
 
-    offset = 0
+    cdef unsigned int offset = 0
 
     while offset < LA and A[offset] == B[offset]:
         offset += 1
@@ -62,18 +69,33 @@ def levenshtein_distance(A, B):
     if LA == 0 or LB < 3:
         return LB
 
-    x = 0
-    y = 0
+    cdef unsigned int V = 2 * LA
+    cdef unsigned int *vector = <unsigned int *> malloc(V * sizeof(unsigned int))
 
-    vector = [0] * (2 * LA)
+    cdef unsigned int x = 0
+    cdef unsigned int y = 0
+    cdef unsigned int t = 0
 
     while y < LA:
         t = y * 2
         vector[t] = y + 1
-        vector[t + 1] = A[offset + y]
+        vector[t + 1] = ord(A[offset + y])
         y += 1
 
-    V = len(vector)
+    cdef unsigned int d0
+    cdef unsigned int d1
+    cdef unsigned int d2
+    cdef unsigned int d3
+
+    cdef unsigned char ay
+
+    cdef unsigned int dd
+    cdef unsigned int dy
+
+    cdef unsigned char bx0
+    cdef unsigned char bx1
+    cdef unsigned char bx2
+    cdef unsigned char bx3
 
     while x + 3 < LB:
         d0 = x
@@ -81,10 +103,10 @@ def levenshtein_distance(A, B):
         d2 = x + 2
         d3 = x + 3
 
-        bx0 = B[offset + d0]
-        bx1 = B[offset + d1]
-        bx2 = B[offset + d2]
-        bx3 = B[offset + d3]
+        bx0 = ord(B[offset + d0])
+        bx1 = ord(B[offset + d1])
+        bx2 = ord(B[offset + d2])
+        bx3 = ord(B[offset + d3])
 
         x += 4
         dd = x
@@ -108,7 +130,7 @@ def levenshtein_distance(A, B):
 
     while x < LB:
         d0 = x
-        bx0 = B[offset + d0]
+        bx0 = ord(B[offset + d0])
         x += 1
         dd = x
 
@@ -132,5 +154,7 @@ def levenshtein_distance(A, B):
             d0 = dy
 
             y += 2
+
+    free(vector)
 
     return dd

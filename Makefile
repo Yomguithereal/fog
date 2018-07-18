@@ -3,8 +3,11 @@ SOURCE = fog
 
 # Commands
 all: lint test
-test: unit
+test: build-ext unit
 publish: lint test upload clean
+
+build-ext:
+	python setup.py build_ext --inplace
 
 clean:
 	rm -rf *.egg-info .pytest_cache .ipynb_checkpoints ./**/__pycache__ ./**/**/__pycache__ build dist

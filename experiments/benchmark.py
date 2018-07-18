@@ -5,7 +5,7 @@ from fog.clustering import *
 from fog.metrics import jaccard_similarity
 from fog.tokenizers import ngrams
 from fog.key import fingerprint, omission_key, skeleton_key
-from Levenshtein import distance as levenshtein
+from fog.metrics.levenshtein import levenshtein_distance as levenshtein
 
 with open('./data/universities.csv', 'r') as f:
     reader = csv.DictReader(f)
