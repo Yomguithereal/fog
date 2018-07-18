@@ -126,7 +126,8 @@ def limited_levenshtein_distance(unsigned int max_distance, str A, str B):
     function will stop computing and return an upper bound of max_distance + 1.
 
     This is really usefull when you want to find similar strings and want
-    to optimize for speed.
+    to optimize for speed. This is really usefull when the considered strings
+    are long.
 
     Args:
         max_distance (number): Maximum allowable distance between A & B.
