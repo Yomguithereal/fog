@@ -7,3 +7,4 @@ from fog.metrics.jaccard import (
     jaccard_similarity,
     weighted_jaccard_similarity
 )
+from fog.metrics.overlap import overlap_coefficient
