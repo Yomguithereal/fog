@@ -35,7 +35,6 @@ from phylactery import VPTree
 from fog.clustering.utils import clusters_from_pairs
 
 # TODO: implement the eta parameter
-# TODO: implement for similarity
 
 
 def partition(S, distance, p, radius, rho):
@@ -189,7 +188,7 @@ def worker(payload):
     return list(BF(S1, S2, distance, radius))
 
 
-def quickjoin(data, distance, radius, block_size=500,
+def quickjoin(data, radius, distance=None, similarity=None, block_size=500,
               min_size=2, max_size=float('inf'),
               mode='connected_components',
               seed=None, processes=1, beta=1.0, vp_tree=False):
@@ -205,7 +204,9 @@ def quickjoin(data, distance, radius, block_size=500,
             into clusters. Will be fully consumed.
         distance (callable): The distance function to use. Must be a true
             metric, e.g. the Levenshtein distance.
-        radius (number, optional): produced clusters' radius.
+        similarity (callable): The similarity function to use. Must be a true
+            metric, e.g. the Jaccard similarity.
+        radius (number): produced clusters' radius.
         block_size (number, optional): block size where the algorithm will
             switch to brute. Defaults to 500.
         min_size (number, optional): minimum number of items in a cluster for
@@ -231,6 +232,10 @@ def quickjoin(data, distance, radius, block_size=500,
 
     if type(data) is not list:
         data = list(data)
+
+    if similarity is not None:
+        distance = lambda x, y: -similarity(x, y)
+        radius = -radius
 
     # Iterator recursively partitioning the data set using QuickJoin's method
     def blocks():

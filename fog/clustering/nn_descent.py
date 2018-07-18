@@ -58,7 +58,7 @@ def reverse(B):
     return R
 
 
-def nn_descent(data, similarity=None, distance=None, k=None, radius=None,
+def nn_descent(data, radius, similarity=None, distance=None, k=None,
                min_size=2, max_size=float('inf'),
                mode='connected_components',
                seed=None):
@@ -69,6 +69,7 @@ def nn_descent(data, similarity=None, distance=None, k=None, radius=None,
     Args:
         data (iterable): Arbitrary iterable containing data points to gather
             into clusters. Will be fully consumed.
+        radius (number): produced clusters' radius.
         k (number, optional): number of nearest neighbor to find per item.
             If not given, k will default to log2(n).
         similarity (callable): If radius is specified, a function returning
@@ -79,7 +80,6 @@ def nn_descent(data, similarity=None, distance=None, k=None, radius=None,
             the distance between two points. Else, a function returning
             whether two point should not be deemed similar. Alternatively, one
             can specify `similarity` instead.
-        radius (number, optional): produced clusters' radius.
         min_size (number, optional): minimum number of items in a cluster for
             it to be considered viable. Defaults to 2.
         max_size (number, optional): maximum number of items in a cluster for
@@ -216,7 +216,7 @@ def reverse_full(old, new):
     return old_prime, new_prime
 
 
-def nn_descent_full(data, similarity=None, distance=None, k=None, radius=None,
+def nn_descent_full(data, radius, similarity=None, distance=None, k=None,
                     min_size=2, max_size=float('inf'),
                     mode='connected_components',
                     seed=None, rho=0.5, delta=0.001):
@@ -227,6 +227,7 @@ def nn_descent_full(data, similarity=None, distance=None, k=None, radius=None,
     Args:
         data (iterable): Arbitrary iterable containing data points to gather
             into clusters. Will be fully consumed.
+        radius (number): produced clusters' radius.
         k (number, optional): number of nearest neighbor to find per item.
             If not given, k will default to log2(n).
         similarity (callable): If radius is specified, a function returning
@@ -237,7 +238,6 @@ def nn_descent_full(data, similarity=None, distance=None, k=None, radius=None,
             the distance between two points. Else, a function returning
             whether two point should not be deemed similar. Alternatively, one
             can specify `similarity` instead.
-        radius (number, optional): produced clusters' radius.
         min_size (number, optional): minimum number of items in a cluster for
             it to be considered viable. Defaults to 2.
         max_size (number, optional): maximum number of items in a cluster for

@@ -5,6 +5,7 @@ import csv
 from test.clustering.utils import Clusters
 from Levenshtein import distance as levenshtein
 from fog.clustering import quickjoin
+from fog.metrics import jaccard_similarity
 
 DATA = [
     'Mister Hyde',
@@ -32,6 +33,10 @@ with open('./data/universities.csv', 'r') as f:
 class TestQuickJoin(object):
     def test_basics(self):
         clusters = Clusters(quickjoin(DATA, distance=levenshtein, radius=1))
+
+        assert clusters == CLUSTERS
+
+        sim_clusters = Clusters(quickjoin(DATA, similarity=jaccard_similarity, radius=0.8))
 
         assert clusters == CLUSTERS
 
