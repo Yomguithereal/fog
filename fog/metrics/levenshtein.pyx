@@ -13,6 +13,8 @@
 # correcting deletions, insertions, and reversals".
 # Soviet Physics Doklady 10 (8): 707–710.
 #
+# Note that this is still slower than python-Levensthein.
+#
 import cython
 from libc.stdlib cimport malloc, free
 
