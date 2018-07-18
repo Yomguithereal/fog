@@ -5,7 +5,8 @@ from fog.clustering import *
 from fog.metrics import jaccard_similarity
 from fog.tokenizers import ngrams
 from fog.key import fingerprint, omission_key, skeleton_key
-from fog.metrics.levenshtein import levenshtein_distance as levenshtein
+from Levenshtein import distance as levenshtein
+from fog.metrics.levenshtein import limited_levenshtein_distance
 
 with open('./data/universities.csv', 'r') as f:
     reader = csv.DictReader(f)
@@ -25,6 +26,10 @@ with open('./data/universities.csv', 'r') as f:
     start = timer()
     clusters = list(pairwise_connected_components(universities, distance=levenshtein, radius=2))
     print('Connected components (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(pairwise_connected_components(universities, distance=lambda x, y: limited_levenshtein_distance(2, x, y), radius=2))
+    print('Limited Levenshtein connected components (%i):' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(vp_tree(universities, distance=levenshtein, radius=2))
@@ -117,6 +122,10 @@ with open('./data/musicians.csv', 'r') as f:
     start = timer()
     clusters = list(pairwise_connected_components(artists, distance=levenshtein, radius=2, processes=8))
     print('Parallel connected components (%i):' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(pairwise_connected_components(artists, distance=lambda x, y: limited_levenshtein_distance(2, x, y), radius=2, processes=8))
+    print('Parallel limited levenshtein connected components (%i):' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(vp_tree(artists, distance=levenshtein, radius=2))

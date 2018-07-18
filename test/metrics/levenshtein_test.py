@@ -3,7 +3,7 @@
 # =============================================================================
 import math
 from pytest import approx
-from fog.metrics import levenshtein_distance
+from fog.metrics import levenshtein_distance, limited_levenshtein_distance
 
 BASIC_TESTS = [
     # (('b', 'o', 'o', 'k'), ('b', 'a', 'c', 'k'), 2),
@@ -50,3 +50,7 @@ class TestLevenshteinSimilarity(object):
     def test_basics(self):
         for A, B, distance in BASIC_TESTS:
             assert levenshtein_distance(A, B) == distance, '%s // %s => %i' % (A, B, distance)
+
+    def test_limited(self):
+        for A, B, distance in BASIC_TESTS:
+            assert limited_levenshtein_distance(2, A, B) == (distance if distance <= 2 else 3)
