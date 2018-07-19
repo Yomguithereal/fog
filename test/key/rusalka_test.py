@@ -6,6 +6,7 @@ from fog.key import rusalka
 TESTS = [
     ((''), ''),
     (('b'), 'b'),
+    (('h'), 'h'),
     (('Tchekov', 'Chekhow', 'Tchekof', 'Tchekoff', 'Chekkoph', 'čekov'), 'ʃkf'),
     (('Dzhugashvili', 'Dzhougachvili', 'Djougachvili'), 'ʒkʃfl'),
     (('Dimitrij', 'Dimitri', 'Dimitry', 'Dimitriy', 'Dmitri', 'D\'mitr', 'Dmitr'), 'dmtr'),

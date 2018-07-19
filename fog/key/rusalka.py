@@ -70,6 +70,9 @@ def rusalka(name):
     # Dropping irrelevant characters
     name = re.sub(FILTER, '', name)
 
+    if len(name) == 1:
+        return name.lower()
+
     # Applying rules
     for pattern, replacement in RULES:
         name = re.sub(pattern, replacement, name)
