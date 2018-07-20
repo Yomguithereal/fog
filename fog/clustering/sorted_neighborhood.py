@@ -20,6 +20,7 @@ from collections import defaultdict
 from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 
 # TODO: adaptive etc.
+# TODO: parallelize
 
 
 def sorted_neighborhood(data, key=None, keys=None, similarity=None, distance=None,

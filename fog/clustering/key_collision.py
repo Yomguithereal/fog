@@ -11,6 +11,8 @@ from collections import defaultdict
 
 from fog.clustering.utils import clusters_from_buckets
 
+# TODO: yield pairs earlier because it's possible
+
 
 def key_collision(data, key=None, keys=None, min_size=2, max_size=float('inf'),
                   merge=True):

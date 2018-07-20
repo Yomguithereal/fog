@@ -12,6 +12,7 @@ from unidecode import unidecode
 from fog.tokenizers.ngrams import ngrams
 
 # TODO: better docs
+# TODO: option to squeeze
 WHITESPACE_RE = re.compile('\\s+')
 DIGITS_RE = re.compile('\\d+')
 BLACKLIST_RE = re.compile('[^a-z0-9\\s]')

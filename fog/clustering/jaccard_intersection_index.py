@@ -12,6 +12,8 @@ from fog.clustering.utils import clusters_from_pairs
 
 # TODO: change this to overlap index and implement cosine & overlap
 
+# NOTE: compromise between key collision & meta blocking
+
 
 def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
                                max_size=float('inf'), mode='connected_components'):

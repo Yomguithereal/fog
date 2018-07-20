@@ -18,6 +18,8 @@ from unidecode import unidecode
 # Feodor Fyodor Fjodor
 # Růžena Maturová
 
+# fails if given numbers
+
 # j between vowels y
 
 # http://intranet.library.arizona.edu/users/brewerm/sil/lib/transprimer.html
@@ -70,7 +72,7 @@ def rusalka(name):
     # Dropping irrelevant characters
     name = re.sub(FILTER, '', name)
 
-    if len(name) == 1:
+    if len(name) < 2:
         return name.lower()
 
     # Applying rules
