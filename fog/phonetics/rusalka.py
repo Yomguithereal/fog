@@ -17,6 +17,20 @@ from unidecode import unidecode
 # Tatiana Tatjana
 # Feodor Fyodor Fjodor
 # Růžena Maturová
+# Hranislav
+# Sergeiy_Liminovich
+# q -> k
+# Almas_Uteschow, Almas_Uteshov
+# Dmytro_Zamotayev, Dmytro_Samotajew
+# Farid_Dosayev, Farid_Dossajew
+# Mirian_Giorgadze, Miriani_Giorgadse
+# Musa_Murtazaliev, Musa_Murtasalijew
+# Soslan_Fraev, Soslan_Frajew
+# Volodymyr_Veredyuk, Wolodymyr_Weredjuk
+# Roman_Kolzow, Roman_Koltsov
+# Sergei_Belych, Sergey_Belykh
+
+# criblage à base de aev pour normalisers
 
 # fails if given numbers
 
