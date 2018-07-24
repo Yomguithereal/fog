@@ -15,7 +15,7 @@ from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 # TODO: custom inner algorithm
 
 
-def blocking_worker(payload):
+def block_worker(payload):
     """
     Worker function used compute pairwise distance/similarity over a whole
     block.
@@ -121,7 +121,7 @@ def blocking(data, block=None, blocks=None, similarity=None, distance=None,
                 if type(bucket) is not list:
                     bucket = list(bucket)
 
-                yield from blocking_worker((similarity, bucket, False, worker_graph))
+                yield from block_worker((similarity, bucket, False, worker_graph))
         else:
 
             pickled_similarity = dill.dumps(similarity)
@@ -134,7 +134,7 @@ def blocking(data, block=None, blocks=None, similarity=None, distance=None,
             )
 
             with Pool(processes=processes) as pool:
-                for pairs in pool.imap_unordered(blocking_worker, pool_iter):
+                for pairs in pool.imap_unordered(block_worker, pool_iter):
                     yield from pairs
 
     yield from clusters_from_pairs(
