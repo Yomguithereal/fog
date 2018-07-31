@@ -1,5 +1,9 @@
 # Little experiments testing the recall of the skeleton and omission keys
-# for cases with Levenshtein distance <= 1.
+#
+# Note that counting the number of clusters may be erroneous but with
+# a low Levenshtein distance, clusters are rarely very large and this is
+# good enough.
+#
 import csv
 from Levenshtein import distance as levenshtein
 from fog.clustering import pairwise_connected_components, sorted_neighborhood
