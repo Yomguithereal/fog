@@ -1,8 +1,8 @@
 # =============================================================================
-# Fog Phonetics Utility Functions
+# Fog Utility Functions
 # =============================================================================
 #
-# Miscellaneous functions used throughout the phonetics module.
+# Miscellaneous functions used throughout the various module.
 #
 import re
 

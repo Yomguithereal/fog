@@ -9,17 +9,17 @@
 #
 import re
 from unidecode import unidecode
+from fog.utils import squeeze as squeeze_string
 from fog.tokenizers.ngrams import ngrams
 
 # TODO: better docs
-# TODO: option to squeeze
 WHITESPACE_RE = re.compile('\\s+')
 DIGITS_RE = re.compile('\\d+')
 BLACKLIST_RE = re.compile('[^a-z0-9\\s]')
 
 
 def create_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
-                                 split=None, stopwords=None):
+                                 split=None, stopwords=None, squeeze=False):
     """
     Function returning a custom fingerprint tokenizer.
 
@@ -29,6 +29,7 @@ def create_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
         min_token_size (int, optional): Minimum token size. Defaults to 1.
         split (list, optional): List of token splitting characters.
         stopwords (iterable, optional): List of stopwords to filter.
+        squeeze (bool, optional): Whether to squeeze the tokens or not.
 
     Returns:
         function: A custom tokenizer.
@@ -81,6 +82,10 @@ def create_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
         # Trimming
         string = string.strip()
 
+        # Squeezing
+        if squeeze:
+            string = squeeze_string(string)
+
         # Tokenizing
         tokens = re.split(WHITESPACE_RE, string)
 
@@ -96,7 +101,7 @@ def create_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
 
 
 def create_ngrams_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
-                                        split=None, stopwords=None):
+                                        split=None, stopwords=None, squeeze=True):
     """
     Function returning a custom ngrams fingerprint tokenizer.
 
@@ -106,6 +111,7 @@ def create_ngrams_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
         min_token_size (int, optional): Minimum token size. Defaults to 1.
         split (list, optional): List of token splitting characters.
         stopwords (iterable, optional): List of stopwords to filter.
+        squeeze (bool, optional): Whether to squeeze the tokens or not.
 
     Returns:
         function: A custom tokenizer.
@@ -157,6 +163,10 @@ def create_ngrams_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
 
         # Trimming
         string = string.strip()
+
+        # Squeezing
+        if squeeze:
+            string = squeeze_string(string)
 
         # Tokenizing
         string = re.sub(WHITESPACE_RE, '', string)

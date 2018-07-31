@@ -14,7 +14,7 @@
 #
 import re
 from unidecode import unidecode
-from fog.phonetics.utils import squeeze
+from fog.utils import squeeze
 
 ALPHA_RE = re.compile(r'[^A-Z]')
 

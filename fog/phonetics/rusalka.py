@@ -8,6 +8,7 @@ import re
 from unidecode import unidecode
 
 # Notes
+# Version renvoyant des nombres
 # skaïa skaia skaja
 # Doïstoievski
 # Alexeïevitch Alexeievitch
@@ -29,6 +30,11 @@ from unidecode import unidecode
 # Volodymyr_Veredyuk, Wolodymyr_Weredjuk
 # Roman_Kolzow, Roman_Koltsov
 # Sergei_Belych, Sergey_Belykh
+# wojciek
+# Djezira, Giacomo, Djacomo al- el-
+# Strzoda
+# Variantes polonaises
+# Pierrick_Rakotoharisoa,Pierrick_Rakotoharizoa
 
 # criblage à base de aev pour normalisers
 

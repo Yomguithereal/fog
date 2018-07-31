@@ -13,6 +13,10 @@
 # Data cleansing and the merge/purge problem. Data Mining and Knowledge
 # Discovery, 2(1), 1998
 #
+# Yan, Su, Dongwon Lee, Min-Yen Kan, et Lee C. Giles. « Adaptive Sorted
+# Neighborhood Methods for Efficient Record Linkage », 185. ACM Press, 2007.
+# https://doi.org/10.1145/1255175.1255213.
+#
 # [Urls]:
 # https://hpi.de/fileadmin/user_upload/fachgebiete/naumann/folien/SS13/DPDC/DPDC_14_SNM.pdf
 #
@@ -99,3 +103,101 @@ def sorted_neighborhood(data, key=None, keys=None, similarity=None, distance=Non
         mode=mode,
         fuzzy=keys is not None
     )
+
+
+# def full_AA_SNM(sorted_records, similarity, window):
+#     n = len(sorted_records)
+#     w = window
+#     blocks = []
+#     first = 0
+#     last = first + w
+
+#     while last < n:
+#         block.append(first)
+
+#         # Enlargement
+#         while similarity(sorted_records[first], sorted_records[last]):
+#             w = last - first + 1
+#             first = last
+#             last = first + w
+
+#         # Retrechment
+#         while w > window:
+#             pass
+
+
+# def adaptive_sorted_neighborhood(data, key=None, keys=None, similarity=None,
+#                                  distance=None, radius=None, window=10,
+#                                  min_size=2, max_size=float('inf'),
+#                                  mode='connected_components'):
+#     """
+#     Function returning an iterator over found clusters using the sorted
+#     neighborhood method.
+
+#     It works using a improved variant of the Sorted Neighborhood Method (SNM)
+#     called Adaptive Sorted Neighoborhood.
+
+#     More specifically, this method implements the "Full-Accumulatively-Adaptative
+#     SNM" from the "Adaptive Sorted Neighborhood Methods for Efficient
+#     Record Linkage" paper.
+
+#     Args:
+#         data (iterable): Arbitrary iterable containing data points to gather
+#             into clusters. Will be fully consumed.
+#         key (callable, optional): key on which to sort the data.
+#         keys (iterable, optional): list of keys on which to sort for multipass
+#             sorted neighborhood method.
+#         similarity (callable): If radius is specified, a function returning
+#             the similarity between two points. Else, a function returning
+#             whether two points should be deemed similar. Alternatively, one can
+#             specify `distance` instead.
+#         distance (callable): If radius is specified, a function returning
+#             the distance between two points. Else, a function returning
+#             whether two point should not be deemed similar. Alternatively, one
+#             can specify `similarity` instead.
+#         radius (number, optional): produced clusters' radius.
+#         window (number, optional): Size of the window in which to look for
+#             matches. Defaults to 10.
+#         min_size (number, optional): minimum number of items in a cluster for
+#             it to be considered viable. Defaults to 2.
+#         max_size (number, optional): maximum number of items in a cluster for
+#             it to be considered viable. Defaults to infinity.
+#         mode (string, optional): 'fuzzy_clusters', 'connected_components'.
+#             Defaults to 'connected_components'.
+
+#     Yields:
+#         list: A viable cluster.
+
+#     """
+
+#     # Formatting similarity
+#     similarity = make_similarity_function(similarity=similarity, distance=distance, radius=radius)
+
+#     # Iterating over sorted data
+#     def clustering():
+#         multipass_keys = keys if keys is not None else [key]
+
+#         for k in multipass_keys:
+#             S = sorted(data, key=k)
+#             n = len(S)
+
+#             w = window
+#             block = []
+
+#     # Building clusters
+#     yield from clusters_from_pairs(
+#         clustering(),
+#         min_size=min_size,
+#         max_size=max_size,
+#         mode=mode,
+#         fuzzy=keys is not None
+#     )
+
+#     # Building clusters
+#     # yield from clusters_from_pairs(
+#     #     clustering(),
+#     #     min_size=min_size,
+#     #     max_size=max_size,
+#     #     mode=mode,
+#     #     fuzzy=keys is not None
+#     # )

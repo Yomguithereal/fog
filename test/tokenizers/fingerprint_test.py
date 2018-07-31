@@ -59,6 +59,11 @@ class TestFingerprintTokenizer(object):
 
         assert tokenizer('l\'université de Bade-Wurt') == ['bade', 'universite', 'wurt']
 
+    def test_squeeze(self):
+        tokenizer = create_fingerprint_tokenizer(squeeze=True)
+
+        assert tokenizer('Russian Barnett') == ['barnet', 'rusian']
+
     def test_ngrams(self):
 
         for n, string, key in NGRAMS_TESTS:
