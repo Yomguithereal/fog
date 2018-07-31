@@ -4,7 +4,7 @@
 import csv
 from test.clustering.utils import Clusters
 from Levenshtein import distance as levenshtein
-from fog.clustering import sorted_neighborhood
+from fog.clustering import sorted_neighborhood, adaptive_sorted_neighborhood
 
 DATA = [
     'Abelard',
@@ -27,5 +27,12 @@ class TestSortedNeighborhood(object):
 
         # Sorting alphabetically
         clusters = Clusters(sorted_neighborhood(DATA, distance=levenshtein, radius=1, window=2))
+
+        assert clusters == CLUSTERS
+
+    def test_adaptive(self):
+
+        # Sorting alphabetically
+        clusters = Clusters(adaptive_sorted_neighborhood(DATA, distance=levenshtein, radius=1, window=2))
 
         assert clusters == CLUSTERS

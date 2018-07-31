@@ -23,7 +23,6 @@
 from collections import defaultdict
 from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 
-# TODO: adaptive etc.
 # TODO: parallelize
 
 
@@ -105,99 +104,128 @@ def sorted_neighborhood(data, key=None, keys=None, similarity=None, distance=Non
     )
 
 
-# def full_AA_SNM(sorted_records, similarity, window):
-#     n = len(sorted_records)
-#     w = window
-#     blocks = []
-#     first = 0
-#     last = first + w
+def full_AA_SNM(sorted_records, similarity, window):
+    n = len(sorted_records)
+    w = window
+    step = w - 1
+    first = 0
+    last = first + step
 
-#     while last < n:
-#         block.append(first)
+    while last < n:
+        f = first
 
-#         # Enlargement
-#         while similarity(sorted_records[first], sorted_records[last]):
-#             w = last - first + 1
-#             first = last
-#             last = first + w
+        # Enlargement
+        while similarity(sorted_records[first], sorted_records[last]):
+            w = last - f + 1
+            first = last
+            last = first + w - 1
 
-#         # Retrechment
-#         while w > window:
-#             pass
+        # Retrenchment
+        w = last - f + 1
+
+        while w > window:
+            previous = last - 1
+
+            if similarity(sorted_records[previous], sorted_records[last]):
+                break
+
+            # NOTE: possibility to divide the window by two according to
+            # the paper.
+            w -= 1
+            last = previous
+
+        w = window
+
+        yield (f, last)
+
+        first = last + 1
+        last = first + step
+
+    if first < n:
+        yield (first, n - 1)
 
 
-# def adaptive_sorted_neighborhood(data, key=None, keys=None, similarity=None,
-#                                  distance=None, radius=None, window=10,
-#                                  min_size=2, max_size=float('inf'),
-#                                  mode='connected_components'):
-#     """
-#     Function returning an iterator over found clusters using the sorted
-#     neighborhood method.
+def adaptive_sorted_neighborhood(data, key=None, keys=None, similarity=None,
+                                 distance=None, radius=None, window=10,
+                                 min_size=2, max_size=float('inf'),
+                                 mode='connected_components'):
+    """
+    Function returning an iterator over found clusters using the sorted
+    neighborhood method.
 
-#     It works using a improved variant of the Sorted Neighborhood Method (SNM)
-#     called Adaptive Sorted Neighoborhood.
+    It works using a improved variant of the Sorted Neighborhood Method (SNM)
+    called Adaptive Sorted Neighoborhood.
 
-#     More specifically, this method implements the "Full-Accumulatively-Adaptative
-#     SNM" from the "Adaptive Sorted Neighborhood Methods for Efficient
-#     Record Linkage" paper.
+    More specifically, this method implements the "Full-Accumulatively-Adaptative
+    SNM" from the "Adaptive Sorted Neighborhood Methods for Efficient
+    Record Linkage" paper.
 
-#     Args:
-#         data (iterable): Arbitrary iterable containing data points to gather
-#             into clusters. Will be fully consumed.
-#         key (callable, optional): key on which to sort the data.
-#         keys (iterable, optional): list of keys on which to sort for multipass
-#             sorted neighborhood method.
-#         similarity (callable): If radius is specified, a function returning
-#             the similarity between two points. Else, a function returning
-#             whether two points should be deemed similar. Alternatively, one can
-#             specify `distance` instead.
-#         distance (callable): If radius is specified, a function returning
-#             the distance between two points. Else, a function returning
-#             whether two point should not be deemed similar. Alternatively, one
-#             can specify `similarity` instead.
-#         radius (number, optional): produced clusters' radius.
-#         window (number, optional): Size of the window in which to look for
-#             matches. Defaults to 10.
-#         min_size (number, optional): minimum number of items in a cluster for
-#             it to be considered viable. Defaults to 2.
-#         max_size (number, optional): maximum number of items in a cluster for
-#             it to be considered viable. Defaults to infinity.
-#         mode (string, optional): 'fuzzy_clusters', 'connected_components'.
-#             Defaults to 'connected_components'.
+    Args:
+        data (iterable): Arbitrary iterable containing data points to gather
+            into clusters. Will be fully consumed.
+        key (callable, optional): key on which to sort the data.
+        keys (iterable, optional): list of keys on which to sort for multipass
+            sorted neighborhood method.
+        similarity (callable): If radius is specified, a function returning
+            the similarity between two points. Else, a function returning
+            whether two points should be deemed similar. Alternatively, one can
+            specify `distance` instead.
+        distance (callable): If radius is specified, a function returning
+            the distance between two points. Else, a function returning
+            whether two point should not be deemed similar. Alternatively, one
+            can specify `similarity` instead.
+        radius (number, optional): produced clusters' radius.
+        window (number, optional): Size of the window in which to look for
+            matches. Defaults to 10.
+        min_size (number, optional): minimum number of items in a cluster for
+            it to be considered viable. Defaults to 2.
+        max_size (number, optional): maximum number of items in a cluster for
+            it to be considered viable. Defaults to infinity.
+        mode (string, optional): 'fuzzy_clusters', 'connected_components'.
+            Defaults to 'connected_components'.
 
-#     Yields:
-#         list: A viable cluster.
+    Yields:
+        list: A viable cluster.
 
-#     """
+    """
 
-#     # Formatting similarity
-#     similarity = make_similarity_function(similarity=similarity, distance=distance, radius=radius)
+    # Formatting similarity
+    similarity = make_similarity_function(similarity=similarity, distance=distance, radius=radius)
 
-#     # Iterating over sorted data
-#     def clustering():
-#         multipass_keys = keys if keys is not None else [key]
+    # Iterating over sorted data
+    def clustering():
+        multipass_keys = keys if keys is not None else [key]
 
-#         for k in multipass_keys:
-#             S = sorted(data, key=k)
-#             n = len(S)
+        for k in multipass_keys:
+            S = sorted(data, key=k)
 
-#             w = window
-#             block = []
+            for start, end in full_AA_SNM(S, similarity, window):
+                l = end - start + 1
 
-#     # Building clusters
-#     yield from clusters_from_pairs(
-#         clustering(),
-#         min_size=min_size,
-#         max_size=max_size,
-#         mode=mode,
-#         fuzzy=keys is not None
-#     )
+                if l == 1:
+                    continue
 
-#     # Building clusters
-#     # yield from clusters_from_pairs(
-#     #     clustering(),
-#     #     min_size=min_size,
-#     #     max_size=max_size,
-#     #     mode=mode,
-#     #     fuzzy=keys is not None
-#     # )
+                elif l == 2:
+                    A = S[start]
+                    B = S[end]
+
+                    if similarity(A, B):
+                        yield (A, B)
+
+                else:
+                    for i in range(start, end + 1):
+                        for j in range(i + 1, end + 1):
+                            A = S[i]
+                            B = S[j]
+
+                            if similarity(A, B):
+                                yield (A, B)
+
+    # Building clusters
+    yield from clusters_from_pairs(
+        clustering(),
+        min_size=min_size,
+        max_size=max_size,
+        mode=mode,
+        fuzzy=keys is not None
+    )

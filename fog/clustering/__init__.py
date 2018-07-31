@@ -13,6 +13,7 @@ from fog.clustering.pairwise import (
 )
 from fog.clustering.quickjoin import quickjoin
 from fog.clustering.sorted_neighborhood import (
-    sorted_neighborhood
+    sorted_neighborhood,
+    adaptive_sorted_neighborhood
 )
 from fog.clustering.vp_tree import vp_tree
