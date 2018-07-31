@@ -4,6 +4,36 @@
 #
 # Functions for creating custom fingerprint tokenizers.
 #
+# Fingerprinting is a clever way to normalize strings in order to remove
+# anything that would not compulsorily yield meaning such as token ordering,
+# & duplication etc.
+#
+# The basic fingerprinting procedure is the following:
+#   1. Normalizing the case
+#   2. Normalizing unicode characters to plain ascii
+#   3. Dropping any non-alphanumeric character
+#   4. Dropping irrelevant whitespace
+#   5. Tokenizing by splitting the string by whitespaces
+#   6. Deduplicating the tokens
+#   7. Sorting the tokens
+#   8. Returning those tokens that will usually be re-joined by a single space
+#
+# For instance, this fingerprinting scheme will be able to match the
+# following strings:
+#   "University of North Carolina"
+#   "North Carolina, university of"
+#   "UNIVERSITY OF NORTH CAROLINA"
+#   "University   of of north CarolINA"
+#   "University --- of --- North Carolina"
+#   "..."
+#
+# Optionally, one can chose more advanced and aggressive options such as
+# filtering some tokens and squeezing the string etc.
+#
+# The ngram fingerprint is a variant that returns a list of normalized ngrams
+# that will be joined in order rather than the whole tokens. It is
+# sometimes useful to find misspelled strings.
+#
 # [Url]:
 # http://openrefine.org/
 #
@@ -12,7 +42,6 @@ from unidecode import unidecode
 from fog.utils import squeeze as squeeze_string
 from fog.tokenizers.ngrams import ngrams
 
-# TODO: better docs
 WHITESPACE_RE = re.compile('\\s+')
 DIGITS_RE = re.compile('\\d+')
 BLACKLIST_RE = re.compile('[^a-z0-9\\s]')
