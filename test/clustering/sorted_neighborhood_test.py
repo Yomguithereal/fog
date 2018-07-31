@@ -7,11 +7,11 @@ from Levenshtein import distance as levenshtein
 from fog.clustering import sorted_neighborhood, adaptive_sorted_neighborhood
 
 DATA = [
+    'Belgian',
     'Abelard',
-    'Abelar',
     'Atrium',
     'Atrides',
-    'Belgian',
+    'Abelar',
     'Belgia',
     'Telgia'
 ]
