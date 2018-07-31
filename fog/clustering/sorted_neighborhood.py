@@ -31,7 +31,7 @@ def sorted_neighborhood(data, key=None, keys=None, similarity=None, distance=Non
                         mode='connected_components'):
     """
     Function returning an iterator over found clusters using the sorted
-    neighborhood method.
+    neighborhood method (SNM).
 
     It works by first sorting the data according to a key which could, if
     cleverly chosen, put similar items next to one another in the result.
@@ -41,6 +41,9 @@ def sorted_neighborhood(data, key=None, keys=None, similarity=None, distance=Non
 
     Omission key & skeleton keys by Pollock & Zamora are a good choice of
     sorting key if you try to find mispellings, for instance.
+
+    Other good choice of keys is a combination of sorting strings
+    lexicographically and sorting them reversed ([None, lambda x: x[::-1]]).
 
     Note that the sorted neighboorhood method usually runs faster than blocking
     but also misses much more true positives.
@@ -150,15 +153,16 @@ def adaptive_sorted_neighborhood(data, key=None, keys=None, similarity=None,
                                  min_size=2, max_size=float('inf'),
                                  mode='connected_components'):
     """
-    Function returning an iterator over found clusters using the sorted
-    neighborhood method.
-
-    It works using a improved variant of the Sorted Neighborhood Method (SNM)
-    called Adaptive Sorted Neighoborhood.
+    Function returning an iterator over found clusters using the adaptive
+    sorted neighborhood method (ASNM).
 
     More specifically, this method implements the "Full-Accumulatively-Adaptative
     SNM" from the "Adaptive Sorted Neighborhood Methods for Efficient
     Record Linkage" paper.
+
+    Note that this method is more precise that basic SNM only for cases where
+    duplicate components are sufficiently large and when the variance
+    of their size is important. Else it's basically useless.
 
     Args:
         data (iterable): Arbitrary iterable containing data points to gather
