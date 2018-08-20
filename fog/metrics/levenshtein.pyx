@@ -63,6 +63,12 @@ def levenshtein_distance(str A, str B):
     if LA == 0:
         return LB
 
+    if LA == 1:
+        if A[start] in B:
+            return LB - 1
+
+        return LB
+
     cdef unsigned short *codes = <unsigned short *> malloc(LB * sizeof(unsigned short))
     cdef unsigned int *vector = <unsigned int *> malloc(LB * sizeof(unsigned int))
 
@@ -117,6 +123,7 @@ def levenshtein_distance(str A, str B):
     free(vector)
 
     return current
+
 
 @cython.boundscheck(False)
 def limited_levenshtein_distance(unsigned int max_distance, str A, str B):
