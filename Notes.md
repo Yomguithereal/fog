@@ -2,7 +2,8 @@
 
 # CLI Commands
 
-Take piped input
+* Take piped input.
+* `--inplace`
 
 ## transform
 
