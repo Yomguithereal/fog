@@ -116,7 +116,6 @@ def levenshtein_distance(str A, str B):
 
             j += 1
 
-
         i += 1
 
     free(codes)
@@ -246,7 +245,6 @@ def limited_levenshtein_distance(unsigned int max_distance, str A, str B):
                 current += 1
 
             vector[j] = current
-
 
             j += 1
 
