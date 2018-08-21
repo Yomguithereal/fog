@@ -5,12 +5,12 @@
 # Logic of the cluster CLI action enabling the user to cluster the content of
 # a CSV file.
 #
-import csv
 import re
 from collections import Counter
 from datetime import datetime
 from timeit import default_timer as timer
 
+from fog.cli.helpers import custom_reader
 from fog.clustering import (
     key_collision
 )
@@ -72,14 +72,14 @@ def cluster_action(namespace):
     routine = CLUSTERING_ROUTINES[namespace.algorithm]
 
     lines = 0
-    with open(namespace.file, 'r') as f:
-        reader = csv.DictReader(f)
 
-        values = Counter()
+    headers, position, reader = custom_reader(namespace.file, namespace.column)
 
-        for line in reader:
-            lines += 1
-            values[line[namespace.column]] += 1
+    values = Counter()
+
+    for line in reader:
+        lines += 1
+        values[line[position]] += 1
 
     start = timer()
     clusters = routine['fn'](values.keys(), **routine['kwargs'])
