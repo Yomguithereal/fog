@@ -1,6 +1,6 @@
 from fog.clustering.blocking import blocking
-from fog.clustering.jaccard_intersection_index import (
-    jaccard_intersection_index
+from fog.clustering.intersection_index import (
+    intersection_index
 )
 from fog.clustering.key_collision import key_collision
 from fog.clustering.minhash import minhash

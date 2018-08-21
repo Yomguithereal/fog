@@ -1,5 +1,5 @@
 # =============================================================================
-# Fog Key Jaccard Intersection Clustering
+# Fog Key Intersection Clustering
 # =============================================================================
 #
 # Clustering routine leveraging an intersection index to find similar items.
@@ -14,9 +14,11 @@ from fog.clustering.utils import clusters_from_pairs
 
 # NOTE: compromise between key collision & meta blocking
 
+METRICS = ['jaccard', 'overlap']
 
-def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
-                               max_size=float('inf'), mode='connected_components'):
+
+def intersection_index(data, metric='jaccard', radius=0.8, key=None, min_size=2,
+                       max_size=float('inf'), mode='connected_components'):
     """
     Function returning an iterator over found clusters.
 
@@ -38,7 +40,9 @@ def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
     Args:
         data (iterable): Arbitrary iterable containing data points to gather
             into clusters. Will be fully consumed.
-        radius (number): Jaccard similarity radius.
+        metric (string, optional): Metric to use. One of {'jaccard', 'overlap'}.
+            Defaults to 'jaccard'.
+        radius (number, optional): Jaccard similarity radius.
         key (callable, optional): Function returning an item's key.
         min_size (number, optional): minimum number of items in a cluster for
             it to be considered viable. Defaults to 2.
@@ -51,6 +55,10 @@ def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
         list: A viable cluster.
 
     """
+
+    if metric not in METRICS:
+        raise TypeError('fog.clustering.intersection_index: unknown metric "%s"' % metric)
+
     buckets = defaultdict(list)
     intersections = defaultdict(Counter)
 
@@ -78,10 +86,18 @@ def jaccard_intersection_index(data, radius=0.8, key=None, min_size=2,
         for i, neighbors in intersections.items():
 
             for j, I in neighbors.items():
-                U = sizes[i] + sizes[j] - I
 
-                if I / U >= radius:
-                    yield (i, j)
+                if metric == 'jaccard':
+                    U = sizes[i] + sizes[j] - I
+
+                    if I / U >= radius:
+                        yield (i, j)
+
+                else:
+                    M = min(sizes[i], sizes[j])
+
+                    if I / M >= radius:
+                        yield (i, j)
 
     gen = clusters_from_pairs(
         clustering(),
