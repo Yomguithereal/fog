@@ -10,7 +10,7 @@ from fog.clustering.utils import clusters_from_pairs
 # TODO: online tf-idf cutoff by automatically cutting down large buckets over
 # a given threshold. call it burst and erase already set counters
 
-# TODO: change this to overlap index and implement cosine & overlap
+# TODO: cosine variants
 
 # NOTE: compromise between key collision & meta blocking
 
