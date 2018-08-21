@@ -24,6 +24,6 @@ setup(name='fog',
         'Unidecode==1.0.22'
     ],
     entry_points={
-        'console_scripts': ['fog=fog.cli.endpoint:main']
+        'console_scripts': ['fog=fog.cli:main']
     },
     zip_safe=True)
