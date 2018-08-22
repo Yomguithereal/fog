@@ -5,7 +5,7 @@ with open('./README.md', 'r') as f:
     long_description = f.read()
 
 setup(name='fog',
-    version='0.5.0',
+    version='0.5.1',
     description='A fuzzy matching & clustering library for python.',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -17,8 +17,9 @@ setup(name='fog',
     python_requires='>=3',
     packages=find_packages(exclude=['experiments', 'test']),
     ext_modules=cythonize('fog/metrics/*.pyx'),
-    package_data={'docs': ['README.md']},
+    package_data={'': ['*.pyx'], 'docs': ['README.md']},
     install_requires=[
+        'Cython>=0.16',
         'dill==0.2.7.1',
         'phylactery==0.1.1',
         'Unidecode==1.0.22'
