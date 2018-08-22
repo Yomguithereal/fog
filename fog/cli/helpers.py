@@ -8,7 +8,11 @@ import csv
 
 
 def custom_reader(f, target_header):
-    reader = csv.reader(f)
+    sniffer = csv.Sniffer()
+    dialect = sniffer.sniff(f.read(1024))
+    f.seek(0)
+
+    reader = csv.reader(f, dialect)
 
     headers = next(reader, None)
 
