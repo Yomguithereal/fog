@@ -25,8 +25,8 @@ setup(name='fog',
         'Unidecode==1.0.22'
     ],
     setup_requires=[
-        'setuptools>=18.0',
-        'cython'
+        'cython',
+        'setuptools>=18.0'
     ],
     entry_points={
         'console_scripts': ['fog=fog.cli.__main__:main']
