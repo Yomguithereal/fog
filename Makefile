@@ -4,7 +4,7 @@ SOURCE = fog
 # Commands
 all: lint test
 test: build-ext unit
-publish: lint test build-ext upload clean
+publish: lint test upload clean
 
 build-ext:
 	python setup.py build_ext --inplace
