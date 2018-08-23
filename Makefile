@@ -7,10 +7,12 @@ test: build-ext unit
 publish: lint test upload clean
 
 build-ext:
-	python setup.py build_ext --inplace
+	find . -name *.pyx | xargs cython
 
 clean:
-	rm -rf *.egg-info .pytest_cache .ipynb_checkpoints ./**/__pycache__ ./**/**/__pycache__ build dist
+	rm -rf *.egg-info .pytest_cache .ipynb_checkpoints build dist
+	find . -name __pycache__ -type d | xargs rm -rf
+	find . -name *.c -type f | xargs rm
 
 lint:
 	@echo Linting source code using pep8...
