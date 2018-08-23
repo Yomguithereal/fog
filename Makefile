@@ -4,7 +4,7 @@ SOURCE = fog
 # Commands
 all: lint test
 test: build-ext unit
-publish: lint test upload clean
+publish: lint test build-ext upload clean
 
 build-ext:
 	find . -name *.pyx | xargs cython
