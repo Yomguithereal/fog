@@ -10,7 +10,7 @@ from argparse import ArgumentParser, FileType
 
 from fog.cli.cluster import cluster_action, CLUSTERING_ROUTINES
 from fog.cli.split import split_action
-from fog.cli.transform import transform_action
+from fog.cli.transform import transform_action, OPERATIONS
 
 SUBPARSERS = {}
 
@@ -38,7 +38,7 @@ def main():
 
     transform_subparser = subparsers.add_parser('transform', description='Transform the values of a column in batch.')
     transform_subparser.add_argument('column', help='column')
-    transform_subparser.add_argument('operations', help='operations to apply, separated by commas')
+    transform_subparser.add_argument('operations', help='operations to apply, separated by commas {%s}' % ','.join(list(OPERATIONS.keys())))
     transform_subparser.add_argument('file', help='csv file to transform', type=FileType('r'), default=sys.stdin, nargs='?')
     transform_subparser.add_argument('-o', '--output', help='output file', type=FileType('w'), default=sys.stdout)
     transform_subparser.add_argument('-t', '--target-column', help='name of the column to create')
