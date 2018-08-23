@@ -7,7 +7,9 @@ test: build-ext unit
 publish: lint test build-ext upload clean
 
 build-ext:
+	@echo Building native extensions...
 	find . -name *.pyx | xargs cython && find . -name *.c
+	@echo
 
 clean:
 	rm -rf *.egg-info .pytest_cache .ipynb_checkpoints build dist
