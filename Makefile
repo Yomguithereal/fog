@@ -7,7 +7,7 @@ test: build-ext unit
 publish: lint test build-ext upload clean
 
 build-ext:
-	find . -name *.pyx | xargs cython
+	find . -name *.pyx | xargs cython && find . -name *.c
 
 clean:
 	rm -rf *.egg-info .pytest_cache .ipynb_checkpoints build dist
