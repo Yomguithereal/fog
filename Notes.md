@@ -5,6 +5,12 @@
 * Take piped input.
 * `--inplace`
 
+## tag
+
+As with datapol.
+
+## create column from others
+
 ## transform
 
 * Decimals
