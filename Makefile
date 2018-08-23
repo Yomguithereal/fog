@@ -9,6 +9,7 @@ publish: lint test build-ext upload clean
 build-ext:
 	@echo Building native extensions...
 	find . -name *.pyx | xargs cython && find . -name *.c
+	@echo
 	python setup.py build_ext --inplace
 	@echo
 

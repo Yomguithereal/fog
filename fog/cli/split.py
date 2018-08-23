@@ -7,7 +7,7 @@
 #
 import csv
 
-from fog.cli.helpers import custom_reader
+from fog.cli.utils import custom_reader
 
 
 def split_action(namespace):
@@ -32,9 +32,8 @@ def split_action(namespace):
         for value in values.split(namespace.separator):
 
             if namespace.target_column:
-                row = line + [value]
+                line.append(value)
             else:
                 line[position] = value
-                row = line
 
-            writer.writerow(row)
+            writer.writerow(line)
