@@ -25,6 +25,7 @@ from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 
 # TODO: parallelize
 # TODO: default zigzag
+# TODO: multipass snm variant
 
 
 def sorted_neighborhood(data, key=None, keys=None, similarity=None, distance=None,

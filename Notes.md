@@ -38,6 +38,8 @@ split file col
 --separator "|"
 ```
 
+--matrix to split as a matrix
+
 ## unique
 
 ```

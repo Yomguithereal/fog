@@ -368,7 +368,7 @@ def pairwise_connected_components(data, similarity=None, distance=None, radius=N
         yield [data[i] for i in component]
 
 
-def pairwise(data, mode='fuzzy_clusters', **kwargs):
+def pairwise(data, mode='connected_components', **kwargs):
     """
     Function returning an iterator over found clusters by computing pairwise
     similarity or distance.
@@ -377,7 +377,7 @@ def pairwise(data, mode='fuzzy_clusters', **kwargs):
         data (iterable): Arbitrary iterable containing data points to gather
             into clusters. Will be fully consumed.
         mode (str): 'leader' or 'fuzzy_clusters' or 'connected_components'.
-            Defaults to 'fuzzy_clusters'.
+            Defaults to 'connected_components'.
         similarity (callable): If radius is specified, a function returning
             the similarity between two points. Else, a function returning
             whether two points should be deemed similar. Alternatively, one can
