@@ -21,6 +21,10 @@ def levenshtein_1d(string, transpositions=False):
     of keys colliding with other strings being at a Levenshtein distance of
     1 with the given string.
 
+    Those keys are useful to perform O(n) clustering with Levenshtein
+    distance <= 1 but can become very costly with long strings since the number
+    of produced keys is a factor of your string's length.
+
     Args:
         string (string): Target string
         transpositions (bool, optional): Whether to support transpositions
