@@ -11,6 +11,7 @@
 #
 # Note that it's also possible to generate transpostion keys.
 #
+from functools import partial
 
 FLAG = '\x00'
 
@@ -59,3 +60,6 @@ def levenshtein_1d(string, transpositions=False):
 
     # Last addition
     yield string + FLAG
+
+
+damerau_levenshtein_1d = partial(levenshtein_1d, transpositions=True)

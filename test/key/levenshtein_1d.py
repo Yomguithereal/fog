@@ -1,7 +1,7 @@
 # =============================================================================
 # Fog Levenshtein 1D Key Unit Tests
 # =============================================================================
-from fog.key import levenshtein_1d
+from fog.key import levenshtein_1d, damerau_levenshtein_1d
 
 HELLO_KEYS = set([
     'hello',
@@ -36,5 +36,9 @@ class TestLevenshtein1DKey(object):
         assert keys == HELLO_KEYS
 
         keys_with_transpositions = set(prettify(k) for k in levenshtein_1d('hello', transpositions=True))
+
+        assert keys_with_transpositions == HELLO_KEYS | HELLO_TRANSPOSITION_KEYS
+
+        keys_with_transpositions = set(prettify(k) for k in damerau_levenshtein_1d('hello'))
 
         assert keys_with_transpositions == HELLO_KEYS | HELLO_TRANSPOSITION_KEYS
