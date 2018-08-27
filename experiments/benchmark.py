@@ -4,7 +4,7 @@ from timeit import default_timer as timer
 from fog.clustering import *
 from fog.metrics import jaccard_similarity
 from fog.tokenizers import ngrams
-from fog.key import fingerprint, omission_key, skeleton_key
+from fog.key import fingerprint, omission_key, skeleton_key, damerau_levenshtein_1d
 from Levenshtein import distance as levenshtein
 from fog.metrics.levenshtein import limited_levenshtein_distance
 
@@ -63,6 +63,10 @@ with open('./data/universities.csv', 'r') as f:
     clusters = list(sorted_neighborhood(universities, keys=[omission_key, skeleton_key], distance=levenshtein, radius=2))
     print('SNM Omission + Skeleton (%i):' % len(clusters), timer() - start)
 
+    start = timer()
+    clusters = list(key_collision(universities, keys=damerau_levenshtein_1d))
+    print('Damerau-Levenshtein 1d (%i):' % len(clusters), timer() - start)
+
 print()
 with open('./data/musicians.csv', 'r') as f:
     reader = csv.DictReader(f)
@@ -78,6 +82,10 @@ with open('./data/musicians.csv', 'r') as f:
     start = timer()
     clusters = list(key_collision(artists, key=fingerprint))
     print('Fingerprint key collision (%i)' % len(clusters), timer() - start)
+
+    start = timer()
+    clusters = list(key_collision(artists, keys=damerau_levenshtein_1d))
+    print('Damerau-Levenshtein 1d (%i)' % len(clusters), timer() - start)
 
     start = timer()
     clusters = list(blocking(artists, blocks=partial(ngrams, 6), distance=levenshtein, radius=2, processes=8))
