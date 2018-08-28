@@ -16,7 +16,7 @@ from functools import partial
 FLAG = '\x00'
 
 
-def levenshtein_1d(string, transpositions=False):
+def levenshtein_1d_keys(string, transpositions=False):
     """
     Function returning an iterator over Levenshtein 1D keys, being the series
     of keys colliding with other strings being at a Levenshtein distance of
@@ -62,4 +62,4 @@ def levenshtein_1d(string, transpositions=False):
     yield string + FLAG
 
 
-damerau_levenshtein_1d = partial(levenshtein_1d, transpositions=True)
+damerau_levenshtein_1d_keys = partial(levenshtein_1d_keys, transpositions=True)

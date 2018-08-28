@@ -1,7 +1,7 @@
 # =============================================================================
 # Fog Levenshtein 1D Key Unit Tests
 # =============================================================================
-from fog.key import levenshtein_1d, damerau_levenshtein_1d
+from fog.key import levenshtein_1d_keys, damerau_levenshtein_1d_keys
 
 HELLO_KEYS = set([
     'hello',
@@ -31,14 +31,14 @@ def prettify(s):
 class TestLevenshtein1DKey(object):
     def test_basics(self):
 
-        keys = set(prettify(k) for k in levenshtein_1d('hello'))
+        keys = set(prettify(k) for k in levenshtein_1d_keys('hello'))
 
         assert keys == HELLO_KEYS
 
-        keys_with_transpositions = set(prettify(k) for k in levenshtein_1d('hello', transpositions=True))
+        keys_with_transpositions = set(prettify(k) for k in levenshtein_1d_keys('hello', transpositions=True))
 
         assert keys_with_transpositions == HELLO_KEYS | HELLO_TRANSPOSITION_KEYS
 
-        keys_with_transpositions = set(prettify(k) for k in damerau_levenshtein_1d('hello'))
+        keys_with_transpositions = set(prettify(k) for k in damerau_levenshtein_1d_keys('hello'))
 
         assert keys_with_transpositions == HELLO_KEYS | HELLO_TRANSPOSITION_KEYS
