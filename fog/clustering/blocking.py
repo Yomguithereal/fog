@@ -14,6 +14,7 @@ from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 # TODO: worker using a VPTree
 # TODO: custom inner algorithm
 # TODO: fuzzy blocking variant
+# TODO: possibility not to merge if sure cannot collide twice
 
 
 def block_worker(payload):

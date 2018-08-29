@@ -76,13 +76,19 @@ LEVENSHTEIN_LTE1_TESTS = [
     ('BONTOUR', 'BONJOUR', True),
     ('BONJOUR', 'MONJOUR', True),
     ('BONJOUR', 'BONJOUT', True),
+    ('BMNJOURE', 'BONJOUR', False),
+    ('MONJOURE', 'BONJOUR', False),
     ('BTONJOUR', 'BONJOUR', True),
     ('BONJOUR', 'F', False),
     ('BONJOUR', 'BNOJOURE', False),
     ('BONJOUR', 'BONJOURES', False),
     ('Faylan', 'Fayray', False),
     ('Loane', 'Loona', False),
-    ('David Byrne', 'David Byron', False)
+    ('David Byrne', 'David Byron', False),
+    ('Willie Nix', 'Willie Nile', False),
+    ('DJ Spinna', 'DJ Spinbad', False),
+    ('Lian Ross', 'Diana Ross', False),
+    ('Diana', 'Lian', False)
 ]
 
 
@@ -110,5 +116,8 @@ class TestLevenshteinSimilarity(object):
         for word in HELLO_WORDS + HELLO_WORDS_TRANSPOSITIONS:
             assert damerau_levenshtein_distance_lte1('BONJOUR', word)
             assert damerau_levenshtein_distance_lte1(word, 'BONJOUR')
+
+        for A, B, result in LEVENSHTEIN_LTE1_TESTS:
+            assert damerau_levenshtein_distance_lte1(A, B) == result
 
         assert not damerau_levenshtein_distance_lte1('BONJOUR', 'OTHER')

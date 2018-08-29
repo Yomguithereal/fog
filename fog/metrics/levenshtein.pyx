@@ -294,50 +294,49 @@ def levenshtein_distance_lte1(str A, str B):
     if LA == 0:
         return LB == 1
 
-    if LB - LA > 1:
+    cdef unsigned int d = LB - LA
+
+    if d > 1:
         return False
 
     cdef unsigned int cost = 0
     cdef unsigned int i = 0
     cdef unsigned int j = 0
 
-    while i < LA:
-        if j == LB:
-            return False
+    # Searching for an addition
+    if d == 1:
 
-        a = A[i]
-        b = B[j]
+        while i < LA:
+            a = A[i]
+            b = B[j]
 
-        if a == b:
+            if a == b:
+                i += 1
+                j += 1
+                continue
+
+            if cost == 1:
+                return False
+
+            cost = 1
+            j += 1
+
+    # Searching for a substitution
+    else:
+
+        while i < LA:
+            a = A[i]
+            b = B[i]
+
+            if a != b:
+
+                if cost == 1:
+                    return False
+
+                cost = 1
+
             i += 1
             j += 1
-            continue
-
-        if cost == 1:
-            return False
-
-        if i + 1 == LA:
-            return True
-
-        # Addition
-        b = B[j + 1]
-
-        if a == b:
-            cost = 1
-            i += 1
-            j += 2
-            continue
-
-        # Substitution
-        a = A[i + 1]
-
-        if a == b:
-            cost = 1
-            i += 2
-            j += 2
-            continue
-
-        return False
 
     return True
 
@@ -372,56 +371,54 @@ def damerau_levenshtein_distance_lte1(str A, str B):
     if LA == 0:
         return LB == 1
 
-    if LB - LA > 1:
+    cdef unsigned int d = LB - LA
+
+    if d > 1:
         return False
 
     cdef unsigned int cost = 0
     cdef unsigned int i = 0
     cdef unsigned int j = 0
 
-    while i < LA:
-        if j == LB:
-            return False
+    # Searching for an addition
+    if d == 1:
 
-        a = A[i]
-        b = B[j]
+        while i < LA:
+            a = A[i]
+            b = B[j]
 
-        if a == b:
-            i += 1
+            if a == b:
+                i += 1
+                j += 1
+                continue
+
+            if cost == 1:
+                return False
+
+            cost = 1
             j += 1
-            continue
 
-        if cost == 1:
-            return False
+    # Searching for a substitution or transposition
+    else:
 
-        if i + 1 == LA:
-            return True
+        while i < LA:
+            a = A[i]
+            b = B[i]
 
-        # Transposition
-        if A[i + 1] == b and B[i + 1] == a:
-            cost = 1
-            i += 2
-            j += 2
-            continue
+            if a != b:
 
-        # Addition
-        b = B[j + 1]
+                if cost == 1:
+                    return False
 
-        if a == b:
-            cost = 1
+                cost = 1
+
+                # Transposition
+                if i + 1 < LA and A[i + 1] == b and B[i + 1] == a:
+                    i += 2
+                    j += 2
+                    continue
+
+
             i += 1
-            j += 2
-            continue
-
-        # Substitution
-        a = A[i + 1]
-
-        if a == b:
-            cost = 1
-            i += 2
-            j += 2
-            continue
-
-        return False
 
     return True
