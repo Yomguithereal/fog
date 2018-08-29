@@ -293,12 +293,14 @@ def levenshtein_distance_lte1(str A, str B):
     if LB - LA > 1:
         return False
 
-    cost = False
+    cdef unsigned int cost = 0
     cdef unsigned int i = 0
     cdef unsigned int j = 0
-    cdef unsigned int end = LA - 1
 
-    while i < end:
+    while i < LA:
+        if j == LB:
+            return False
+
         a = A[i]
         b = B[j]
 
@@ -307,24 +309,28 @@ def levenshtein_distance_lte1(str A, str B):
             j += 1
             continue
 
-        if cost:
+        if cost == 1:
             return False
 
+        if i + 1 == LA:
+            return True
+
         # Addition
-        # Note that deletion is just reversed addition
-        b = B[i + 1]
+        b = B[j + 1]
+
         if a == b:
+            cost = 1
             i += 1
             j += 2
-            cost = True
             continue
 
         # Substitution
         a = A[i + 1]
+
         if a == b:
-            i += 1
-            j += 1
-            cost = True
+            cost = 1
+            i += 2
+            j += 2
             continue
 
         return False

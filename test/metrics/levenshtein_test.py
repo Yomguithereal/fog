@@ -67,6 +67,21 @@ HELLO_WORDS_TRANSPOSITIONS = [
     'OBNJOUR'
 ]
 
+LEVENSHTEIN_LTE1_TESTS = [
+    ('BONJOUR', 'BONJOURE', True),
+    ('TBONJOUR', 'BONJOUR', True),
+    ('BONTOUR', 'BONJOUR', True),
+    ('BONJOUR', 'MONJOUR', True),
+    ('BONJOUR', 'BONJOUT', True),
+    ('BTONJOUR', 'BONJOUR', True),
+    ('BONJOUR', 'F', False),
+    ('BONJOUR', 'BNOJOURE', False),
+    ('BONJOUR', 'BONJOURES', False),
+    ('Faylan', 'Fayray', False),
+    ('Loane', 'Loona', False),
+    ('David Byrne', 'David Byron', False)
+]
+
 
 class TestLevenshteinSimilarity(object):
     def test_basics(self):
@@ -84,3 +99,6 @@ class TestLevenshteinSimilarity(object):
         for word in HELLO_WORDS:
             assert levenshtein_distance_lte1(word, 'BONJOUR')
             assert levenshtein_distance_lte1('BONJOUR', word)
+
+        for A, B, result in LEVENSHTEIN_LTE1_TESTS:
+            assert levenshtein_distance_lte1(A, B) == result

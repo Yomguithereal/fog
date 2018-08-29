@@ -17,9 +17,8 @@ with Timer('keys'):
     key_clusters = list(key_collision(artists, keys=levenshtein_1d_keys))
 
 with Timer('blocks'):
-    block_clusters = list(blocking(artists, blocks=levenshtein_1d_blocks, distance=levenshtein, radius=1))
+    block_clusters = list(blocking(artists, blocks=levenshtein_1d_blocks, similarity=levenshtein_distance_lte1))
 
-#['Faylan', 'Fayray'] - ['Loane', 'Loona']
 print(len(pairwise_clusters) == len(key_clusters) == len(block_clusters))
 
 A = set()
