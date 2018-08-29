@@ -4,7 +4,8 @@
 from fog.key import (
     levenshtein_1d_keys,
     damerau_levenshtein_1d_keys,
-    levenshtein_1d_blocks
+    levenshtein_1d_blocks,
+    damerau_levenshtein_1d_blocks
 )
 
 HELLO_KEYS = set([
@@ -36,10 +37,23 @@ HELLO_WORDS = [
     'BONJOU',
     'BONJOURE',
     'BONTJOUR',
-    'TBONJOUR',
-    # 'BOJNOUR',
-    # 'BONOJUR',
-    # 'OBNJOUR'
+    'TBONJOUR'
+]
+
+HELLO_WORDS_TRANSPOSITIONS = [
+    'BOJNOUR',
+    'BONOJUR',
+    'OBNJOUR',
+    'BONJORU'
+]
+
+SECOND_TRANSPOSITIONS_TEST = [
+    'BONJOU',
+    'OBNJOU',
+    'BNOJOU',
+    'BOJNOU',
+    'BONOJU',
+    'BONJUO'
 ]
 
 
@@ -65,11 +79,21 @@ class TestLevenshtein1D(object):
     def test_blocks(self):
 
         assert levenshtein_1d_blocks('T') == ('T', )
-        assert levenshtein_1d_blocks('BONBON') == ('BON', )
 
-        hello_blocks = levenshtein_1d_blocks('BONJOUR')
+        bonjour_blocks = levenshtein_1d_blocks('BONJOUR')
+        bonjou_blocks = damerau_levenshtein_1d_blocks('BONJOU')
 
         for word in HELLO_WORDS:
             blocks = levenshtein_1d_blocks(word)
 
-            assert any(b in hello_blocks for b in blocks)
+            assert any(b in bonjour_blocks for b in blocks)
+
+        for word in HELLO_WORDS + HELLO_WORDS_TRANSPOSITIONS:
+            blocks = levenshtein_1d_blocks(word, transpositions=True)
+
+            assert any(b in bonjour_blocks for b in blocks)
+
+        for word in SECOND_TRANSPOSITIONS_TEST:
+            blocks = damerau_levenshtein_1d_blocks(word)
+
+            assert any(b in bonjou_blocks for b in blocks)

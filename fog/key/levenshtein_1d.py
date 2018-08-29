@@ -65,16 +65,18 @@ def levenshtein_1d_keys(string, transpositions=False):
 damerau_levenshtein_1d_keys = partial(levenshtein_1d_keys, transpositions=True)
 
 
-# TODO: transpositions, TODO: marking start and end
-def levenshtein_1d_blocks(string):
+def levenshtein_1d_blocks(string, transpositions=False):
     """
     Function returning the minimal set of longest Levenshtein distance <= 1
     blocking keys of target string. Under the hood, this splits the given
     string into an average of 3 blocks (2 when string length is even, 4 when
-    odd).
+    odd). When supporting transpositions, the function will always return
+    4 blocks to handle the case when middle letters are transposed.
 
     Args:
         string (str): Target string.
+        transpositions (bool, optional): Whether to support transpositions
+            like with the Damerau-Levenshtein distance. Defaults to False.
 
     Returns:
         tuple: Resulting blocks.
@@ -88,27 +90,21 @@ def levenshtein_1d_blocks(string):
     h = n // 2
 
     # String has even length, we just split in half
-    if n % 2 == 0:
-        first_half = string[:h]
-        second_half = string[h:]
-
-        if first_half == second_half:
-            return (first_half, )
+    if n % 2 == 0 and not transpositions:
+        first_half = FLAG + string[:h]
+        second_half = string[h:] + FLAG
 
         return (first_half, second_half)
 
     # String has odd length, we split twice
     h1 = h + 1
 
-    first_half = string[:h]
-    second_half = string[h:]
-    first_half1 = string[:h1]
-    second_half1 = string[h1:]
-
-    if first_half == second_half1:
-        return (first_half, second_half1, first_half1)
-
-    if second_half == first_half1:
-        return (first_half, second_half, second_half1)
+    first_half = FLAG + string[:h]
+    second_half = string[h:] + FLAG
+    first_half1 = FLAG + string[:h1]
+    second_half1 = string[h1:] + FLAG
 
     return (first_half, second_half, first_half1, second_half1)
+
+
+damerau_levenshtein_1d_blocks = partial(levenshtein_1d_blocks, transpositions=True)
