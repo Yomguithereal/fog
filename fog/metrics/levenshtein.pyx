@@ -266,7 +266,6 @@ def levenshtein_distance_lte1(str A, str B):
     string).
 
     Args:
-        max_distance (number): Maximum allowable distance between A & B.
         A (str): First string.
         B (str): Second string.
 
