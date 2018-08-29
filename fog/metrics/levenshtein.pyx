@@ -340,3 +340,88 @@ def levenshtein_distance_lte1(str A, str B):
         return False
 
     return True
+
+
+def damerau_levenshtein_distance_lte1(str A, str B):
+    """
+    Function returning whether the Damerau-Levenshtein distance between A & B
+    is less than or equal to 1 in linear time (O(m), m being the length of the
+    shortest string).
+
+    Args:
+        A (str): First string.
+        B (str): Second string.
+
+    Returns:
+        bool: Whether Damerau-Levenshtein(A, B) <= 1.
+
+    """
+
+    if A is B:
+        return True
+
+    cdef unsigned int LA = len(A)
+    cdef unsigned int LB = len(B)
+
+    # A should be the shortest string
+    if LA > LB:
+        A, B = B, A
+        LA, LB = LB, LA
+
+    # Early termination
+    if LA == 0:
+        return LB == 1
+
+    if LB - LA > 1:
+        return False
+
+    cdef unsigned int cost = 0
+    cdef unsigned int i = 0
+    cdef unsigned int j = 0
+
+    while i < LA:
+        if j == LB:
+            return False
+
+        a = A[i]
+        b = B[j]
+
+        if a == b:
+            i += 1
+            j += 1
+            continue
+
+        if cost == 1:
+            return False
+
+        if i + 1 == LA:
+            return True
+
+        # Transposition
+        if A[i + 1] == b and B[i + 1] == a:
+            cost = 1
+            i += 2
+            j += 2
+            continue
+
+        # Addition
+        b = B[j + 1]
+
+        if a == b:
+            cost = 1
+            i += 1
+            j += 2
+            continue
+
+        # Substitution
+        a = A[i + 1]
+
+        if a == b:
+            cost = 1
+            i += 2
+            j += 2
+            continue
+
+        return False
+
+    return True

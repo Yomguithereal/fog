@@ -6,7 +6,8 @@ from pytest import approx
 from fog.metrics import (
     levenshtein_distance,
     limited_levenshtein_distance,
-    levenshtein_distance_lte1
+    levenshtein_distance_lte1,
+    damerau_levenshtein_distance_lte1
 )
 
 BASIC_TESTS = [
@@ -62,9 +63,11 @@ HELLO_WORDS = [
 ]
 
 HELLO_WORDS_TRANSPOSITIONS = [
+    'OBNJOUR',
+    'BNOJOUR',
     'BOJNOUR',
     'BONOJUR',
-    'OBNJOUR'
+    'BONJORU'
 ]
 
 LEVENSHTEIN_LTE1_TESTS = [
@@ -102,3 +105,10 @@ class TestLevenshteinSimilarity(object):
 
         for A, B, result in LEVENSHTEIN_LTE1_TESTS:
             assert levenshtein_distance_lte1(A, B) == result
+
+    def test_damerau_lte1(self):
+        for word in HELLO_WORDS + HELLO_WORDS_TRANSPOSITIONS:
+            assert damerau_levenshtein_distance_lte1('BONJOUR', word)
+            assert damerau_levenshtein_distance_lte1(word, 'BONJOUR')
+
+        assert not damerau_levenshtein_distance_lte1('BONJOUR', 'OTHER')
