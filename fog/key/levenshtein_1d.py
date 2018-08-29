@@ -65,12 +65,13 @@ def levenshtein_1d_keys(string, transpositions=False):
 damerau_levenshtein_1d_keys = partial(levenshtein_1d_keys, transpositions=True)
 
 
-def damerau_levenshtein_1d_blocks(string):
+# TODO: transpositions, TODO: marking start and end
+def levenshtein_1d_blocks(string):
     """
-    Function returning the minimal set of longest Damerau-Levenshtein
-    distance <= 1 blocking keys of target string. Under the hood, this splits
-    the given string into an average of 3 blocks (2 when string length is
-    even, 4 when odd).
+    Function returning the minimal set of longest Levenshtein distance <= 1
+    blocking keys of target string. Under the hood, this splits the given
+    string into an average of 3 blocks (2 when string length is even, 4 when
+    odd).
 
     Args:
         string (str): Target string.

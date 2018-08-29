@@ -7,7 +7,7 @@ from fog.key.fingerprint import (
 from fog.key.levenshtein_1d import (
     levenshtein_1d_keys,
     damerau_levenshtein_1d_keys,
-    damerau_levenshtein_1d_blocks
+    levenshtein_1d_blocks
 )
 from fog.key.misc import zig_zag
 from fog.key.omission import omission_key

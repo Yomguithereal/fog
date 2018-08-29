@@ -1,8 +1,9 @@
 import csv
 from experiments.utils import Timer
-from fog.key import levenshtein_1d_keys, damerau_levenshtein_1d_blocks
+from fog.key import levenshtein_1d_keys, levenshtein_1d_blocks
 from Levenshtein import distance as levenshtein
 from fog.clustering import key_collision, pairwise, blocking
+from fog.metrics import levenshtein_distance_lte1
 
 with open('./data/musicians.csv', 'r') as f:
     artists = set(line['artist'] for line in csv.DictReader(f))
@@ -16,8 +17,9 @@ with Timer('keys'):
     key_clusters = list(key_collision(artists, keys=levenshtein_1d_keys))
 
 with Timer('blocks'):
-    block_clusters = list(blocking(artists, blocks=damerau_levenshtein_1d_blocks, radius=1, distance=levenshtein))
+    block_clusters = list(blocking(artists, blocks=levenshtein_1d_blocks, distance=levenshtein, radius=1))
 
+#['Faylan', 'Fayray'] - ['Loane', 'Loona']
 print(len(pairwise_clusters) == len(key_clusters) == len(block_clusters))
 
 A = set()

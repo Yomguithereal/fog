@@ -9,6 +9,7 @@ from fog.metrics.jaccard import (
 )
 from fog.metrics.levenshtein import (
     levenshtein_distance,
-    limited_levenshtein_distance
+    limited_levenshtein_distance,
+    levenshtein_distance_lte1
 )
 from fog.metrics.overlap import overlap_coefficient

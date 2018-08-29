@@ -257,3 +257,76 @@ def limited_levenshtein_distance(unsigned int max_distance, str A, str B):
     free(vector)
 
     return current if current <= max_distance else upper_bound
+
+
+def levenshtein_distance_lte1(str A, str B):
+    """
+    Function returning whether the Levenshtein distance between A & B is less
+    than or equal to 1 in linear time (O(m), m being the length of the shortest
+    string).
+
+    Args:
+        max_distance (number): Maximum allowable distance between A & B.
+        A (str): First string.
+        B (str): Second string.
+
+    Returns:
+        bool: Whether Levenshtein(A, B) <= 1.
+
+    """
+
+    if A is B:
+        return True
+
+    cdef unsigned int LA = len(A)
+    cdef unsigned int LB = len(B)
+
+    # A should be the shortest string
+    if LA > LB:
+        A, B = B, A
+        LA, LB = LB, LA
+
+    # Early termination
+    if LA == 0:
+        return LB == 1
+
+    if LB - LA > 1:
+        return False
+
+    cost = False
+    cdef unsigned int i = 0
+    cdef unsigned int j = 0
+    cdef unsigned int end = LA - 1
+
+    while i < end:
+        a = A[i]
+        b = B[j]
+
+        if a == b:
+            i += 1
+            j += 1
+            continue
+
+        if cost:
+            return False
+
+        # Addition
+        # Note that deletion is just reversed addition
+        b = B[i + 1]
+        if a == b:
+            i += 1
+            j += 2
+            cost = True
+            continue
+
+        # Substitution
+        a = A[i + 1]
+        if a == b:
+            i += 1
+            j += 1
+            cost = True
+            continue
+
+        return False
+
+    return True

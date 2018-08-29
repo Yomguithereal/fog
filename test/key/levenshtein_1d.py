@@ -4,7 +4,7 @@
 from fog.key import (
     levenshtein_1d_keys,
     damerau_levenshtein_1d_keys,
-    damerau_levenshtein_1d_blocks
+    levenshtein_1d_blocks
 )
 
 HELLO_KEYS = set([
@@ -37,9 +37,9 @@ HELLO_WORDS = [
     'BONJOURE',
     'BONTJOUR',
     'TBONJOUR',
-    'BOJNOUR',
-    'BONOJUR',
-    'OBNJOUR'
+    # 'BOJNOUR',
+    # 'BONOJUR',
+    # 'OBNJOUR'
 ]
 
 
@@ -64,12 +64,12 @@ class TestLevenshtein1D(object):
 
     def test_blocks(self):
 
-        assert damerau_levenshtein_1d_blocks('T') == ('T', )
-        assert damerau_levenshtein_1d_blocks('BONBON') == ('BON', )
+        assert levenshtein_1d_blocks('T') == ('T', )
+        assert levenshtein_1d_blocks('BONBON') == ('BON', )
 
-        hello_blocks = damerau_levenshtein_1d_blocks('BONJOUR')
+        hello_blocks = levenshtein_1d_blocks('BONJOUR')
 
         for word in HELLO_WORDS:
-            blocks = damerau_levenshtein_1d_blocks(word)
+            blocks = levenshtein_1d_blocks(word)
 
             assert any(b in hello_blocks for b in blocks)

@@ -3,7 +3,11 @@
 # =============================================================================
 import math
 from pytest import approx
-from fog.metrics import levenshtein_distance, limited_levenshtein_distance
+from fog.metrics import (
+    levenshtein_distance,
+    limited_levenshtein_distance,
+    levenshtein_distance_lte1
+)
 
 BASIC_TESTS = [
     # (('b', 'o', 'o', 'k'), ('b', 'a', 'c', 'k'), 2),
@@ -45,6 +49,24 @@ BASIC_TESTS = [
     # (list('因為我是中國人所以我會說中文'), list('因為我是英國人所以我會說英文'), 2)
 ]
 
+HELLO_WORDS = [
+    'BONJOUR',
+    'BINJOUR',
+    'BONTOUR',
+    'NONJOUR',
+    'ONJOUR',
+    'BONJOU',
+    'BONJOURE',
+    'BONTJOUR',
+    'TBONJOUR'
+]
+
+HELLO_WORDS_TRANSPOSITIONS = [
+    'BOJNOUR',
+    'BONOJUR',
+    'OBNJOUR'
+]
+
 
 class TestLevenshteinSimilarity(object):
     def test_basics(self):
@@ -54,3 +76,11 @@ class TestLevenshteinSimilarity(object):
     def test_limited(self):
         for A, B, distance in BASIC_TESTS:
             assert limited_levenshtein_distance(2, A, B) == (distance if distance <= 2 else 3)
+
+    def test_lte1(self):
+        for A, B, distance in BASIC_TESTS:
+            assert levenshtein_distance_lte1(A, B) == (distance <= 1)
+
+        for word in HELLO_WORDS:
+            assert levenshtein_distance_lte1(word, 'BONJOUR')
+            assert levenshtein_distance_lte1('BONJOUR', word)
