@@ -2,16 +2,21 @@
 # Fog Levenshtein Distance
 # =============================================================================
 #
-# Functions related to the Levenshtein or "edit" distance.
+# Functions related to the Levenshtein or "edit" distance. Also includes
+# function related to the popular Damerau-Levensthein variant.
 #
 # [Urls]:
 # https://en.wikipedia.org/wiki/Levenshtein_distance
 # https://github.com/Yomguithereal/talisman
 #
-# [Reference]:
+# [References]:
 # Levenshtein, Vladimir I. (February 1966). "Binary codes capable of
 # correcting deletions, insertions, and reversals".
 # Soviet Physics Doklady 10 (8): 707–710.
+#
+# Damerau, Fred J. (March 1964), "A technique for computer detection and
+# correction of spelling errors", Communications of the ACM, ACM, 7 (3):
+# 171–176, doi:10.1145/363958.363994
 #
 # Note that this is still slower than python-Levensthein.
 #
