@@ -3,7 +3,7 @@ from collections import defaultdict
 from functools import partial
 from statistics import median, mean
 from fog.tokenizers import ngrams
-from fog.key import levenshtein_1d_blocks
+from fog.key import levenshtein_1d_blocks, damerau_levenshtein_1d_blocks
 
 with open('./data/musicians.csv', 'r') as f:
     artists = set(line['artist'] for line in csv.DictReader(f))
@@ -26,6 +26,7 @@ def test_blocking_method(name, fn):
     print()
 
 test_blocking_method('Levenshtein 1D Blocks', levenshtein_1d_blocks)
+test_blocking_method('Damerau-Levenshtein 1D Blocks', damerau_levenshtein_1d_blocks)
 test_blocking_method('5-grams Blocks', partial(ngrams, 5))
 test_blocking_method('6-grams Blocks', partial(ngrams, 6))
 test_blocking_method('7-grams Blocks', partial(ngrams, 7))

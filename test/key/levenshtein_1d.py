@@ -53,7 +53,12 @@ SECOND_TRANSPOSITIONS_TEST = [
     'BNOJOU',
     'BOJNOU',
     'BONOJU',
-    'BONJUO'
+    'BONJUO',
+    'BONJOUR',
+    'TBONJOU',
+    'BONTJOU',
+    'BOTNJOU',
+    'MONJOU'
 ]
 
 
