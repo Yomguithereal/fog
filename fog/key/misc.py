@@ -22,6 +22,9 @@ zig_zag = (None, lambda x: x[::-1])
 def ngram_keys(n, string, threshold=0.8):
     """
     Function returning n-gram keys for the given string. Useful for blocking.
+    Note that this method is only suitable with small strings (a single name,
+    for instance), else the number of combinations will explode and generate
+    way too many keys.
 
     Args:
         n (number): Size of the grams.
