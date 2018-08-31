@@ -40,6 +40,7 @@ def test_blocking_method(name, fn):
     print('  - Median size of colliding blocks: % f' % median(len(b) for b in blocks.values() if len(b) > 1))
     print('  - Mean size of blocks: %f' % mean(len(b) for b in blocks.values()))
     print('  - Max size of blocks: %i' % max(len(b) for b in blocks.values()))
+    print('  - Key of max block: "%s"' % max(blocks.items(), key=lambda x: len(x[1]))[0])
     print('  - Recall %f' % (len(items) / GROUND_TRUTH))
     print('  - Time %f' % time)
     print()
