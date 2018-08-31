@@ -73,6 +73,9 @@ def levenshtein_1d_blocks(string, transpositions=False):
     odd). When supporting transpositions, the function will always return
     4 blocks to handle the case when middle letters are transposed.
 
+    Note that this method therefore yields a constant number of keys, as
+    opposed to ngrams which yield a linear number of keys.
+
     Args:
         string (str): Target string.
         transpositions (bool, optional): Whether to support transpositions
@@ -85,7 +88,7 @@ def levenshtein_1d_blocks(string, transpositions=False):
     n = len(string)
 
     if n == 1:
-        return (string, )
+        return (FLAG + string, string + FLAG, '\x00')
 
     h = n // 2
 

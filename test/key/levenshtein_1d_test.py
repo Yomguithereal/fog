@@ -82,9 +82,6 @@ class TestLevenshtein1D(object):
         assert keys_with_transpositions == HELLO_KEYS | HELLO_TRANSPOSITION_KEYS
 
     def test_blocks(self):
-
-        assert levenshtein_1d_blocks('T') == ('T', )
-
         bonjour_blocks = levenshtein_1d_blocks('BONJOUR')
         bonjou_blocks = damerau_levenshtein_1d_blocks('BONJOU')
 
@@ -102,3 +99,9 @@ class TestLevenshtein1D(object):
             blocks = damerau_levenshtein_1d_blocks(word)
 
             assert any(b in bonjou_blocks for b in blocks)
+
+        # Small keys
+        assert any(b in levenshtein_1d_blocks('h') for b in levenshtein_1d_blocks('he'))
+        assert any(b in levenshtein_1d_blocks('h') for b in levenshtein_1d_blocks('eh'))
+        assert any(b in levenshtein_1d_blocks('h') for b in levenshtein_1d_blocks('t'))
+        assert any(b in levenshtein_1d_blocks('he') for b in levenshtein_1d_blocks('lhe'))
