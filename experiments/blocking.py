@@ -5,7 +5,7 @@ from statistics import median, mean
 from timeit import default_timer as timer
 from fog.clustering import blocking
 from fog.tokenizers import ngrams
-from fog.key import levenshtein_1d_blocks, damerau_levenshtein_1d_blocks
+from fog.key import levenshtein_1d_blocks, damerau_levenshtein_1d_blocks, levenshtein_2d_blocks
 from fog.metrics import levenshtein_distance_lte1
 
 NB_CLUSTERS = 138
@@ -46,6 +46,7 @@ def test_blocking_method(name, fn):
 
 test_blocking_method('Levenshtein 1D Blocks', levenshtein_1d_blocks)
 test_blocking_method('Damerau-Levenshtein 1D Blocks', damerau_levenshtein_1d_blocks)
+test_blocking_method('Levenshtein 2D Blocks', levenshtein_2d_blocks)
 test_blocking_method('4-grams Blocks', partial(ngrams, 4))
 test_blocking_method('5-grams Blocks', partial(ngrams, 5))
 test_blocking_method('6-grams Blocks', partial(ngrams, 6))

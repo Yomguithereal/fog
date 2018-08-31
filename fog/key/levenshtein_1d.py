@@ -72,7 +72,8 @@ def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
     4 blocks to handle the case when middle letters are transposed.
 
     Note that this method therefore yields a constant number of keys, as
-    opposed to ngrams which yield a linear number of keys.
+    opposed to ngrams which yield a number of keys proportional to the size
+    of the given strings.
 
     Args:
         string (str): Target string.
@@ -86,7 +87,7 @@ def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
     n = len(string)
 
     if n == 1:
-        return (flag + string, string + flag, '\x00')
+        return (flag + string, string + flag, flag)
 
     h = n // 2
 
@@ -109,3 +110,28 @@ def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
 
 
 damerau_levenshtein_1d_blocks = partial(levenshtein_1d_blocks, transpositions=True)
+
+
+def levenshtein_2d_blocks(string, transpositions=False, flag='\x00', inner_flag='\x01'):
+    """
+    Function returning the minimal set of longest Levenshtein distance <= 2
+    blocking keys of target string. Note that this method is basically a one
+    time recursion over the `levensthein_1d_blocks` scheme.
+
+    Args:
+        string (str): Target string.
+        transpositions (bool, optional): Whether to support transpositions
+            like with the Damerau-Levenshtein distance. Defaults to False.
+
+    Returns:
+        tuple: Resulting blocks.
+
+    """
+
+    blocks_1d = levenshtein_1d_blocks(string, transpositions=transpositions, flag=flag)
+    blocks_2d = []
+
+    for block in blocks_1d:
+        blocks_2d.extend(levenshtein_1d_blocks(block, transpositions=transpositions, flag=inner_flag))
+
+    return tuple(blocks_2d)
