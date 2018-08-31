@@ -13,10 +13,8 @@
 #
 from functools import partial
 
-FLAG = '\x00'
 
-
-def levenshtein_1d_keys(string, transpositions=False):
+def levenshtein_1d_keys(string, transpositions=False, flag='\x00'):
     """
     Function returning an iterator over Levenshtein 1D keys, being the series
     of keys colliding with other strings being at a Levenshtein distance of
@@ -43,7 +41,7 @@ def levenshtein_1d_keys(string, transpositions=False):
     for i in range(n):
 
         # Substitution
-        yield string[:i] + FLAG + string[i + 1:]
+        yield string[:i] + flag + string[i + 1:]
 
         # Transpositions
         if i > 0 and transpositions:
@@ -56,16 +54,16 @@ def levenshtein_1d_keys(string, transpositions=False):
         if i > 0 and string[i - 1] == string[i]:
             continue
 
-        yield string[:i] + FLAG + string[i:]
+        yield string[:i] + flag + string[i:]
 
     # Last addition
-    yield string + FLAG
+    yield string + flag
 
 
 damerau_levenshtein_1d_keys = partial(levenshtein_1d_keys, transpositions=True)
 
 
-def levenshtein_1d_blocks(string, transpositions=False):
+def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
     """
     Function returning the minimal set of longest Levenshtein distance <= 1
     blocking keys of target string. Under the hood, this splits the given
@@ -88,24 +86,24 @@ def levenshtein_1d_blocks(string, transpositions=False):
     n = len(string)
 
     if n == 1:
-        return (FLAG + string, string + FLAG, '\x00')
+        return (flag + string, string + flag, '\x00')
 
     h = n // 2
 
     # String has even length, we just split in half
     if n % 2 == 0 and not transpositions:
-        first_half = FLAG + string[:h]
-        second_half = string[h:] + FLAG
+        first_half = flag + string[:h]
+        second_half = string[h:] + flag
 
         return (first_half, second_half)
 
     # String has odd length, we split twice
     h1 = h + 1
 
-    first_half = FLAG + string[:h]
-    second_half = string[h:] + FLAG
-    first_half1 = FLAG + string[:h1]
-    second_half1 = string[h1:] + FLAG
+    first_half = flag + string[:h]
+    second_half = string[h:] + flag
+    first_half1 = flag + string[:h1]
+    second_half1 = string[h1:] + flag
 
     return (first_half, second_half, first_half1, second_half1)
 

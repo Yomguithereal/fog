@@ -62,22 +62,18 @@ SECOND_TRANSPOSITIONS_TEST = [
 ]
 
 
-def prettify(s):
-    return s.replace('\x00', '!')
-
-
 class TestLevenshtein1D(object):
     def test_keys(self):
 
-        keys = set(prettify(k) for k in levenshtein_1d_keys('hello'))
+        keys = set(levenshtein_1d_keys('hello', flag='!'))
 
         assert keys == HELLO_KEYS
 
-        keys_with_transpositions = set(prettify(k) for k in levenshtein_1d_keys('hello', transpositions=True))
+        keys_with_transpositions = set(levenshtein_1d_keys('hello', transpositions=True, flag='!'))
 
         assert keys_with_transpositions == HELLO_KEYS | HELLO_TRANSPOSITION_KEYS
 
-        keys_with_transpositions = set(prettify(k) for k in damerau_levenshtein_1d_keys('hello'))
+        keys_with_transpositions = set(damerau_levenshtein_1d_keys('hello', flag='!'))
 
         assert keys_with_transpositions == HELLO_KEYS | HELLO_TRANSPOSITION_KEYS
 
