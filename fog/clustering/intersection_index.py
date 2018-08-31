@@ -14,6 +14,9 @@ from fog.clustering.utils import clusters_from_pairs
 
 # NOTE: compromise between key collision & meta blocking
 
+# TODO: found in the litterature as pair-count / probe count
+# ref in sarawagi-kirpal
+
 METRICS = ['jaccard', 'overlap']
 
 
