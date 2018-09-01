@@ -15,6 +15,7 @@ from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 # TODO: custom inner algorithm
 # TODO: fuzzy blocking variant
 # TODO: possibility not to merge if sure cannot collide twice
+# TODO: the worker_graph is not used right now, the code does not use it (make a clusters from graph also)
 
 
 def block_worker(payload):
