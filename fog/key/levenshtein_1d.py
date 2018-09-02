@@ -11,9 +11,13 @@
 #
 # Note that it's also possible to generate transpostion keys.
 #
+
+# TODO: link to "Indexing Methods for Approximate Dictionary Searching: Comparative Analysis"
 from functools import partial
 
 
+# TODO: note that this is called full-neighborhood generation
+# TODO: note that my impl seems to be better because alphabet-agnostic & addition over deletion
 def levenshtein_1d_keys(string, transpositions=False, flag='\x00'):
     """
     Function returning an iterator over Levenshtein 1D keys, being the series
@@ -51,6 +55,11 @@ def levenshtein_1d_keys(string, transpositions=False, flag='\x00'):
             yield string[:i - 1] + string[i] + string[i - 1] + string[i + 1:]
 
         # Additions
+        # Note: I use additions here and not deletions because indexing
+        # on deletions can generate false positives such as:
+        # "abcd", "abde" -> key "abd".
+        # Note: for k = 1, an addition for A->B is compulsorily a deletion
+        # for B->A.
         if i > 0 and string[i - 1] == string[i]:
             continue
 
@@ -112,6 +121,7 @@ def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
 damerau_levenshtein_1d_blocks = partial(levenshtein_1d_blocks, transpositions=True)
 
 
+# TODO: should not consider the flag in string length when recursing?
 def levenshtein_2d_blocks(string, transpositions=False, flag='\x00', inner_flag='\x01'):
     """
     Function returning the minimal set of longest Levenshtein distance <= 2
