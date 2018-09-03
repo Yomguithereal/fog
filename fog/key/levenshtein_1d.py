@@ -2,27 +2,38 @@
 # Fog Levensthein 1D Key
 # =============================================================================
 #
-# Key function returning a series of keys that one can index in a dict to
-# make strings having a Levenshtein distance of 1 collide.
+# Functions related to solving the Levenshtein & Damerau-Levenshtein <= 1
+# problem efficiently by providing collision keys & blocks.
 #
-# Under the hood it works by producing every substitution key then every
-# addition key (deletion keys are redundant with addition keys and will
-# produce wrong collisions such as "abc" & "adb").
+# [References]:
+# Boytsov, Leonid. « Indexing Methods for Approximate Dictionary Searching:
+# Comparative Analysis ». Journal of Experimental Algorithmics 16 (1 mai 2011):
+# 1.1. https://doi.org/10.1145/1963190.1963191.
 #
-# Note that it's also possible to generate transpostion keys.
-#
-
-# TODO: link to "Indexing Methods for Approximate Dictionary Searching: Comparative Analysis"
 from functools import partial
 
 
-# TODO: note that this is called full-neighborhood generation
-# TODO: note that my impl seems to be better because alphabet-agnostic & addition over deletion
+# TODO: also try Mor-Fraenkel index for k = 1 using only deletions
 def levenshtein_1d_keys(string, transpositions=False, flag='\x00'):
     """
     Function returning an iterator over Levenshtein 1D keys, being the series
     of keys colliding with other strings being at a Levenshtein distance of
     1 with the given string.
+
+    This works by generating a set of collision keys such as two strings may
+    only share a key if they have a Levenshtein distance <= 1.
+
+    Note that the number of keys is proportional to the size of the string:
+        - 1 key + n substition keys + (n + 2) addition keys, i.e. (2n + 3) keys
+          for Levenshtein distance.
+        - n - 1 keys for transpositions, i.e. (3n + 2) total keys
+          for Damerau-Levenshtein distance.
+
+    In the literature, this technique seems to be called generating the
+    "wildcard neighborhood" of a string. It's quite efficient compared to
+    traditional neighborhood methods because the number of keys is not
+    dependent on the size of the alphabet since we use a wildcard to represent
+    the substitutions/additions.
 
     Those keys are useful to perform O(n) clustering with Levenshtein
     distance <= 1 but can become very costly with long strings since the number
@@ -59,7 +70,10 @@ def levenshtein_1d_keys(string, transpositions=False, flag='\x00'):
         # on deletions can generate false positives such as:
         # "abcd", "abde" -> key "abd".
         # Note: for k = 1, an addition for A->B is compulsorily a deletion
-        # for B->A.
+        # for B->A. So, in fact, substitution key and transposition keys will
+        # match when required.
+
+        # When some letters are doubled, we can skip some keys
         if i > 0 and string[i - 1] == string[i]:
             continue
 
@@ -72,6 +86,7 @@ def levenshtein_1d_keys(string, transpositions=False, flag='\x00'):
 damerau_levenshtein_1d_keys = partial(levenshtein_1d_keys, transpositions=True)
 
 
+# TODO: this can be considered as an application of q-sampling but leveraging positional information
 def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
     """
     Function returning the minimal set of longest Levenshtein distance <= 1
@@ -101,11 +116,20 @@ def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
     h = n // 2
 
     # String has even length, we just split in half
-    if n % 2 == 0 and not transpositions:
+    if n % 2 == 0:
+
         first_half = flag + string[:h]
         second_half = string[h:] + flag
 
-        return (first_half, second_half)
+        # For transpositions, we swap once the middle characters
+        if transpositions:
+
+            first_transposed_half = flag + string[:h - 1] + second_half[0]
+            second_transposed_half = first_half[-1] + string[h + 1:] + flag
+
+            return (first_half, second_half, first_transposed_half, second_transposed_half)
+        else:
+            return (first_half, second_half)
 
     # String has odd length, we split twice
     h1 = h + 1
