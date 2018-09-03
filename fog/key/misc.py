@@ -11,10 +11,16 @@
 # Engineering 24, no 9 (septembre 2012): 1537‑55.
 # https://doi.org/10.1109/TKDE.2011.127.
 #
+# Knuth, D. 1997. The Art of Computer Programming. Sorting and Searching,
+# 2d ed., vol. 3. Addison-Wesley, Upper Saddle River, NJ. p. 394
+#
 import math
 from itertools import chain, combinations
 from fog.tokenizers import ngrams
 
+# Following Knuth's intuitions, sorting keys twice, once normally and once
+# over the reversed strings, yields very good results when applying sorted
+# neighborhood method over edit distances.
 zig_zag = (None, lambda x: x[::-1])
 
 

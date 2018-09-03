@@ -7,8 +7,21 @@
 #
 # [References]:
 # Boytsov, Leonid. « Indexing Methods for Approximate Dictionary Searching:
-# Comparative Analysis ». Journal of Experimental Algorithmics 16 (1 mai 2011):
-# 1.1. https://doi.org/10.1145/1963190.1963191.
+# Comparative Analysis ». Journal of Experimental Algorithmics 16 (1 mai 2011).
+# https://doi.org/10.1145/1963190.1963191.
+#
+# Doster. « Contextual Postprocessing System for Cooperation with a
+# Multiple-Choice Character-Recognition System ». IEEE Transactions on
+# Computers C-26, no 11 (novembre 1977): 1090‑1101.
+# https://doi.org/10.1109/TC.1977.1674755.
+#
+# Knuth, D. 1997. The Art of Computer Programming. Sorting and Searching,
+# 2d ed., vol. 3. Addison-Wesley, Upper Saddle River, NJ. p. 394
+#
+# Sutinen, Erkki, et Jorma Tarhio. « Filtration with q-samples in approximate
+# string matching ». In Combinatorial Pattern Matching, 1075:50‑63. Berlin,
+# Heidelberg: Springer Berlin Heidelberg, 1996.
+# https://doi.org/10.1007/3-540-61258-0_4.
 #
 from functools import partial
 
@@ -86,7 +99,6 @@ def levenshtein_1d_keys(string, transpositions=False, flag='\x00'):
 damerau_levenshtein_1d_keys = partial(levenshtein_1d_keys, transpositions=True)
 
 
-# TODO: this can be considered as an application of q-sampling but leveraging positional information
 def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
     """
     Function returning the minimal set of longest Levenshtein distance <= 1
@@ -98,6 +110,20 @@ def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
     Note that this method therefore yields a constant number of keys, as
     opposed to ngrams which yield a number of keys proportional to the size
     of the given strings.
+
+    The intuition of this technique can be found in Knuth. Similar concepts can
+    be found in Doster. This is also reminiscent of q-samples.
+
+    This method works quite well because it's independent of the string's
+    length and therefore implicitly incorporates the string's length into
+    the generated keys.
+
+    Indeed, this method minimizes the number of produced keys (the number
+    is constant, contrary to n-grams, for instance) and minimizes the
+    probability of two strings colliding.
+
+    What's more, this method is exact and won't generate false negatives like
+    n-grams would.
 
     Args:
         string (str): Target string.
@@ -145,7 +171,6 @@ def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
 damerau_levenshtein_1d_blocks = partial(levenshtein_1d_blocks, transpositions=True)
 
 
-# TODO: should not consider the flag in string length when recursing?
 def levenshtein_2d_blocks(string, transpositions=False, flag='\x00', inner_flag='\x01'):
     """
     Function returning the minimal set of longest Levenshtein distance <= 2
@@ -162,10 +187,48 @@ def levenshtein_2d_blocks(string, transpositions=False, flag='\x00', inner_flag=
 
     """
 
-    blocks_1d = levenshtein_1d_blocks(string, transpositions=transpositions, flag=flag)
+    blocks_1d = levenshtein_1d_blocks(string, transpositions=transpositions, flag='')
     blocks_2d = []
 
-    for block in blocks_1d:
-        blocks_2d.extend(levenshtein_1d_blocks(block, transpositions=transpositions, flag=inner_flag))
+    n = len(blocks_1d)
 
-    return tuple(blocks_2d)
+    for i, block in enumerate(blocks_1d):
+        outer = i % 2 == 0
+        sub = levenshtein_1d_blocks(block, transpositions=transpositions, flag='')
+
+        if len(sub) == 2:
+            if outer:
+                blocks_2d.extend([
+                    flag + sub[0],
+                    inner_flag + sub[1]
+                ])
+            else:
+                blocks_2d.extend([
+                    sub[0] + inner_flag,
+                    sub[1] + flag
+                ])
+        elif len(sub) == 3:
+
+            # TODO: handle very small strings
+            pass
+        else:
+            if outer:
+                blocks_2d.extend([
+                    flag + sub[0],
+                    inner_flag + sub[1],
+                    flag + sub[2],
+                    inner_flag + sub[3]
+                ])
+            else:
+                blocks_2d.extend([
+                    sub[0] + inner_flag,
+                    sub[1] + flag,
+                    sub[2] + inner_flag,
+                    sub[3] + flag
+                ])
+
+    # TODO: can do better than a set here to only keep unique blocks (odd len)
+    return tuple(set(blocks_2d))
+
+
+damerau_levenshtein_2d_blocks = partial(levenshtein_2d_blocks, transpositions=True)
