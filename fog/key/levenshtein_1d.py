@@ -23,10 +23,17 @@
 # Heidelberg: Springer Berlin Heidelberg, 1996.
 # https://doi.org/10.1007/3-540-61258-0_4.
 #
+# Bast, Hannah, et Marjan Celikik. « Efficient Fuzzy Search in Large Text
+# Collections ». ACM Transactions on Information Systems 31, no 2
+# (1 mai 2013): 1‑59.
+# https://doi.org/10.1145/2457465.2457470.
+#
 from functools import partial
 
 
 # TODO: also try Mor-Fraenkel index for k = 1 using only deletions
+# TODO: k-truncated from Efficient Fuzzy Search in Large Text Collections.pdf
+# TODO: rename wildcard_neighborhood and rename package
 def levenshtein_1d_keys(string, transpositions=False, flag='\x00'):
     """
     Function returning an iterator over Levenshtein 1D keys, being the series

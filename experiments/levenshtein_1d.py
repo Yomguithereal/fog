@@ -37,7 +37,8 @@ for c in block_clusters:
 print(A == B == C)
 
 
-# # TODO: try a radix tree instead?
+# TODO: try a radix tree instead?
+# TODO: try with length filtering
 
 # class TrieNode(object):
 #     def __init__(self):
