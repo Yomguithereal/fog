@@ -197,8 +197,10 @@ def levenshtein_2d_blocks(string, transpositions=False, flag='\x00', inner_flag=
     # Easy corner cases
     if len(string) == 1:
         return (flag + string[0], inner_flag + string[0], string[0] + inner_flag, string[0] + flag, flag)
+
     elif len(string) == 2:
         return (flag + string[0], inner_flag + string[0], string[1] + inner_flag, string[1] + flag, flag)
+
     elif len(string) == 3:
         return (flag + string[0], inner_flag + string[1], string[1] + inner_flag, string[2] + flag)
 
