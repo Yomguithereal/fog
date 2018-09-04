@@ -194,6 +194,14 @@ def levenshtein_2d_blocks(string, transpositions=False, flag='\x00', inner_flag=
 
     """
 
+    # Easy corner cases
+    if len(string) == 1:
+        return (flag + string[0], inner_flag + string[0], string[0] + inner_flag, string[0] + flag, flag)
+    elif len(string) == 2:
+        return (flag + string[0], inner_flag + string[0], string[1] + inner_flag, string[1] + flag, flag)
+    elif len(string) == 3:
+        return (flag + string[0], inner_flag + string[1], string[1] + inner_flag, string[2] + flag)
+
     blocks_1d = levenshtein_1d_blocks(string, transpositions=transpositions, flag='')
     blocks_2d = []
 
@@ -214,10 +222,6 @@ def levenshtein_2d_blocks(string, transpositions=False, flag='\x00', inner_flag=
                     sub[0] + inner_flag,
                     sub[1] + flag
                 ])
-        elif len(sub) == 3:
-
-            # TODO: handle very small strings
-            pass
         else:
             if outer:
                 blocks_2d.extend([
