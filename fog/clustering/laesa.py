@@ -26,10 +26,9 @@ import random
 from fog.clustering.utils import clusters_from_pairs
 
 
-# TODO: currently NOT working
 def pivot_selection(rng, data, pivots, distance):
     """
-    Function in charge of the pivot selection.
+    Function in charge of pivot selection.
 
     """
     b_prime = rng.randint(0, len(data) - 1)
@@ -61,6 +60,7 @@ def pivot_selection(rng, data, pivots, distance):
     return list(p), D
 
 
+# TODO: currently not working
 def laesa(data, distance, radius, pivots=None, min_size=2,
           max_size=float('inf'), seed=None, mode='connected_components'):
     """
@@ -106,22 +106,19 @@ def laesa(data, distance, radius, pivots=None, min_size=2,
         for i, x in enumerate(data):
 
             # Distance to the nearest pivot
-            nearest_p_distance = float('inf')
-            nearest_p = None
+            d_star = float('inf')
 
             for j in range(pivots):
                 d = distance(data[p[j]], x)
 
-                if d < nearest_p_distance:
-                    nearest_p_distance = d
-                    nearest_p = j
+                if d < d_star:
+                    d_star = d
 
             for k in range(i + 1, n):
 
-                # TODO: I suspect my code is wrong here
-                d_prime = nearest_p_distance - D[nearest_p][k]
-
-                if d_prime <= radius:
+                d_prime = max(abs(D[j][i] - D[j][k]) for j in range(pivots))
+                # print(d_prime, d_star, [abs(D[j][i] - D[j][k]) for j in range(pivots)])
+                if d_prime <= d_star:
                     d = distance(x, data[k])
                     DD += 1
 
