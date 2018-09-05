@@ -9,7 +9,7 @@ with open('./data/musicians.csv', 'r') as f:
 print(len(artists))
 
 with Timer('LAESA'):
-    clusters = list(laesa(artists, distance=levenshtein, radius=1))
+    clusters = list(laesa(artists, distance=levenshtein, radius=1, pivots=100))
 
 for cluster in clusters:
     print(cluster)

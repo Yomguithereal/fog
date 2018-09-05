@@ -2,7 +2,7 @@
 # Fog LAESA Clustering
 # =============================================================================
 #
-# Implementation of the linear AESA algorithm to perform knn neighbor
+# Implementation of the linear AESA algorithm to perform nearest neighbor
 # clustering.
 #
 # [References]:
@@ -19,6 +19,9 @@
 #
 # [Urls]:
 # http://www.xavierdupre.fr/app/mlstatpy/helpsphinx/c_ml/kppv.html
+#
+# Note that this method is not particularly efficient for the general use
+# case. It's often worse than the quadratic approach.
 #
 import math
 import random
@@ -37,6 +40,7 @@ def pivot_selection(rng, data, pivots, distance):
     A = [0] * n
     D = []
 
+    # Finding pivots
     for i in range(pivots):
         maximum = 0
         b = b_prime
@@ -48,16 +52,24 @@ def pivot_selection(rng, data, pivots, distance):
                 continue
 
             d = distance(pivot, item)
-            D[i][j] = d
             A[j] += d
 
-            if A[j] >= maximum:
+            if A[j] > maximum:
                 b_prime = j
                 maximum = A[j]
 
         p.add(b_prime)
 
-    return list(p), D
+    p = list(p)
+
+    # Pre-computing distances (not necessary, can be done before or later)
+    for i in range(pivots):
+        pivot = data[p[i]]
+
+        for j, item in enumerate(data):
+            D[i][j] = distance(pivot, item)
+
+    return p, D
 
 
 # TODO: currently not working
@@ -116,9 +128,16 @@ def laesa(data, distance, radius, pivots=None, min_size=2,
 
             for k in range(i + 1, n):
 
-                d_prime = max(abs(D[j][i] - D[j][k]) for j in range(pivots))
-                # print(d_prime, d_star, [abs(D[j][i] - D[j][k]) for j in range(pivots)])
-                if d_prime <= d_star:
+                compute = True
+
+                for j in range(pivots):
+                    delta = abs(D[j][i] - D[j][k])
+
+                    if delta > d_star:
+                        compute = False
+                        break
+
+                if compute:
                     d = distance(x, data[k])
                     DD += 1
 
