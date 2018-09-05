@@ -106,6 +106,7 @@ def levenshtein_1d_keys(string, transpositions=False, flag='\x00'):
 damerau_levenshtein_1d_keys = partial(levenshtein_1d_keys, transpositions=True)
 
 
+# TODO: half-grams, easily parallelizable method
 def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
     """
     Function returning the minimal set of longest Levenshtein distance <= 1

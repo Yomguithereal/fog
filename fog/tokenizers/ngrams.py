@@ -7,6 +7,7 @@
 from functools import partial
 
 
+# TODO: add positional n-grams
 def ngrams(n, tokens):
     """
     Function returning an iterator over the given sequence's n-grams. The

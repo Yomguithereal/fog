@@ -3,6 +3,7 @@ from fog.clustering.intersection_index import (
     intersection_index
 )
 from fog.clustering.key_collision import key_collision
+from fog.clustering.laesa import laesa
 from fog.clustering.minhash import minhash
 from fog.clustering.nn_descent import nn_descent, nn_descent_full
 from fog.clustering.pairwise import (
