@@ -183,11 +183,12 @@ damerau_levenshtein_1d_blocks = partial(levenshtein_1d_blocks, transpositions=Tr
 
 
 # TODO: generalize to 3 and make a dynamic version
-def levenshtein_2d_blocks(string, transpositions=False, flag='\x00', inner_flag='\x01'):
+def levenshtein_2d_blocks(string, transpositions=False,
+                          flag1='\x00', flag2='\x01', flag3='\x02'):
     """
     Function returning the minimal set of longest Levenshtein distance <= 2
-    blocking keys of target string. Note that this method is basically a one
-    time recursion over the `levensthein_1d_blocks` scheme.
+    blocking keys of target string. Note that this method is basically a
+    generalization of the `levensthein_1d_blocks` scheme.
 
     Args:
         string (str): Target string.
@@ -199,54 +200,60 @@ def levenshtein_2d_blocks(string, transpositions=False, flag='\x00', inner_flag=
 
     """
 
-    # Easy corner cases
-    if len(string) == 1:
-        return (flag + string[0], inner_flag + string[0], string[0] + inner_flag, string[0] + flag, flag)
+    n = len(string)
+    q = n % 3
 
-    elif len(string) == 2:
-        return (flag + string[0], inner_flag + string[0], string[1] + inner_flag, string[1] + flag, flag)
+    if q == 0:
+        h = n // 3
 
-    elif len(string) == 3:
-        return (flag + string[0], inner_flag + string[1], string[1] + inner_flag, string[2] + flag)
+        basic = (
+            flag1 + string[:h],
+            flag2 + string[h:h * 2],
+            flag3 + string[h * 2:]
+        )
 
-    blocks_1d = levenshtein_1d_blocks(string, transpositions=transpositions, flag='')
-    blocks_2d = []
+        if transpositions:
+            h1 = h - 1
 
-    n = len(blocks_1d)
+            return basic + (
+                flag1 + string[:h1] + string[h],
+                flag2 + string[h1] + string[h + 1:h * 2],
+                flag3 + string[h * 2 - 1] + string[h * 2 + 1:]
+            )
 
-    for i, block in enumerate(blocks_1d):
-        outer = i % 2 == 0
-        sub = levenshtein_1d_blocks(block, transpositions=transpositions, flag='')
+        return basic
 
-        if len(sub) == 2:
-            if outer:
-                blocks_2d.extend([
-                    flag + sub[0],
-                    inner_flag + sub[1]
-                ])
-            else:
-                blocks_2d.extend([
-                    sub[0] + inner_flag,
-                    sub[1] + flag
-                ])
-        else:
-            if outer:
-                blocks_2d.extend([
-                    flag + sub[0],
-                    inner_flag + sub[1],
-                    flag + sub[2],
-                    inner_flag + sub[3]
-                ])
-            else:
-                blocks_2d.extend([
-                    sub[0] + inner_flag,
-                    sub[1] + flag,
-                    sub[2] + inner_flag,
-                    sub[3] + flag
-                ])
+    elif q == 2:
+        h1 = n // 3
+        h = h1 + 1
 
-    # TODO: can do better than a set here to only keep unique blocks (odd len)
-    return tuple(set(blocks_2d))
+        return (
+            flag1 + string[:h],
+            flag2 + string[h:h * 2],
+            flag3 + string[h * 2:],
+
+            flag1 + string[:h1],
+            flag2 + string[h1:h + h1],
+            flag3 + string[h + h1:],
+
+            flag2 + string[h:h + h1]
+        )
+
+    elif q == 1:
+        h1 = n // 3
+        h = h1 + 1
+
+        return (
+            flag1 + string[:h],
+            flag2 + string[h:h + h1],
+            flag3 + string[h + h1:],
+
+            flag1 + string[:h1],
+            flag2 + string[h1:h1 + h],
+
+            flag2 + string[h1:h1 * 2],
+            flag3 + string[h1 * 2:]
+        )
 
 
 damerau_levenshtein_2d_blocks = partial(levenshtein_2d_blocks, transpositions=True)
