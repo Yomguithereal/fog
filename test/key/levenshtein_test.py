@@ -1,5 +1,5 @@
 # =============================================================================
-# Fog Levenshtein 1D Key Unit Tests
+# Fog Levenshtein Keys Unit Tests
 # =============================================================================
 from fog.key import (
     levenshtein_1d_keys,
@@ -62,7 +62,7 @@ SECOND_TRANSPOSITIONS_TEST = [
 ]
 
 
-class TestLevenshtein1D(object):
+class TestLevenshtein(object):
     def test_keys(self):
 
         keys = set(levenshtein_1d_keys('hello', flag='!'))

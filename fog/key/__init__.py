@@ -4,7 +4,7 @@ from fog.key.fingerprint import (
     fingerprint,
     ngrams_fingerprint
 )
-from fog.key.levenshtein_1d import (
+from fog.key.levenshtein import (
     levenshtein_1d_keys,
     damerau_levenshtein_1d_keys,
     levenshtein_1d_blocks,
