@@ -7,6 +7,7 @@ from fog.clustering import blocking
 from fog.tokenizers import ngrams
 from fog.key import levenshtein_1d_blocks, damerau_levenshtein_1d_blocks, levenshtein_2d_blocks
 from fog.metrics import levenshtein_distance_lte1
+from experiments.levenshtein_split import keys as generic_levenshtein_blocks
 
 NB_CLUSTERS = 138
 GROUND_TRUTH = 294
@@ -40,7 +41,7 @@ def test_blocking_method(name, fn):
     print('  - Median size of colliding blocks: % f' % median(len(b) for b in blocks.values() if len(b) > 1))
     print('  - Mean size of blocks: %f' % mean(len(b) for b in blocks.values()))
     print('  - Max size of blocks: %i' % max(len(b) for b in blocks.values()))
-    print('  - Key of max block: "%s"' % max(blocks.items(), key=lambda x: len(x[1]))[0])
+    print('  - Key of max block: "%s"' % str(max(blocks.items(), key=lambda x: len(x[1]))[0]))
     print('  - Recall %f' % (len(items) / GROUND_TRUTH))
     print('  - Time %f' % time)
     print()
@@ -48,6 +49,9 @@ def test_blocking_method(name, fn):
 test_blocking_method('Levenshtein 1D Blocks', levenshtein_1d_blocks)
 test_blocking_method('Damerau-Levenshtein 1D Blocks', damerau_levenshtein_1d_blocks)
 test_blocking_method('Levenshtein 2D Blocks', levenshtein_2d_blocks)
+test_blocking_method('Levenshtein 3D Blocks', partial(generic_levenshtein_blocks, 3))
+test_blocking_method('Levenshtein 4D Blocks', partial(generic_levenshtein_blocks, 4))
+test_blocking_method('Levenshtein 5D Blocks', partial(generic_levenshtein_blocks, 5))
 test_blocking_method('4-grams Blocks', partial(ngrams, 4))
 test_blocking_method('5-grams Blocks', partial(ngrams, 5))
 test_blocking_method('6-grams Blocks', partial(ngrams, 6))

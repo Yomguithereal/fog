@@ -110,6 +110,7 @@ damerau_levenshtein_1d_keys = partial(levenshtein_1d_keys, transpositions=True)
 # TODO: include positional info + length info (get filtering refs in paper)
 # TODO: no rolling to avoid generating too much keys
 # TODO: test the deletion of middle char (more collisions, less keys)
+# TODO: if even and transposing, if doubled letter, don't need to generate tr keys
 def levenshtein_1d_blocks(string, transpositions=False, flag='\x00'):
     """
     Function returning the minimal set of longest Levenshtein distance <= 1
