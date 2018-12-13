@@ -48,3 +48,4 @@ def print_toml_report(file, meta, values, clusters):
         p(']')
 
         p('harmonize = false')
+        p('')
