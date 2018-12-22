@@ -1,4 +1,5 @@
 import csv
+import random
 from collections import defaultdict
 from functools import partial
 from statistics import median, mean
@@ -36,12 +37,20 @@ def test_blocking_method(name, fn):
     for c in clusters:
         items.update(c)
 
+    max_block = max(blocks.items(), key=lambda x: len(x[1]))
+    sample = random.sample(max_block[1], min(len(max_block[1]), 5))
+
     print('  - Number of blocks: %i' % len(blocks))
     print('  - Median size of blocks: %f' % median(len(b) for b in blocks.values()))
     print('  - Median size of colliding blocks: % f' % median(len(b) for b in blocks.values() if len(b) > 1))
     print('  - Mean size of blocks: %f' % mean(len(b) for b in blocks.values()))
-    print('  - Max size of blocks: %i' % max(len(b) for b in blocks.values()))
-    print('  - Key of max block: "%s"' % str(max(blocks.items(), key=lambda x: len(x[1]))[0]))
+    print('  - Max size of blocks: %i' % len(max_block[1]))
+    print('  - Key of max block: "%s"' % str(max_block[0]))
+    print('  - Sample of max block:')
+
+    for element in sample:
+        print('     * "%s"' % element)
+
     print('  - Recall %f' % (len(items) / GROUND_TRUTH))
     print('  - Time %f' % time)
     print()

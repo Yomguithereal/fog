@@ -51,3 +51,9 @@ unique file col1,col2
 ```
 flag file col pattern
 ```
+
+### id
+
+```
+id --uuid --inc etc.
+```
