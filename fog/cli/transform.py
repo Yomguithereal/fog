@@ -11,6 +11,7 @@ from fog.utils import squeeze
 
 OPERATIONS = {
     'fingerprint': fingerprint,
+    'len': len,
     'lower': lambda x: x.lower(),
     'squeeze': squeeze,
     'strip': lambda x: x.strip(),
