@@ -64,6 +64,15 @@ def count_keys(k, s):
     return c
 
 
+def sort_key(string):
+    """
+    Function returning sort value for the strings in PassJoin algorithm. It
+    basically order them by decreasing length, then alphabetically as per
+    the "4.2 Effective Indexing Strategy" point of the paper.
+    """
+    return -len(string), string
+
+
 def partition(k, l):
     """
     Function partitioning a string into k + 1 uneven segments, the shorter
@@ -173,3 +182,8 @@ def multi_match_aware_substrings(k, string, l, i, pi, li):
         yield substring
 
         current_substring = substring
+
+
+def passjoin(data, k, sort=True, min_size=2, max_size=float('inf'),
+             mode='connected_components'):
+    pass
