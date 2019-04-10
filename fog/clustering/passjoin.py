@@ -21,10 +21,53 @@
 #
 
 
+def count_substrings_l(k, s, l):
+    """
+    Function returning the number of substrings that will be selected by the
+    multi-match-aware selection scheme for theshold `k`, for a string of length
+    `s` to match strings of length `l`.
+
+    Args:
+        k (int): Levenshtein distance threshold.
+        s (int): Length of target strings.
+        l (int): Length of strings to match.
+
+    Returns:
+        int: The number of selected substrings.
+
+    """
+    return ((k ** 2 - abs(s - l) ** 2) // 2) + k + 1
+
+
+def count_keys(k, s):
+    """
+    Function returning the minimum number of substrings that will be selected by
+    the multi-match-aware selection scheme for theshold `k`, for a string of
+    length `s` to match any string of relevant length.
+
+    Note that for queries, this number will be higher => range(s - k, s + k + 1).
+
+    Args:
+        k (int): Levenshtein distance threshold.
+        s (int): Length of target strings.
+
+    Returns:
+        int: The number of selected substrings.
+
+    """
+
+    c = 0
+
+    for l in range(s - k, s + 1):
+        c += count_keys_l(k, s, l)
+
+    return c
+
+
 def multi_match_aware_interval(k, delta, i, pi):
     """
     Function returning the interval of relevant substrings to lookup using the
-    multimatch-aware substring selection scheme described in the paper.
+    multi-match-aware substring selection scheme described in the paper.
 
     Args:
         k (int): Levenshtein distance threshold.
