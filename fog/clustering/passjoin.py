@@ -64,32 +64,6 @@ def count_keys(k, s):
     return c
 
 
-def multi_match_aware_interval(k, delta, i, pi):
-    """
-    Function returning the interval of relevant substrings to lookup using the
-    multi-match-aware substring selection scheme described in the paper.
-
-    Args:
-        k (int): Levenshtein distance threshold.
-        delta (int): Signed length difference between both considered strings.
-        i (int): k + 1 segment index.
-        pi (int): k + 1 segment position in target string.
-
-    Returns:
-        tuple: start, stop of the interval.
-
-    """
-    start1 = pi - i
-    end1 = pi + i
-
-    o = k - i
-
-    start2 = pi + delta - o
-    end2 = pi + delta + o
-
-    return max(start1, start2), min(end1, end2)
-
-
 def partition(k, l):
     """
     Function partitioning a string into k + 1 uneven segments, the shorter
@@ -133,3 +107,69 @@ def segments(k, string):
     """
     for i, start, length in partition(k, len(string)):
         yield (i, string[start:start + length])
+
+
+def multi_match_aware_interval(k, delta, i, pi):
+    """
+    Function returning the interval of relevant substrings to lookup using the
+    multi-match-aware substring selection scheme described in the paper.
+
+    Args:
+        k (int): Levenshtein distance threshold.
+        delta (int): Signed length difference between both considered strings.
+        i (int): k + 1 segment index.
+        pi (int): k + 1 segment position in target string.
+
+    Returns:
+        tuple: start, stop of the interval.
+
+    """
+    start1 = pi - i
+    end1 = pi + i
+
+    o = k - i
+
+    start2 = pi + delta - o
+    end2 = pi + delta + o
+
+    return max(start1, start2), min(end1, end2)
+
+
+def multi_match_aware_substrings(k, string, l, i, pi, li):
+    """
+    Function yielding relevant substrings to lookup using the multi-match-aware
+    substring selection scheme described in the paper.
+
+    Args:
+        k (int): Levenshtein distance threshold.
+        string (str): Target string.
+        l (int): Length of strings to match.
+        i (int): k + 1 segment index.
+        pi (int): k + 1 segment position in target string.
+        li (int): size in characters of the k + 1 segment.
+
+    Yields:
+        str: one of the contiguous substrings.
+
+    """
+    s = len(string)
+
+    # Note that we need to keep the absolute delta for this function
+    # to work in both directions, up & down
+    delta = s - l
+
+    start, stop = multi_match_aware_interval(k, delta, i, pi)
+
+    current_substring = None
+
+    for j in range(start, stop + 1):
+        substring = string[j:j + li]
+
+        # We skip identical consecutive substrings (to avoid repetition on
+        # cases of letter duplication)
+        if substring == current_substring:
+            continue
+
+        yield substring
+
+        current_substring = substring
