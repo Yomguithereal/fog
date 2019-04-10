@@ -27,10 +27,10 @@ def multi_match_aware_interval(k, delta, i, pi):
     multimatch-aware substring selection scheme described in the paper.
 
     Args:
-        k (int): Distance threshold.
+        k (int): Levenshtein distance threshold.
         delta (int): Signed length difference between both considered strings.
-        i (int): k+1 segment index.
-        pi (int): k+1 segment position in target string.
+        i (int): k + 1 segment index.
+        pi (int): k + 1 segment position in target string.
 
     Returns:
         tuple: start, stop of the interval.
@@ -45,3 +45,48 @@ def multi_match_aware_interval(k, delta, i, pi):
     end2 = pi + delta + o
 
     return max(start1, start2), min(end1, end2)
+
+
+def partition(k, l):
+    """
+    Function partitioning a string into k + 1 uneven segments, the shorter
+    ones, then the longer ones.
+
+    Args:
+        k (int): Levenshtein distance threshold.
+        l (int): Length of the string.
+
+    Yields:
+        tuple: index, start, length.
+
+    """
+    m = k + 1
+    a = l // m
+    b = a + 1
+
+    large_segments = l - a * m
+    small_segments = m - large_segments
+
+    for i in range(small_segments):
+        yield (i, i * a, a)
+
+    offset = i * a + a
+
+    for j in range(large_segments):
+        yield (i + 1 + j, offset + j * b, b)
+
+
+def segments(k, string):
+    """
+    Function yielding a string's k + 1 passjoin segments to index.
+
+    Args:
+        k (int): Levenshtein distance threshold.
+        string (str): Target string.
+
+    Yields:
+        tuple: index, segment.
+
+    """
+    for i, start, length in partition(k, len(string)):
+        yield (i, string[start:start + length])
