@@ -2,6 +2,7 @@
 # Fog PassJoin Unit Tests
 # =============================================================================
 import csv
+from Levenshtein import distance as levenshtein
 from test.clustering.utils import Clusters
 from fog.clustering import passjoin
 from fog.clustering.passjoin import (
@@ -121,28 +122,28 @@ class TestPassJoins(object):
     def test_passjoin(self):
 
         # k = 1
-        clusters = Clusters(passjoin(STRINGS, 1))
+        clusters = Clusters(passjoin(STRINGS, 1, distance=levenshtein))
 
         assert clusters == CLUSTERS_K1
 
-        clusters = Clusters(passjoin(STRINGS, 1, sort=False))
+        clusters = Clusters(passjoin(STRINGS, 1, distance=levenshtein, sort=False))
 
         assert clusters == CLUSTERS_K1
 
         # k = 2
-        clusters = Clusters(passjoin(STRINGS, 2))
+        clusters = Clusters(passjoin(STRINGS, 2, distance=levenshtein))
 
         assert clusters == CLUSTERS_K2
 
-        clusters = Clusters(passjoin(STRINGS, 2, sort=False))
+        clusters = Clusters(passjoin(STRINGS, 2, distance=levenshtein, sort=False))
 
         assert clusters == CLUSTERS_K2
 
         # k = 3
-        clusters = Clusters(passjoin(STRINGS, 3))
+        clusters = Clusters(passjoin(STRINGS, 3, distance=levenshtein))
 
         assert clusters == CLUSTERS_K3
 
-        clusters = Clusters(passjoin(STRINGS, 3, sort=False))
+        clusters = Clusters(passjoin(STRINGS, 3, distance=levenshtein, sort=False))
 
         assert clusters == CLUSTERS_K3

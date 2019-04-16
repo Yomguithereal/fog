@@ -26,7 +26,6 @@ setup(name='fog',
     install_requires=[
         'dill>=0.2.7.1',
         'phylactery>=0.1.1',
-        'python-Levenshtein>=0.12.0',
         'Unidecode>=1.0.22'
     ],
     entry_points={

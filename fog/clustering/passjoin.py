@@ -20,7 +20,6 @@
 # http://people.csail.mit.edu/dongdeng/projects/passjoin/index.html
 #
 from collections import defaultdict
-from Levenshtein import distance as levenshtein
 from fog.clustering.utils import clusters_from_pairs
 
 
@@ -187,7 +186,7 @@ def multi_match_aware_substrings(k, string, l, i, pi, li):
         current_substring = substring
 
 
-def passjoin(data, k, sort=True, min_size=2, max_size=float('inf'),
+def passjoin(data, k, distance, sort=True, min_size=2, max_size=float('inf'),
              mode='connected_components'):
     """
     Function returning an iterator over found clusters using the PassJoin
@@ -207,6 +206,8 @@ def passjoin(data, k, sort=True, min_size=2, max_size=float('inf'),
         data (iterable): Arbitrary iterable containing data points to gather
             into clusters. Will be fully consumed.
         k (number): Levenshtein distance threshold.
+        distance (callable): Function tasked to compute the Levenshtein distance
+            between two points of data.
         sort (boolean, optional): whether to sort the data beforehand. Defaults
             to False.
         min_size (number, optional): minimum number of items in a cluster for
@@ -252,7 +253,7 @@ def passjoin(data, k, sort=True, min_size=2, max_size=float('inf'),
 
                             # NOTE: first condition is here not to compute Levenshtein
                             # distance for tiny strings
-                            if (s <= k and l <= k) or levenshtein(A, B) <= k:
+                            if (s <= k and l <= k) or distance(A, B) <= k:
                                 yield (A, B)
 
             # Indexing the string
