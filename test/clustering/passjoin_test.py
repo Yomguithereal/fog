@@ -3,6 +3,7 @@
 # =============================================================================
 import csv
 from test.clustering.utils import Clusters
+from fog.clustering import passjoin
 from fog.clustering.passjoin import (
     multi_match_aware_interval,
     multi_match_aware_substrings,
@@ -69,6 +70,33 @@ MULTI_MATCH_AWARE_TESTS = [
     )
 ]
 
+STRINGS = [
+    'benjamin',
+    'paule',
+    'paul',
+    'pa',
+    'benja',
+    'benjomon',
+    'ab',
+    'a',
+    ''
+]
+
+CLUSTERS_K1 = Clusters([
+    ['paul', 'paule'],
+    ['', 'a', 'pa', 'ab']
+])
+
+CLUSTERS_K2 = Clusters([
+    ['benjamin', 'benjomon'],
+    ['', 'a', 'ab', 'pa', 'paul', 'paule']
+])
+
+CLUSTERS_K3 = Clusters([
+    ['benjamin', 'benjomon', 'benja'],
+    ['', 'a', 'ab', 'pa', 'paul', 'paule']
+])
+
 
 class TestPassJoins(object):
     def test_segments(self):
@@ -89,3 +117,32 @@ class TestPassJoins(object):
 
         # NOTE: should not duplicate 'sss'
         assert substrings == ['tss', 'sss']
+
+    def test_passjoin(self):
+
+        # k = 1
+        clusters = Clusters(passjoin(STRINGS, 1))
+
+        assert clusters == CLUSTERS_K1
+
+        clusters = Clusters(passjoin(STRINGS, 1, sort=False))
+
+        assert clusters == CLUSTERS_K1
+
+        # k = 2
+        clusters = Clusters(passjoin(STRINGS, 2))
+
+        assert clusters == CLUSTERS_K2
+
+        clusters = Clusters(passjoin(STRINGS, 2, sort=False))
+
+        assert clusters == CLUSTERS_K2
+
+        # k = 3
+        clusters = Clusters(passjoin(STRINGS, 3))
+
+        assert clusters == CLUSTERS_K3
+
+        clusters = Clusters(passjoin(STRINGS, 3, sort=False))
+
+        assert clusters == CLUSTERS_K3

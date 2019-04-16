@@ -19,6 +19,9 @@
 # [Urls]:
 # http://people.csail.mit.edu/dongdeng/projects/passjoin/index.html
 #
+from collections import defaultdict
+from Levenshtein import distance as levenshtein
+from fog.clustering.utils import clusters_from_pairs
 
 
 def count_substrings_l(k, s, l):
@@ -186,4 +189,82 @@ def multi_match_aware_substrings(k, string, l, i, pi, li):
 
 def passjoin(data, k, sort=True, min_size=2, max_size=float('inf'),
              mode='connected_components'):
-    pass
+    """
+    Function returning an iterator over found clusters using the PassJoin
+    algorithm that is able to find every pair of strings having a Levenshtein
+    distance less than or equal to a threshold k.
+
+    It works by indexing k + 1 mostly even segments of the considered strings
+    into inverted indices splitted by string length and segment index. Then,
+    we use another complex but comprehensive string partition scheme to be able
+    to produce candidate pairs which are verified using Levenshtein distance.
+
+    It runs in approximately O(nk^2) or O(nk^3) if not sorted. It's therefore
+    very scalable with small k values and is undoubtedly better than the naive
+    quadratic approach.
+
+    Args:
+        data (iterable): Arbitrary iterable containing data points to gather
+            into clusters. Will be fully consumed.
+        k (number): Levenshtein distance threshold.
+        sort (boolean, optional): whether to sort the data beforehand. Defaults
+            to False.
+        min_size (number, optional): minimum number of items in a cluster for
+            it to be considered viable. Defaults to 2.
+        max_size (number, optional): maximum number of items in a cluster for
+            it to be considered viable. Defaults to infinity.
+        mode (string, optional): 'fuzzy_clusters', 'connected_components'.
+            Defaults to 'connected_components'.
+
+    Yields:
+        list: A viable cluster.
+
+    """
+
+    if sort:
+
+        # NOTE: sorting in reverse as per "4.2 Effective Indexing Strategy"
+        data = sorted(data, key=sort_key)
+
+    def clustering():
+        L = defaultdict(lambda: defaultdict(list))
+        Ll = None
+
+        for A in data:
+            s = len(A)
+
+            # Attempting to match the string
+            for l in range(s if sort else max(0, s - k), s + k + 1):
+                Ll = L.get(l)
+
+                # Index is empty for this length, no need to enquire further
+                if Ll is None:
+                    continue
+
+                for i, start, length in partition(k, l):
+                    for substring in multi_match_aware_substrings(k, A, l, i, start, length):
+                        candidates = Ll.get((i, substring))
+
+                        if candidates is None:
+                            continue
+
+                        for B in candidates:
+
+                            # NOTE: first condition is here not to compute Levenshtein
+                            # distance for tiny strings
+                            if (s <= k and l <= k) or levenshtein(A, B) <= k:
+                                yield (A, B)
+
+            # Indexing the string
+            # NOTE: it's possible to cleanup some memory when working on sorted strings
+            Ll = L[s]
+
+            for key in segments(k, A):
+                Ll[key].append(A)
+
+    yield from clusters_from_pairs(
+        clustering(),
+        min_size=min_size,
+        max_size=max_size,
+        mode=mode
+    )
