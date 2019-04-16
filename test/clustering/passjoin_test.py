@@ -79,7 +79,13 @@ class TestPassJoins(object):
         for (delta, i, pi), interval in EXPECTED_INTERVALS:
             assert multi_match_aware_interval(3, delta, i, pi) == interval
 
-    def test_multi_match_aware_segments(self):
+    def test_multi_match_aware_substrings(self):
         for group in MULTI_MATCH_AWARE_TESTS:
             for (i, l, substrings), (_, pi, li) in zip(group, partition(3, group[0][1])):
                 assert list(multi_match_aware_substrings(3, 'avaterasha', l, i, pi, li))
+
+        # Duplicate letters
+        substrings = list(multi_match_aware_substrings(3, 'avatssssha', 11, 2, 5, 3))
+
+        # NOTE: should not duplicate 'sss'
+        assert substrings == ['tss', 'sss']
