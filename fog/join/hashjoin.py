@@ -2,56 +2,76 @@
 # Fog Hashjoin Algorithm
 # =============================================================================
 #
-# TODO: Docstring
-#
-# TODO: check input data length properly
+# TODO: key(s) as iterable of fuctions ?
 #
 #
-import warnings
 from types import GeneratorType
-from pprint import pprint
+import warnings
 
 
 def hashjoin(left, right, key=None, keys=None):
     """
-    Pairs are found across two different datasets : left and right.
+    For each element in left, hasjoin finds similar elements in right.
+    Pairs are yieled when two elements share at least one key.
+
+    Returns a list of pair of candidates (left_elt, right_elt).
 
     Args
-        left (iterable) : Arbitrary iterable containing data points. Will be
+        left (iterable): Arbitrary iterable containing data points. Will be
             fully consumed.
         right (iterable): Arbitrary iterable containing data points. Will be
             fully consumed.
-        key (callable) : A function returning an item's key.
-        keys (callable) : A function returning an item's keys.
+        key (function): Functions returning an item's key.
+        keys (function): Functions returning an item's keys.
 
     Yield
-        list: List of simple pairs found across the the two datasets.
+        (list): List of pairs found across left and right datasets.
     """
-    if not (isinstance(left, GeneratorType) and isinstance(right, GeneratorType)):
+    try:
         if len(left) > len(right):
-            warnings.warn(
-                'For performance reasons, len(left) should be > to len(right).',
-                Warning
-            )
+            A, B = right, left
+            invert = True
+        else:
+            A, B = left, right
+            invert = False
+    except TypeError:
+        A, B = left, right
+        invert = False
+
+    if isinstance(B, GeneratorType):
+        warnings.warn(
+            """
+            fog.join.hasjoin: At least one of the input iterables is a
+            generator. It will be fully consumed before hasjoin finds all
+            similar pairs.
+            """)
 
     # Single key
     if key is not None:
-        for item_l in left:
-            key_l = key(item_l)
+        for a in A:
+            key_a = key(a)
 
-            for item_r in right:
-                key_r = key(item_r)
+            for b in B:
+                key_b = key(b)
 
-                if k_left == k_right:
-                    yield (item_l, item_r)
+                if key_a == key_b:
+
+                    if invert:
+                        yield (b, a)
+                    else:
+                        yield (a, b)
 
     # Multiple keys
     if keys is not None:
-        for item_l in left:
-            key_l = keys(item_l)
+        for a in A:
+            key_a = keys(a)
 
-            for item_r in right:
-                key_r = keys(item_r)
+            for b in B:
+                key_b = keys(b)
 
-                if len(list(set(key_l) & set(key_r))) > 0:
-                    yield (item_l, item_r)
+                if len(list(set(key_a) & set(key_b))) > 0:
+
+                    if invert:
+                        yield (b, a)
+                    else:
+                        yield (a, b)

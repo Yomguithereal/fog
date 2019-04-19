@@ -1,14 +1,8 @@
-from fog.join import hashjoin
+from fog.join.hashjoin import hashjoin
+from pprint import pprint
 
 
-B = [
-    'John Doe',
-    'Ron Wisley',
-    'Clark Kent',
-    'Britney Spears',
-]
-
-A = [
+A = {
     'Spartan Spears',
     'Kent & Barby',
     'Doe John',
@@ -16,16 +10,18 @@ A = [
     'Kent Doe',
     'John Mirage',
     'Mirage',
-]
+}
+
+B = {
+    'John Doe',
+    'Ron Wisley',
+    'Clark Kent',
+    'Britney Spears',
+}
 
 R = [
-    ('John Doe', 'Doe John'),
-    ('John Doe', 'Kent Doe'),
-    ('John Doe', 'John Mirage'),
-    ('Ron Wisley', 'Ron The Turtel'),
-    ('Clark Kent', 'Kent & Barby'),
-    ('Clark Kent', 'Kent Doe'),
-    ('Britney Spears', 'Spartan Spears')
+    ('Ron The Turtel', 'Ron Wisley'),
+    ('John Mirage', 'John Doe')
 ]
 
 objA = [
@@ -34,6 +30,7 @@ objA = [
     {'name': 'Clark Kent', 'id': 2},
     {'name': 'Britney Spears', 'id': 3}
 ]
+
 
 objB = [
     {'name': 'Spartan Spears', 'id': 90},
@@ -55,11 +52,13 @@ objR = [
     ({'name': 'Britney Spears', 'id': 3}, {'name': 'Spartan Spears', 'id': 90})
 ]
 
+objA = (e for e in objA)
+
 
 def fingerprint(item):
     item = item.lower()
     item = item.split(' ')
-    return [k.strip() for k in item]
+    return [k.strip() for k in item][0]
 
 
 def fingerprintObj(item):
@@ -70,10 +69,10 @@ def fingerprintObj(item):
 
 class TestHashJoin(object):
 
-    def simpleTest(self):
-        result = list(hashjoin(A, B, keys=fingerprint))
-        assert result == R
+    def test_simple(self):
+        result = hashjoin(A, B, key=fingerprint)
+        assert set(result) == set(R)
 
-    def objectTest(self):
+    def test_objectTest(self):
         result = list(hashjoin(objA, objB, keys=fingerprintObj))
         assert result == objR
