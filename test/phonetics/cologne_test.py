@@ -1,7 +1,6 @@
 # =============================================================================
 # Fog Cologne Unit Tests
 # =============================================================================
-from pytest import approx
 from fog.phonetics import cologne
 
 TESTS = [
