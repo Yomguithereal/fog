@@ -209,7 +209,7 @@ def passjoin(data, k, distance, sort=True, min_size=2, max_size=float('inf'),
         distance (callable): Function tasked to compute the Levenshtein distance
             between two points of data.
         sort (boolean, optional): whether to sort the data beforehand. Defaults
-            to False.
+            to True.
         min_size (number, optional): minimum number of items in a cluster for
             it to be considered viable. Defaults to 2.
         max_size (number, optional): maximum number of items in a cluster for
