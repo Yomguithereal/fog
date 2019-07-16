@@ -143,7 +143,7 @@ def multi_match_aware_interval(k, delta, i, pi):
     start2 = pi + delta - o
     end2 = pi + delta + o
 
-    return max(start1, start2), min(end1, end2)
+    return max(0, start1, start2), min(end1, end2)
 
 
 def multi_match_aware_substrings(k, string, l, i, pi, li):
@@ -229,6 +229,7 @@ def passjoin(data, k, distance, sort=True, min_size=2, max_size=float('inf'),
 
     # TODO: when keys lengths are <= k some pairs are tested more than once!
     # TODO: test exact match cases
+    # TODO: empty string should probably be handled in its own way?
 
     def clustering():
         L = defaultdict(lambda: defaultdict(list))
