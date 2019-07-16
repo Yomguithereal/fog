@@ -14,7 +14,9 @@ TESTS = [
     ('1274', 'Patrick'),
     ('051742', 'Albrecht'),
     ('68', 'Mac'),
-    ('64', 'Mack')
+    ('64', 'Mack'),
+    ('6', 'M'),
+    ('', '45639')  # Numbers should produce empty code
 ]
 
 
