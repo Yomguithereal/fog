@@ -67,6 +67,9 @@ def key_collision(data, key=None, keys=None, min_size=2, max_size=float('inf'),
         for item in data:
             ks = keys(item)
 
+            if not ks:
+                continue
+
             for k in ks:
                 if k:
                     buckets[k].append(item)

@@ -19,6 +19,11 @@ CLUSTERS = Clusters([
     ['gooDbye', 'Goodbye']
 ])
 
+FALSEY_CLUSTERS = Clusters([
+    ['hello', 'heLLo'],
+    ['gooDbye', 'Goodbye']
+])
+
 NAMES = [
     'John Doe',
     'John Doe Jr.',
@@ -57,3 +62,12 @@ class TestKeyCollisionClustering(object):
         clusters = Clusters(key_collision(NAMES, keys=lambda x: ngrams(5, x)))
 
         assert clusters == MERGED_NAMES_CLUSTERS
+
+    def test_falsey_keys(self):
+        clusters = Clusters(key_collision(DATA, key=lambda x: x.lower() if x != 'Hello' else None))
+
+        assert clusters == FALSEY_CLUSTERS
+
+        clusters = Clusters(key_collision(DATA, keys=lambda x: [x.lower()] if x != 'Hello' else None))
+
+        assert clusters == FALSEY_CLUSTERS
