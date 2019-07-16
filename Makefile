@@ -4,7 +4,7 @@ SOURCE = fog
 # Commands
 all: lint test
 test: build-ext unit
-publish: lint test build-ext upload clean
+publish: clean lint test build-ext upload clean
 
 build-ext:
 	@echo Building native extensions...

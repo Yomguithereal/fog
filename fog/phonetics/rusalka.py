@@ -35,6 +35,7 @@ from unidecode import unidecode
 # Strzoda
 # Variantes polonaises
 # Pierrick_Rakotoharisoa,Pierrick_Rakotoharizoa
+# Jughashvilli
 
 # criblage à base de aev pour normalisers
 
