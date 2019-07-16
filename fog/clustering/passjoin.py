@@ -61,7 +61,7 @@ def count_keys(k, s):
     c = 0
 
     for l in range(s - k, s + 1):
-        c += count_keys_l(k, s, l)
+        c += count_substrings_l(k, s, l)
 
     return c
 
