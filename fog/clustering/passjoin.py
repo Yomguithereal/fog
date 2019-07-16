@@ -227,6 +227,8 @@ def passjoin(data, k, distance, sort=True, min_size=2, max_size=float('inf'),
         # NOTE: sorting in reverse as per "4.2 Effective Indexing Strategy"
         data = sorted(data, key=sort_key)
 
+    # TODO: when keys lengths are <= k some pairs are tested more than once!
+
     def clustering():
         L = defaultdict(lambda: defaultdict(list))
         Ll = None
