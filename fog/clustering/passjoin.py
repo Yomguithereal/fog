@@ -176,8 +176,8 @@ def multi_match_aware_substrings(k, string, l, i, pi, li):
     for j in range(start, stop + 1):
         substring = string[j:j + li]
 
-        # We skip identical consecutive substrings (to avoid repetition on
-        # cases of letter duplication)
+        # We skip identical consecutive substrings (to avoid repetition in
+        # case of contiguous letter duplication)
         if substring == current_substring:
             continue
 
@@ -228,6 +228,7 @@ def passjoin(data, k, distance, sort=True, min_size=2, max_size=float('inf'),
         data = sorted(data, key=sort_key)
 
     # TODO: when keys lengths are <= k some pairs are tested more than once!
+    # TODO: test exact match cases
 
     def clustering():
         L = defaultdict(lambda: defaultdict(list))
