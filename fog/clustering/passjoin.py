@@ -143,6 +143,7 @@ def multi_match_aware_interval(k, delta, i, pi):
     start2 = pi + delta - o
     end2 = pi + delta + o
 
+    # NOTE: the 0 is propbably useless?
     return max(0, start1, start2), min(end1, end2)
 
 
