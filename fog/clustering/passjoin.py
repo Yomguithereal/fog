@@ -165,7 +165,7 @@ def multi_match_aware_substrings(k, string, l, i, pi, li):
     """
     s = len(string)
 
-    # Note that we need to keep the absolute delta for this function
+    # Note that we need to keep the non-absolute delta for this function
     # to work in both directions, up & down
     delta = s - l
 
