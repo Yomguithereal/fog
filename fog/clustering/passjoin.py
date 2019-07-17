@@ -263,6 +263,8 @@ def passjoin(data, k, distance, sort=True, min_size=2, max_size=float('inf'),
                             # distance for tiny strings
                             # NOTE: a pair may arise more than once here
                             # It's taken care of later but I feel we can do better...
+                            # What's more, we should also record non-matches even if the
+                            # case of testing twice is naturally rarer
                             if (s <= k and l <= k) or distance(A, B) <= k:
                                 yield (A, B)
 
