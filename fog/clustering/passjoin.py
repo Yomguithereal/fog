@@ -261,6 +261,8 @@ def passjoin(data, k, distance, sort=True, min_size=2, max_size=float('inf'),
 
                             # NOTE: first condition is here not to compute Levenshtein
                             # distance for tiny strings
+                            # NOTE: a pair may arise more than once here
+                            # It's taken care of later but I feel we can do better...
                             if (s <= k and l <= k) or distance(A, B) <= k:
                                 yield (A, B)
 
