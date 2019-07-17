@@ -14,10 +14,10 @@ from fog.clustering.passjoin import (
 
 
 EXPECTED_INTERVALS = [
-    ((1, 0, 0), (0, 0)),
-    ((1, 1, 2), (1, 3)),
-    ((1, 2, 4), (4, 6)),
-    ((1, 3, 6), (7, 7))
+    ((1, 0, 0, 2), (0, 0)),
+    ((1, 1, 2, 2), (1, 3)),
+    ((1, 2, 4, 3), (4, 6)),
+    ((1, 3, 6, 3), (7, 7))
 ]
 
 MULTI_MATCH_AWARE_TESTS = [
@@ -105,8 +105,8 @@ class TestPassJoins(object):
         assert list(segments(3, 'avaterasha')) == [(0, 'av'), (1, 'at'), (2, 'era'), (3, 'sha')]
 
     def test_multi_match_aware_interval(self):
-        for (delta, i, pi), interval in EXPECTED_INTERVALS:
-            assert multi_match_aware_interval(3, delta, i, pi) == interval
+        for (delta, i, pi, li), interval in EXPECTED_INTERVALS:
+            assert multi_match_aware_interval(3, delta, i, 10, pi, li) == interval
 
     def test_multi_match_aware_substrings(self):
         for group in MULTI_MATCH_AWARE_TESTS:

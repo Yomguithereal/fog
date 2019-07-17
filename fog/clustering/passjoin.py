@@ -120,7 +120,7 @@ def segments(k, string):
         yield (i, string[start:start + length])
 
 
-def multi_match_aware_interval(k, delta, i, pi):
+def multi_match_aware_interval(k, delta, i, s, pi, li):
     """
     Function returning the interval of relevant substrings to lookup using the
     multi-match-aware substring selection scheme described in the paper.
@@ -129,7 +129,9 @@ def multi_match_aware_interval(k, delta, i, pi):
         k (int): Levenshtein distance threshold.
         delta (int): Signed length difference between both considered strings.
         i (int): k + 1 segment index.
+        s (int): string length.
         pi (int): k + 1 segment position in target string.
+        li (int): k + 1 segment length.
 
     Returns:
         tuple: start, stop of the interval.
@@ -143,8 +145,9 @@ def multi_match_aware_interval(k, delta, i, pi):
     start2 = pi + delta - o
     end2 = pi + delta + o
 
-    # NOTE: the 0 is propbably useless?
-    return max(0, start1, start2), min(end1, end2)
+    end3 = s - li
+
+    return max(0, start1, start2), min(end1, end2, end3)
 
 
 def multi_match_aware_substrings(k, string, l, i, pi, li):
@@ -170,7 +173,7 @@ def multi_match_aware_substrings(k, string, l, i, pi, li):
     # to work in both directions, up & down
     delta = s - l
 
-    start, stop = multi_match_aware_interval(k, delta, i, pi)
+    start, stop = multi_match_aware_interval(k, delta, i, s, pi, li)
 
     current_substring = None
 
