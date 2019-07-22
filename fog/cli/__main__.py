@@ -43,6 +43,7 @@ def main():
     transform_subparser.add_argument('-o', '--output', help='output file', type=FileType('w'), default=sys.stdout)
     transform_subparser.add_argument('-t', '--target-column', help='name of the column to create')
     transform_subparser.add_argument('-a', '--after', help='whether to add the new column just after the original one', action='store_true')
+    transform_subparser.add_argument('--eval', help='evaluate the operations as a python expression rather than using an operation chain', action='store_true')
     SUBPARSERS['transform'] = transform_subparser
 
     help_suparser = subparsers.add_parser('help')

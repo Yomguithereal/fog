@@ -22,7 +22,10 @@ OPERATIONS = {
 def transform_action(namespace):
 
     # TODO: validate operation_chain
-    operation_chain = [OPERATIONS[o] for o in namespace.operations.split(',')]
+    operation_chain = None
+
+    if not namespace.eval:
+        operation_chain = [OPERATIONS[o] for o in namespace.operations.split(',')]
 
     headers, position, reader = custom_reader(namespace.file, namespace.column)
 
@@ -38,8 +41,13 @@ def transform_action(namespace):
     for line in reader:
         new_value = line[position]
 
-        for op in operation_chain:
-            new_value = op(new_value)
+        if namespace.eval:
+            new_value = eval(namespace.operations, None, {
+                'value': new_value
+            })
+        else:
+            for op in operation_chain:
+                new_value = op(new_value)
 
         if namespace.target_column is not None:
             if namespace.after:
