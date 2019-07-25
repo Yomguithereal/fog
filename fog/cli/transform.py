@@ -5,6 +5,7 @@
 # Logic of the transform CLI action enabling the user to edit cell in batch.
 #
 import csv
+from unidecode import unidecode
 from fog.cli.utils import custom_reader
 from fog.key import fingerprint
 from fog.utils import squeeze
@@ -15,6 +16,7 @@ OPERATIONS = {
     'lower': lambda x: x.lower(),
     'squeeze': squeeze,
     'strip': lambda x: x.strip(),
+    'unidecode': unidecode,
     'upper': lambda x: x.upper()
 }
 
@@ -43,6 +45,7 @@ def transform_action(namespace):
 
         if namespace.eval:
             new_value = eval(namespace.operations, None, {
+                'unidecode': unidecode,
                 'value': new_value
             })
         else:
