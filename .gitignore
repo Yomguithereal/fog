@@ -1,6 +1,7 @@
 __pycache__
 .DS_Store
 .pytest_cache
+.python-version
 .ipynb_checkpoints
 *.egg-info
 *.c
