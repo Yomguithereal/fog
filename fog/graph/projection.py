@@ -8,7 +8,8 @@ import math
 import networkx as nx
 from collections import defaultdict, Counter
 
-from fog.metrics import sparse_dot_product
+from fog.metrics.cosine import sparse_dot_product
+from fog.metrics.utils import intersection_size
 
 MONOPARTITE_PROJECTION_METRICS = ('cosine', 'jaccard', 'overlap')
 
@@ -43,9 +44,6 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
 
     if metric is not None and metric not in MONOPARTITE_PROJECTION_METRICS:
         raise TypeError('fog.graph.monopartite_projection: unsupported metric "%s"' % metric)
-
-    if metric != 'cosine' and metric is not None:
-        raise NotImplementedError
 
     monopartite = nx.Graph()
 
@@ -113,13 +111,25 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
             norm2 = norms[n2]
             vector2 = vectors[n2]
 
-            w = sparse_dot_product(vector1, vector2)
+            # NOTE: at this point, both norms should be > 0
+            if metric == 'cosine':
+                w = sparse_dot_product(vector1, vector2)
 
-            if w == 0:
-                continue
+                if w == 0:
+                    continue
 
-            # NOTE: at this point, both norms should be > 0, so no need to test
-            w = w / (norm1 * norm2)
+                w /= (norm1 * norm2)
+
+            else:
+                w = intersection_size(vector1, vector2)
+
+                if w == 0:
+                    continue
+
+                if metric == 'jaccard':
+                    w /= (norm1 + norm2 - w)
+                elif metric == 'overlap':
+                    w /= min(norm1, norm2)
 
             if threshold is None or w >= threshold:
                 monopartite.add_edge(n1, n2, **{weight: w})

@@ -1,11 +1,16 @@
 # =============================================================================
 # Fog Graph Projection Unit Tests
 # =============================================================================
+import pytest
 from pytest import approx
 
 import networkx as nx
 from fog.graph import monopartite_projection
-from fog.metrics import sparse_cosine_similarity
+from fog.metrics import (
+    sparse_cosine_similarity,
+    jaccard_similarity,
+    overlap_coefficient
+)
 
 NODES = [
     ('John', 'people'),
@@ -46,6 +51,10 @@ def to_vector(g, u):
 
 
 class TestGraphProjection(object):
+    def test_invalid_arguments(self):
+        with pytest.raises(TypeError):
+            monopartite_projection(BIPARTITE, 'people', part='part', metric='unknown')
+
     def test_basics(self):
         mono = monopartite_projection(BIPARTITE, 'people', part='part')
 
@@ -78,3 +87,27 @@ class TestGraphProjection(object):
 
         for _, _, c in mono.edges(data='weight'):
             assert c >= 0.3
+
+    def test_jaccard(self):
+        mono = monopartite_projection(BIPARTITE, 'people', part='part', metric='jaccard')
+
+        assert set(mono.nodes) == PEOPLE_PART
+
+        for u, v, c in mono.edges(data='weight'):
+            u = to_vector(BIPARTITE, u)
+            v = to_vector(BIPARTITE, v)
+
+            assert c == approx(jaccard_similarity(u, v))
+
+    def test_overlap(self):
+        mono = monopartite_projection(BIPARTITE, 'people', part='part', metric='overlap')
+
+        assert set(mono.nodes) == PEOPLE_PART
+
+        assert mono['John']['Lucy']['weight'] == 1.0
+
+        for u, v, c in mono.edges(data='weight'):
+            u = to_vector(BIPARTITE, u)
+            v = to_vector(BIPARTITE, v)
+
+            assert c == approx(overlap_coefficient(u, v))
