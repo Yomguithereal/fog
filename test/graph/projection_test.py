@@ -5,6 +5,7 @@ import pytest
 from pytest import approx
 
 import networkx as nx
+from test.clustering.utils import Clusters
 from fog.graph import monopartite_projection
 from fog.metrics import (
     sparse_cosine_similarity,
@@ -60,12 +61,12 @@ class TestGraphProjection(object):
 
         assert set(mono.nodes) == PEOPLE_PART
 
-        assert sorted(set(mono.edges(data='weight'))) == sorted(set([
+        assert Clusters(mono.edges(data='weight')) == Clusters([
             ('John', 'Mary', 1),
             ('John', 'Lucy', 2),
             ('Mary', 'Lucy', 1),
             ('Mary', 'Gabriel', 1)
-        ]))
+        ])
 
     def test_cosine(self):
         mono = monopartite_projection(BIPARTITE, 'people', part='part', metric='cosine')
@@ -83,7 +84,7 @@ class TestGraphProjection(object):
 
         assert set(mono.nodes) == PEOPLE_PART
 
-        assert sorted(set(mono.edges)) == sorted(set([('John', 'Lucy'), ('Mary', 'Lucy')]))
+        assert Clusters(mono.edges) == Clusters([('John', 'Lucy'), ('Mary', 'Lucy')])
 
         for _, _, c in mono.edges(data='weight'):
             assert c >= 0.3

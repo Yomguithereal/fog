@@ -85,7 +85,6 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
 
     # Accumulating norms
     # TODO: we could try to save up the vectors memory cost by relying on graph
-    norms = {}
     vectors = {}
 
     if metric is not None:
@@ -103,18 +102,15 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
 
             if s > 0:
                 if metric == 'cosine':
-                    norms[node] = math.sqrt(s)
+                    vectors[node] = (math.sqrt(s), neighbors)
                 else:
-                    norms[node] = s
-
-                vectors[node] = neighbors
+                    vectors[node] = (s, neighbors)
 
     # Basic projection
     if metric is None or use_index:
 
         for n1 in monopartite.nodes:
-            vector1 = vectors[n1] if metric is not None else None
-            norm1 = norms[n1] if metric is not None else None
+            norm1, vector1 = vectors[n1] if metric is not None else (None, None)
 
             for _, np in bipartite.edges(n1):
                 for _, n2 in bipartite.edges(np):
@@ -124,8 +120,7 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
                         continue
 
                     if metric is not None:
-                        vector2 = vectors[n2]
-                        norm2 = norms[n2]
+                        norm2, vector2 = vectors[n1] if metric is not None else (None, None)
 
                         # NOTE: at this point, both norms should be > 0
                         w = compute_metric(metric, vector1, vector2, norm1, norm2)
@@ -146,17 +141,15 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
         return monopartite
 
     # Quadratic version
-    nodes = list(norms.keys())
+    nodes = list(vectors.keys())
     l = len(nodes)
 
     for i, n1 in enumerate(nodes):
-        norm1 = norms[n1]
-        vector1 = vectors[n1]
+        norm1, vector1 = vectors[n1]
 
         for j in range(i + 1, l):
             n2 = nodes[j]
-            norm2 = norms[n2]
-            vector2 = vectors[n2]
+            norm2, vector2 = vectors[n2]
 
             # NOTE: at this point, both norms should be > 0
             w = compute_metric(metric, vector1, vector2, norm1, norm2)
