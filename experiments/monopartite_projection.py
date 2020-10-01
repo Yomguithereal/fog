@@ -20,7 +20,8 @@ with Timer('quadratic'):
     monopartite = monopartite_projection(bipartite, 'account',
         part='node_type',
         metric='cosine',
-        threshold=0.3
+        threshold=0.3,
+        bipartition_check=False
     )
 
 print(monopartite.order(), monopartite.size())
@@ -30,7 +31,8 @@ with Timer('index'):
         part='node_type',
         metric='cosine',
         threshold=0.3,
-        use_index=True
+        use_index=True,
+        bipartition_check=False
     )
 
 print(monopartite.order(), monopartite.size())

@@ -103,6 +103,9 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
         monopartite.add_node(node, **attr)
 
     # Accumulating vectors & norms
+    # TODO: we could save up some memory by relying on nx's graph directly
+    # But this would make code a bit more complex and won't ease up adapting
+    # the function to a sparse vector input
     vectors = {}
 
     if metric is not None:
