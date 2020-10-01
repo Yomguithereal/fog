@@ -12,6 +12,7 @@ from fog.metrics.cosine import sparse_dot_product
 from fog.metrics.utils import intersection_size
 
 MONOPARTITE_PROJECTION_METRICS = ('cosine', 'jaccard', 'overlap')
+EMPTY_COUPLE = (None, None)
 
 
 def compute_metric(metric, vector1, vector2, norm1, norm2):
@@ -110,7 +111,7 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
     if metric is None or use_index:
 
         for n1 in monopartite.nodes:
-            norm1, vector1 = vectors[n1] if metric is not None else (None, None)
+            norm1, vector1 = vectors.get(n1, EMPTY_COUPLE) if metric is not None else EMPTY_COUPLE
 
             for _, np in bipartite.edges(n1):
                 for _, n2 in bipartite.edges(np):
@@ -120,23 +121,26 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
                         continue
 
                     if metric is not None:
-                        norm2, vector2 = vectors[n1] if metric is not None else (None, None)
+                        if monopartite.has_edge(n1, n2):
+                            continue
+
+                        norm2, vector2 = vectors[n2]
 
                         # NOTE: at this point, both norms should be > 0
                         w = compute_metric(metric, vector1, vector2, norm1, norm2)
 
                         if w == 0:
                             continue
+
+                        monopartite.add_edge(n1, n2, **{weight: w})
                     else:
-                        w = 1
+                        if monopartite.has_edge(n1, n2):
+                            monopartite[n1][n2][weight] += 1
+                        else:
+                            monopartite.add_edge(n1, n2, **{weight: 1})
 
                     if threshold is not None and w < threshold:
                         continue
-
-                    if monopartite.has_edge(n1, n2):
-                        monopartite[n1][n2][weight] += w
-                    else:
-                        monopartite.add_edge(n1, n2, **{weight: w})
 
         return monopartite
 

@@ -6,7 +6,7 @@ from pytest import approx
 
 import networkx as nx
 from test.clustering.utils import Clusters
-from fog.graph import monopartite_projection
+from fog.graph.projection import monopartite_projection, MONOPARTITE_PROJECTION_METRICS
 from fog.metrics import (
     sparse_cosine_similarity,
     jaccard_similarity,
@@ -112,3 +112,16 @@ class TestGraphProjection(object):
             v = to_vector(BIPARTITE, v)
 
             assert c == approx(overlap_coefficient(u, v))
+
+    def test_use_index(self):
+
+        for metric in MONOPARTITE_PROJECTION_METRICS:
+            mono1 = monopartite_projection(BIPARTITE, 'people', part='part', metric=metric)
+            mono2 = monopartite_projection(BIPARTITE, 'people', part='part', metric=metric, use_index=True)
+
+            assert mono1.order() == mono2.order()
+            assert mono1.size() == mono2.size()
+
+            for u, v, w in mono1.edges(data='weight'):
+                assert mono2.has_edge(u, v)
+                assert mono2[u][v]['weight'] == approx(w), (u, v, w)
