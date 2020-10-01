@@ -40,7 +40,8 @@ def compute_metric(metric, vector1, vector2, norm1, norm2):
 
 # TODO: use passjoin prefix filtering as optimization scheme
 def monopartite_projection(bipartite, project, part='bipartite', weight='weight',
-                           metric=None, threshold=None, use_index=False):
+                           metric=None, threshold=None, use_index=False,
+                           bipartition_check=True):
     """
     Function computing a monopartite projection of the given bipartite graph.
     This projection can be basic and create a weighted edge each time two nodes
@@ -49,8 +50,7 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
     for instance.
 
     Args:
-        bipartite (nx.Graph): Target bipartite graph. The function will raise an
-            error in case the given graph is not truly bipartite.
+        bipartite (nx.Graph): Target bipartite graph.
         project (str): Name of the partition to project.
         part (str, optional): Name of the partition attribute.
             Defaults to "bipartite" wrt networkx conventions.
@@ -66,6 +66,11 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
             a lot of memory depending on your dataset. But if you can guarantee
             that the probability that two nodes share the same neighbor is low,
             then it can drastically improve your performance.
+        bipartition_check (bool, optional): This function will start by checking
+            whether your graph is bipartite because it can get stuck in an
+            infinite loop if given graph is not truly bipartite. Be sure to
+            disable this kwarg if you know beforehand that your graph is
+            bipartite and for better performance.
 
     Returns:
         nx.Graph: The monopartite projection.
@@ -74,6 +79,19 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
 
     if metric is not None and metric not in MONOPARTITE_PROJECTION_METRICS:
         raise TypeError('fog.graph.monopartite_projection: unsupported metric "%s"' % metric)
+
+    if bipartition_check:
+        parts = set()
+
+        for n1, n2 in bipartite.edges:
+            p1 = bipartite.nodes[n1][part]
+            p2 = bipartite.nodes[n2][part]
+
+            parts.add(p1)
+            parts.add(p2)
+
+            if p1 == p2 or len(parts) > 2:
+                raise TypeError('fog.graph.monopartite_projection: given graph is not truly bipartite!')
 
     monopartite = nx.Graph()
 
@@ -84,8 +102,7 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
 
         monopartite.add_node(node, **attr)
 
-    # Accumulating norms
-    # TODO: we could try to save up the vectors memory cost by relying on graph
+    # Accumulating vectors & norms
     vectors = {}
 
     if metric is not None:

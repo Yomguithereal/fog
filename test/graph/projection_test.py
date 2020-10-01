@@ -56,6 +56,18 @@ class TestGraphProjection(object):
         with pytest.raises(TypeError):
             monopartite_projection(BIPARTITE, 'people', part='part', metric='unknown')
 
+        invalid_bipartite = BIPARTITE.copy()
+        invalid_bipartite.add_edge("red", "purple")
+
+        with pytest.raises(TypeError):
+            monopartite_projection(invalid_bipartite, 'people', part='part', metric='unknown')
+
+        invalid_bipartite = BIPARTITE.copy()
+        invalid_bipartite.add_edge("John", "Lucy")
+
+        with pytest.raises(TypeError):
+            monopartite_projection(invalid_bipartite, 'people', part='part', metric='unknown')
+
     def test_basics(self):
         mono = monopartite_projection(BIPARTITE, 'people', part='part')
 
