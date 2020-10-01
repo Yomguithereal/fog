@@ -1,6 +1,6 @@
 import csv
 import networkx as nx
-from fog.graph import monopartite_projection
+from fog.graph import monopartite_projection, floatsam_sparsification
 from experiments.utils import Timer
 
 bipartite = nx.Graph()
@@ -20,7 +20,7 @@ with Timer('quadratic'):
     monopartite = monopartite_projection(bipartite, 'account',
         part='node_type',
         metric='cosine',
-        threshold=0.3,
+        threshold=0.1,
         bipartition_check=False
     )
 
@@ -30,7 +30,7 @@ with Timer('index'):
     monopartite = monopartite_projection(bipartite, 'account',
         part='node_type',
         metric='cosine',
-        threshold=0.3,
+        threshold=0.1,
         use_index=True,
         bipartition_check=False
     )
@@ -38,3 +38,10 @@ with Timer('index'):
 print(monopartite.order(), monopartite.size())
 
 nx.write_gexf(monopartite, './output/monopartite.gexf')
+
+with Timer('floatsam'):
+    best_threshold = floatsam_sparsification(monopartite, 0.3, learning_rate=0.01, remove_edges=True)
+
+print(monopartite.order(), monopartite.size(), best_threshold)
+
+nx.write_gexf(monopartite, './output/sparse.gexf')
