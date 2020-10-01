@@ -3,6 +3,7 @@ __pycache__
 .pytest_cache
 .python-version
 .ipynb_checkpoints
+.vscode
 *.egg-info
 *.c
 *.so
