@@ -5,8 +5,8 @@ with open('./README.md', 'r') as f:
 
 EXTENSIONS = [
     Extension(
-        'fog.metrics.levenshtein',
-        ['fog/metrics/levenshtein.c']
+        'cfog.metrics.levenshtein',
+        ['cfog/metrics/levenshtein.c']
     )
 ]
 
@@ -21,7 +21,7 @@ setup(name='fog',
     author_email='kropotkinepiotr@gmail.com',
     keywords='fuzzy',
     python_requires='>=3',
-    packages=find_packages(exclude=['experiments', 'test']),
+    packages=find_packages(exclude=['experiments', 'experiments.*', 'test', 'test.*']),
     ext_modules=EXTENSIONS,
     install_requires=[
         'dill>=0.2.7.1',

@@ -1,5 +1,5 @@
 # Variables
-SOURCE = fog
+SOURCE = fog cfog
 
 # Commands
 all: lint test

@@ -3,7 +3,7 @@
 # =============================================================================
 import math
 from pytest import approx
-from fog.metrics import (
+from cfog.metrics import (
     levenshtein_distance,
     limited_levenshtein_distance,
     levenshtein_distance_lte1,
