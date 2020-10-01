@@ -35,6 +35,13 @@ class TestGraphProjection(object):
 
         assert sizes == [1, 3, 5]
 
+        def edge_filter(u, v, attr):
+            return u != 1
+
+        sizes = sorted(component_sizes(g, edge_filter))
+
+        assert sizes == [1, 1, 1, 3, 3]
+
     def test_second_largest_component_size(self):
         g = nx.Graph()
 
@@ -47,3 +54,8 @@ class TestGraphProjection(object):
         g = create_components()
 
         assert second_largest_component_size(g) == 3
+
+        def edge_filter(u, v, attr):
+            return u != 1 and u != 2
+
+        assert second_largest_component_size(g, edge_filter) == 2
