@@ -4,7 +4,10 @@
 import pytest
 
 import networkx as nx
-from fog.graph.utils import component_sizes
+from fog.graph.utils import (
+    component_sizes,
+    second_largest_component_size
+)
 
 
 def create_components():
@@ -31,3 +34,16 @@ class TestGraphProjection(object):
         sizes = sorted(component_sizes(g))
 
         assert sizes == [1, 3, 5]
+
+    def test_second_largest_component_size(self):
+        g = nx.Graph()
+
+        assert second_largest_component_size(g) is None
+
+        g.add_node(1)
+
+        assert second_largest_component_size(g) is None
+
+        g = create_components()
+
+        assert second_largest_component_size(g) == 3

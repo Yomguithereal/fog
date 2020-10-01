@@ -4,6 +4,7 @@
 #
 # Miscellaneous utility functions related to graphs.
 #
+from heapq import nlargest
 
 
 def component_sizes(g):
@@ -27,3 +28,12 @@ def component_sizes(g):
                 stack.extend(g.neighbors(v))
 
         yield c
+
+
+def second_largest_component_size(g):
+    top = nlargest(2, component_sizes(g))
+
+    if len(top) < 2:
+        return None
+
+    return top[1]
