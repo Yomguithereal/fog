@@ -132,15 +132,15 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
                         if w == 0:
                             continue
 
+                        if threshold is not None and w < threshold:
+                            continue
+
                         monopartite.add_edge(n1, n2, **{weight: w})
                     else:
                         if monopartite.has_edge(n1, n2):
                             monopartite[n1][n2][weight] += 1
                         else:
                             monopartite.add_edge(n1, n2, **{weight: 1})
-
-                    if threshold is not None and w < threshold:
-                        continue
 
         return monopartite
 
