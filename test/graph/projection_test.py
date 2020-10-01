@@ -60,12 +60,12 @@ class TestGraphProjection(object):
 
         assert set(mono.nodes) == PEOPLE_PART
 
-        assert set(mono.edges(data='weight')) == set([
+        assert sorted(set(mono.edges(data='weight'))) == sorted(set([
             ('John', 'Mary', 1),
             ('John', 'Lucy', 2),
             ('Mary', 'Lucy', 1),
             ('Mary', 'Gabriel', 1)
-        ])
+        ]))
 
     def test_cosine(self):
         mono = monopartite_projection(BIPARTITE, 'people', part='part', metric='cosine')
@@ -83,7 +83,7 @@ class TestGraphProjection(object):
 
         assert set(mono.nodes) == PEOPLE_PART
 
-        assert set(mono.edges) == set([('John', 'Lucy'), ('Mary', 'Lucy')])
+        assert sorted(set(mono.edges)) == sorted(set([('John', 'Lucy'), ('Mary', 'Lucy')]))
 
         for _, _, c in mono.edges(data='weight'):
             assert c >= 0.3
