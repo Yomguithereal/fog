@@ -16,8 +16,11 @@ MONOPARTITE_PROJECTION_METRICS = ('cosine', 'jaccard', 'overlap')
 def monopartite_projection(bipartite, project, part='bipartite', weight='weight',
                            metric=None, threshold=None):
     """
-    Function computing a monopartite projection of the given bipartite graph and
-    filtering potential edges by using a similarity metric.
+    Function computing a monopartite projection of the given bipartite graph.
+    This projection can be basic and create a weighted edge each time two nodes
+    in target partition share a common neighbor. Or it can be weighted and
+    filtered using a similarity metric such as Jaccard or cosine similarity,
+    for instance.
 
     Args:
         bipartite (nx.Graph): Target bipartite graph. The function will raise an

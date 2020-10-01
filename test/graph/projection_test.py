@@ -1,8 +1,11 @@
 # =============================================================================
 # Fog Graph Projection Unit Tests
 # =============================================================================
+from pytest import approx
+
 import networkx as nx
 from fog.graph import monopartite_projection
+from fog.metrics import sparse_cosine_similarity
 
 NODES = [
     ('John', 'people'),
@@ -38,6 +41,10 @@ for key, part in NODES:
 BIPARTITE.add_weighted_edges_from(EDGES)
 
 
+def to_vector(g, u):
+    return {n: w for _, n, w in g.edges(u, data='weight')}
+
+
 class TestGraphProjection(object):
     def test_basics(self):
         mono = monopartite_projection(BIPARTITE, 'people', part='part')
@@ -50,3 +57,24 @@ class TestGraphProjection(object):
             ('Mary', 'Lucy', 1),
             ('Mary', 'Gabriel', 1)
         ])
+
+    def test_cosine(self):
+        mono = monopartite_projection(BIPARTITE, 'people', part='part', metric='cosine')
+
+        assert set(mono.nodes) == PEOPLE_PART
+
+        for u, v, c in mono.edges(data='weight'):
+            u = to_vector(BIPARTITE, u)
+            v = to_vector(BIPARTITE, v)
+
+            assert c == approx(sparse_cosine_similarity(u, v))
+
+    def test_cosine_threshold(self):
+        mono = monopartite_projection(BIPARTITE, 'people', part='part', metric='cosine', threshold=0.3)
+
+        assert set(mono.nodes) == PEOPLE_PART
+
+        assert set(mono.edges) == set([('John', 'Lucy'), ('Mary', 'Lucy')])
+
+        for _, _, c in mono.edges(data='weight'):
+            assert c >= 0.3
