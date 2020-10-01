@@ -10,39 +10,93 @@ from collections import defaultdict, Counter
 
 from fog.metrics import sparse_dot_product
 
+MONOPARTITE_PROJECTION_METRICS = ('cosine', 'jaccard', 'overlap')
 
-def cosine_monopartite_projection(bipartite, keep, part='bipartite', weight='weight',
-                                  threshold=None):
+
+def monopartite_projection(bipartite, project, part='bipartite', weight='weight',
+                           metric=None, threshold=None):
+    """
+    Function computing a monopartite projection of the given bipartite graph and
+    filtering potential edges by using a similarity metric.
+
+    Args:
+        bipartite (nx.Graph): Target bipartite graph. The function will raise an
+            error in case the given graph is not truly bipartite.
+        project (str): Name of the partition to project.
+        part (str, optional): Name of the partition attribute.
+            Defaults to "bipartite" wrt networkx conventions.
+        weight (str, optional): Name of the weight attribute.
+            Defaults to "weight" wrt networkx conventions.
+        metric (str, optional): Metric to use. If `None`, the basic projection
+            will be returned. Also accepts `jaccard`, `overlap` or `cosine`.
+            Defaults to basic projection.
+        threshold (float, optional): Optional similarity threshold under which
+            edges won't be added. Defaults to no threshold.
+
+    Returns:
+        nx.Graph: The monopartite projection.
+
+    """
+
+    if metric is not None and metric not in MONOPARTITE_PROJECTION_METRICS:
+        raise TypeError('fog.graph.monopartite_projection: unsupported metric "%s"' % metric)
+
+    if metric != 'cosine' and metric is not None:
+        raise NotImplementedError
+
     monopartite = nx.Graph()
 
-    vectors = defaultdict(Counter)
+    # Initialising monopartite graph
+    for node, attr in bipartite.nodes(data=True):
+        if attr[part] != project:
+            continue
 
-    # TODO: what to do with nodes having no edges?
-    for n1, n2, w in bipartite.edges(data=weight, default=1):
-        p1 = bipartite.nodes[n1][part]
-        p2 = bipartite.nodes[n2][part]
+        monopartite.add_node(node, **attr)
 
-        assert p1 != p2, 'fog.graph.cosine_monopartite_projection: given graph is not truly bipartite.'
+    # Basic projection
+    if metric is None:
 
-        # Swapping so n1 is from part to keep
-        if p2 == keep:
-            n1, n2 = n2, n1
+        for n1 in monopartite.nodes:
+            for _, np in bipartite.edges(n1):
+                for _, n2 in bipartite.edges(np):
 
-        vectors[n1][n2] += w
+                    # Undirectedness
+                    if n1 >= n2:
+                        continue
 
+                    if monopartite.has_edge(n1, n2):
+                        monopartite[n1][n2][weight] += 1
+                    else:
+                        monopartite.add_edge(n1, n2, **{weight: 1})
+
+        return monopartite
+
+    # Accumulating norms
+    # TODO: we could try to save up the vectors memory cost by relying on graph
     norms = {}
-    nodes = list(vectors)
-    # inverted_index = defaultdict(list)
+    vectors = {}
 
-    for node, vector in vectors.items():
-        monopartite.add_node(node, **bipartite.nodes[node])
+    for node in monopartite.nodes:
         s = 0
+        neighbors = {}
 
-        for neighbor, w in vector.items():
-            s += w * w
-            # inverted_index[neighbor].append(node)
+        for _, neighbor, w in bipartite.edges(node, data=weight, default=1):
+            if metric == 'cosine':
+                s += w * w
+            else:
+                s += 1
 
-        norms[node] = math.sqrt(s)
+            neighbors[neighbor] = w
+
+        if s > 0:
+            if metric == 'cosine':
+                norms[node] = math.sqrt(s)
+            else:
+                norms[node] = s
+
+            vectors[node] = neighbors
+
+    nodes = list(norms.keys())
 
     # Quadratic version
     l = len(nodes)
@@ -65,6 +119,6 @@ def cosine_monopartite_projection(bipartite, keep, part='bipartite', weight='wei
             w = w / (norm1 * norm2)
 
             if threshold is None or w >= threshold:
-                monopartite.add_edge(n1, n2, weight=w)
+                monopartite.add_edge(n1, n2, **{weight: w})
 
     return monopartite

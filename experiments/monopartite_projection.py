@@ -1,6 +1,6 @@
 import csv
 import networkx as nx
-from fog.graph import cosine_monopartite_projection
+from fog.graph import monopartite_projection
 from experiments.utils import Timer
 
 bipartite = nx.Graph()
@@ -17,7 +17,11 @@ with open('./data/bipartite.csv') as f:
         bipartite.add_edge(account, url, weight=int(line['weight']))
 
 with Timer('quadratic'):
-    monopartite = cosine_monopartite_projection(bipartite, 'account', part='node_type')
+    monopartite = monopartite_projection(bipartite, 'account',
+        part='node_type',
+        metric='cosine',
+        threshold=0.3
+    )
 
 print(monopartite.order(), monopartite.size())
 
