@@ -14,8 +14,32 @@ from fog.metrics.utils import intersection_size
 MONOPARTITE_PROJECTION_METRICS = ('cosine', 'jaccard', 'overlap')
 
 
+def compute_metric(metric, vector1, vector2, norm1, norm2):
+    if metric == 'cosine':
+        w = sparse_dot_product(vector1, vector2)
+
+        if w == 0:
+            return 0
+
+        return w / (norm1 * norm2)
+
+    w = intersection_size(vector1, vector2)
+
+    if w == 0:
+        return 0
+
+    if metric == 'jaccard':
+        return w / (norm1 + norm2 - w)
+
+    if metric == 'overlap':
+        return w / min(norm1, norm2)
+
+    raise NotImplementedError
+
+
+# TODO: use passjoin prefix filtering as optimization scheme
 def monopartite_projection(bipartite, project, part='bipartite', weight='weight',
-                           metric=None, threshold=None):
+                           metric=None, threshold=None, use_index=False):
     """
     Function computing a monopartite projection of the given bipartite graph.
     This projection can be basic and create a weighted edge each time two nodes
@@ -36,6 +60,11 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
             Defaults to basic projection.
         threshold (float, optional): Optional similarity threshold under which
             edges won't be added. Defaults to no threshold.
+        use_index (bool, optional): Whether to use indexation techniques to
+            attempt a subquadratic time for the projection. This can consume
+            a lot of memory depending on your dataset. But if you can guarantee
+            that the probability that two nodes share the same neighbor is low,
+            then it can drastically improve your performance.
 
     Returns:
         nx.Graph: The monopartite projection.
@@ -54,10 +83,39 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
 
         monopartite.add_node(node, **attr)
 
+    # Accumulating norms
+    # TODO: we could try to save up the vectors memory cost by relying on graph
+    norms = {}
+    vectors = {}
+
+    if metric is not None:
+        for node in monopartite.nodes:
+            s = 0
+            neighbors = {} if metric == 'cosine' else set()
+
+            for _, neighbor, w in bipartite.edges(node, data=weight, default=1):
+                if metric == 'cosine':
+                    s += w * w
+                    neighbors[neighbor] = w
+                else:
+                    s += 1
+                    neighbors.add(neighbor)
+
+            if s > 0:
+                if metric == 'cosine':
+                    norms[node] = math.sqrt(s)
+                else:
+                    norms[node] = s
+
+                vectors[node] = neighbors
+
     # Basic projection
-    if metric is None:
+    if metric is None or use_index:
 
         for n1 in monopartite.nodes:
+            vector1 = vectors[n1] if metric is not None else None
+            norm1 = norms[n1] if metric is not None else None
+
             for _, np in bipartite.edges(n1):
                 for _, n2 in bipartite.edges(np):
 
@@ -65,41 +123,30 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
                     if n1 >= n2:
                         continue
 
-                    if monopartite.has_edge(n1, n2):
-                        monopartite[n1][n2][weight] += 1
+                    if metric is not None:
+                        vector2 = vectors[n2]
+                        norm2 = norms[n2]
+
+                        # NOTE: at this point, both norms should be > 0
+                        w = compute_metric(metric, vector1, vector2, norm1, norm2)
+
+                        if w == 0:
+                            continue
                     else:
-                        monopartite.add_edge(n1, n2, **{weight: 1})
+                        w = 1
+
+                    if threshold is not None and w < threshold:
+                        continue
+
+                    if monopartite.has_edge(n1, n2):
+                        monopartite[n1][n2][weight] += w
+                    else:
+                        monopartite.add_edge(n1, n2, **{weight: w})
 
         return monopartite
 
-    # Accumulating norms
-    # TODO: we could try to save up the vectors memory cost by relying on graph
-    norms = {}
-    vectors = {}
-
-    for node in monopartite.nodes:
-        s = 0
-        neighbors = {}
-
-        for _, neighbor, w in bipartite.edges(node, data=weight, default=1):
-            if metric == 'cosine':
-                s += w * w
-            else:
-                s += 1
-
-            neighbors[neighbor] = w
-
-        if s > 0:
-            if metric == 'cosine':
-                norms[node] = math.sqrt(s)
-            else:
-                norms[node] = s
-
-            vectors[node] = neighbors
-
-    nodes = list(norms.keys())
-
     # Quadratic version
+    nodes = list(norms.keys())
     l = len(nodes)
 
     for i, n1 in enumerate(nodes):
@@ -112,24 +159,10 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
             vector2 = vectors[n2]
 
             # NOTE: at this point, both norms should be > 0
-            if metric == 'cosine':
-                w = sparse_dot_product(vector1, vector2)
+            w = compute_metric(metric, vector1, vector2, norm1, norm2)
 
-                if w == 0:
-                    continue
-
-                w /= (norm1 * norm2)
-
-            else:
-                w = intersection_size(vector1, vector2)
-
-                if w == 0:
-                    continue
-
-                if metric == 'jaccard':
-                    w /= (norm1 + norm2 - w)
-                elif metric == 'overlap':
-                    w /= min(norm1, norm2)
+            if w == 0:
+                continue
 
             if threshold is None or w >= threshold:
                 monopartite.add_edge(n1, n2, **{weight: w})

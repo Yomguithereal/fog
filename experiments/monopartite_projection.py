@@ -25,4 +25,14 @@ with Timer('quadratic'):
 
 print(monopartite.order(), monopartite.size())
 
+with Timer('index'):
+    monopartite = monopartite_projection(bipartite, 'account',
+        part='node_type',
+        metric='cosine',
+        threshold=0.3,
+        use_index=True
+    )
+
+print(monopartite.order(), monopartite.size())
+
 nx.write_gexf(monopartite, './output/monopartite.gexf')
