@@ -27,7 +27,16 @@ def cosine_monopartite_projection(bipartite, keep, part='bipartite', weight='wei
         vectors[n1][n2] += w
 
     norms = {}
+    inverted_index = defaultdict(list)
 
     for node, vector in vectors.items():
-        monopartite.add_node(node, bipartite.nodes[node])
-        norms[node] = sum(vector.values())
+        monopartite.add_node(node, attr_dict=bipartite.nodes[node])
+        s = 0
+
+        for neighbor, w in vector.items():
+            s += w
+            inverted_index[neighbor].append(node)
+
+        norms[node] = s
+
+    # print(inverted_index)
