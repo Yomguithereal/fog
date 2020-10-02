@@ -133,8 +133,8 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
         for n1 in monopartite.nodes:
             norm1, vector1 = vectors.get(n1, EMPTY_COUPLE) if metric is not None else EMPTY_COUPLE
 
-            for _, np in bipartite.edges(n1):
-                for _, n2 in bipartite.edges(np):
+            for np in bipartite.neighbors(n1):
+                for n2 in bipartite.neighbors(np):
 
                     # Undirectedness
                     if n1 >= n2:
