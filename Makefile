@@ -19,6 +19,11 @@ clean:
 	find . -name *.c -type f | xargs rm
 	find . -name *.so -type f | xargs rm
 
+deps:
+	pip3 install -U pip
+	pip3 install -U setuptools
+	pip3 install -r requirements.txt
+
 lint:
 	@echo Linting source code using pep8...
 	pycodestyle --ignore E501,E722,E731,E741,W503,W504 $(SOURCE) test
