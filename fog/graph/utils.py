@@ -17,7 +17,7 @@ def component_sizes(g, edge_filter=None):
             continue
 
         c = 0
-        stack = [node]
+        stack.append(node)
 
         while len(stack) != 0:
             n1 = stack.pop()
