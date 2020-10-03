@@ -12,7 +12,6 @@ from fog.metrics.cosine import sparse_dot_product
 from fog.metrics.utils import intersection_size
 
 MONOPARTITE_PROJECTION_METRICS = ('cosine', 'jaccard', 'overlap')
-EMPTY_COUPLE = (None, None)
 
 
 def compute_metric(metric, vector1, vector2, norm1, norm2):
@@ -28,6 +27,9 @@ def compute_metric(metric, vector1, vector2, norm1, norm2):
 
     if w == 0:
         return 0
+
+    if metric is None:
+        return w
 
     if metric == 'jaccard':
         return w / (norm1 + norm2 - w)
@@ -112,31 +114,28 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
     # the function to a sparse vector input
     vectors = {}
 
-    if metric is not None:
-        for node in monopartite.nodes:
-            s = 0
-            neighbors = {} if metric == 'cosine' else set()
+    for node in monopartite.nodes:
+        s = 0
+        neighbors = {} if metric == 'cosine' else set()
 
-            for _, neighbor, w in bipartite.edges(node, data=weight, default=1):
-                if metric == 'cosine':
-                    s += w * w
-                    neighbors[neighbor] = w
-                else:
-                    s += 1
-                    neighbors.add(neighbor)
+        for _, neighbor, w in bipartite.edges(node, data=weight, default=1):
+            if metric == 'cosine':
+                s += w * w
+                neighbors[neighbor] = w
+            else:
+                s += 1
+                neighbors.add(neighbor)
 
-            if s > 0:
-                if metric == 'cosine':
-                    vectors[node] = (math.sqrt(s), neighbors)
-                else:
-                    vectors[node] = (s, neighbors)
+        if s > 0:
+            if metric == 'cosine':
+                vectors[node] = (math.sqrt(s), neighbors)
+            else:
+                vectors[node] = (s, neighbors)
 
     # Basic projection
-    if metric is None or use_topology:
+    if use_topology:
 
-        for n1 in monopartite.nodes:
-            norm1, vector1 = vectors.get(n1, EMPTY_COUPLE) if metric is not None else EMPTY_COUPLE
-
+        for n1, (norm1, vector1) in vectors.items():
             for np in bipartite.neighbors(n1):
                 for n2 in bipartite.neighbors(np):
 
@@ -144,27 +143,21 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
                     if n1 >= n2:
                         continue
 
-                    if metric is not None:
-                        if monopartite.has_edge(n1, n2):
-                            continue
+                    if monopartite.has_edge(n1, n2):
+                        continue
 
-                        norm2, vector2 = vectors[n2]
+                    norm2, vector2 = vectors[n2]
 
-                        # NOTE: at this point, both norms should be > 0
-                        w = compute_metric(metric, vector1, vector2, norm1, norm2)
+                    # NOTE: at this point, both norms should be > 0
+                    w = compute_metric(metric, vector1, vector2, norm1, norm2)
 
-                        if w == 0:
-                            continue
+                    if w == 0:
+                        continue
 
-                        if threshold is not None and w < threshold:
-                            continue
+                    if threshold is not None and w < threshold:
+                        continue
 
-                        monopartite.add_edge(n1, n2, **{weight: w})
-                    else:
-                        if monopartite.has_edge(n1, n2):
-                            monopartite[n1][n2][weight] += 1
-                        else:
-                            monopartite.add_edge(n1, n2, **{weight: 1})
+                    monopartite.add_edge(n1, n2, **{weight: w})
 
         return monopartite
 

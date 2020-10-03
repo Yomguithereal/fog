@@ -127,7 +127,7 @@ class TestGraphProjection(object):
 
     def test_not_use_topology(self):
 
-        for metric in MONOPARTITE_PROJECTION_METRICS:
+        for metric in [None, *MONOPARTITE_PROJECTION_METRICS]:
             mono1 = monopartite_projection(BIPARTITE, 'people', part='part', metric=metric)
             mono2 = monopartite_projection(BIPARTITE, 'people', part='part', metric=metric, use_topology=False)
 
