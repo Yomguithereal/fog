@@ -32,6 +32,13 @@ def jaccard_similarity(A, B):
     Returns:
         float: Jaccard similarity between A & B.
 
+    Example:
+        from fog.metrics import jaccard_similarity
+
+        # Basic
+        jaccard_similarity('context', 'contact')
+        >>> ~0.571
+
     """
     if A is B:
         return 1.0
@@ -74,6 +81,13 @@ def weighted_jaccard_similarity(A, B):
 
     Returns:
         float: Weighted Jaccard similarity between A & B.
+
+    Example:
+        from fog.metrics import weighted_jaccard_similarity
+
+        # Basic
+        weighted_jaccard_similarity({'apple': 34, 'pear': 3}, {'pear': 1, 'orange': 1})
+        >>> ~0.026
 
     """
 

@@ -1,5 +1,5 @@
 # Variables
-SOURCE = fog cfog
+SOURCE = fog cfog docs
 
 # Commands
 all: lint test
@@ -28,6 +28,9 @@ lint:
 	@echo Linting source code using pep8...
 	pycodestyle --ignore E501,E722,E731,E741,W503,W504 $(SOURCE) test
 	@echo
+
+readme:
+	python -m docs.build > README.md
 
 unit:
 	@echo Running unit tests...

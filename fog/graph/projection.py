@@ -56,15 +56,15 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
         project (str): Name of the partition to project.
         part (str, optional): Name of the node attribute on which the
             graph partition is built e.g. "color" or "type" etc.
-            Defaults to "bipartite" wrt networkx conventions.
+            Defaults to "bipartite".
         weight (str, optional): Name of the weight edge attribute.
-            Defaults to "weight" wrt networkx conventions.
+            Defaults to "weight".
         metric (str, optional): Metric to use. If `None`, the basic projection
             will be returned. Also accepts `jaccard`, `overlap` or `cosine`.
-            Defaults to basic projection.
+            Defaults to None.
         threshold (float, optional): Optional similarity threshold under which
             edges won't be added to the monopartite projection.
-            Defaults to no threshold.
+            Defaults to None.
         use_topology (bool, optional): Whether to use the bipartite graph's
             topology to attempt a subquadratic time projection. Intuitively,
             this works by not computing similarities of all pairs of nodes but

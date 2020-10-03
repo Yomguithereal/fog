@@ -25,6 +25,13 @@ def sparse_cosine_similarity(A, B):
     Returns:
         float: Cosine similarity between A & B.
 
+    Example:
+        from fog.metrics import sparse_cosine_similarity
+
+        # Basic
+        sparse_cosine_similarity({'apple': 34, 'pear': 3}, {'pear': 1, 'orange': 1})
+        >>> ~0.062
+
     """
 
     # Early termination
