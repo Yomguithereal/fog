@@ -15,13 +15,44 @@ pip install fog
 ## Usage
 
 * [Graph](#graph)
+  * [floatsam_sparsification](#floatsam_sparsification)
   * [monopartite_projection](#monopartite_projection)
 * [Metrics](#metrics)
-  * [jaccard_similarity](#jaccard_similarity)
+  * [cosine_similarity](#cosine_similarity)
   * [sparse_cosine_similarity](#sparse_cosine_similarity)
+  * [sparse_dot_product](#sparse_dot_product)
+  * [jaccard_similarity](#jaccard_similarity)
   * [weighted_jaccard_similarity](#weighted_jaccard_similarity)
+  * [overlap_coefficient](#overlap_coefficient)
 
 ### Graph
+
+#### floatsam_sparsification
+
+Function using an iterative algorithm to try and find the best weight
+threshold to apply to trim the given graph's edges while keeping the
+underlying community structures.
+
+It works by iteratively increasing the threshold and stopping as soon as
+a significant connected component starts to drift away from the principal
+one.
+
+This is basically a very naive gradient descent with a very naive cost
+function but it works decently for typical cases.
+
+*Arguments*
+* **graph** *nx.Graph*: Graph to sparsify.
+* **starting_treshold** *float*: Starting similarity threshold.
+* **learning_rate** *?float* [`0.05`]: How much to increase the threshold
+at each step of the algorithm.
+* **max_drifter_size** *?int*: Max size of component to detach itself
+from the principal one before stopping the algorithm. If not
+provided it will default to the logarithm of the graph's total
+number of nodes.
+* **weight** *?str* [`weight wrt networkx conventions`]: Name of the weight attribute.
+* **remove_edges** *?bool* [`False`]: Whether to remove edges from the graph
+having a weight less than found threshold or not. Note that if
+`True`, this will mutate the given graph.
 
 #### monopartite_projection
 
@@ -56,20 +87,10 @@ bipartite and for better performance.
 
 ### Metrics
 
-#### jaccard_similarity
+#### cosine_similarity
 
-Function computing the Jaccard similarity. That is to say the intersection
-of input sets divided by their union.
-
-Runs in O(n), n being the size of the smallest set.
-
-```python
-from fog.metrics import jaccard_similarity
-
-# Basic
-jaccard_similarity('context', 'contact')
->>> ~0.571
-```
+Function computing the cosine similarity of the given sequences.
+Runs in O(n), n being the sum of A & B's sizes.
 
 *Arguments*
 * **A** *iterable*: First sequence.
@@ -94,6 +115,36 @@ sparse_cosine_similarity({'apple': 34, 'pear': 3}, {'pear': 1, 'orange': 1})
 * **A** *Counter*: First weighted set.
 * **B** *Counter*: Second weighted set.
 
+#### sparse_dot_product
+
+Function used to compute the dotproduct of sparse weighted sets represented
+by python dicts.
+
+Runs in O(n), n being the size of the smallest set.
+
+*Arguments*
+* **A** *Counter*: First weighted set.
+* **B** *Counter*: Second weighted set.
+
+#### jaccard_similarity
+
+Function computing the Jaccard similarity. That is to say the intersection
+of input sets divided by their union.
+
+Runs in O(n), n being the size of the smallest set.
+
+```python
+from fog.metrics import jaccard_similarity
+
+# Basic
+jaccard_similarity('context', 'contact')
+>>> ~0.571
+```
+
+*Arguments*
+* **A** *iterable*: First sequence.
+* **B** *iterable*: Second sequence.
+
 #### weighted_jaccard_similarity
 
 Function computing the weighted Jaccard similarity.
@@ -110,3 +161,14 @@ weighted_jaccard_similarity({'apple': 34, 'pear': 3}, {'pear': 1, 'orange': 1})
 *Arguments*
 * **A** *Counter*: First weighted set.
 * **B** *Counter*: Second weighted set.
+
+#### overlap_coefficient
+
+Function computing the overlap coefficient of the given sets, i.e. the size
+of their intersection divided by the size of the smallest set.
+
+Runs in O(n), n being the size of the smallest set.
+
+*Arguments*
+* **A** *iterable*: First sequence.
+* **B** *iterable*: Second sequence.

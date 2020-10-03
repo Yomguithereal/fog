@@ -16,18 +16,23 @@ DOCS = [
     {
         'title': 'Graph',
         'fns': [
+            graph.floatsam_sparsification,
             graph.monopartite_projection
         ]
     },
     {
         'title': 'Metrics',
         'fns': [
-            metrics.jaccard_similarity,
+            metrics.cosine_similarity,
             metrics.sparse_cosine_similarity,
-            metrics.weighted_jaccard_similarity
+            metrics.sparse_dot_product,
+            metrics.jaccard_similarity,
+            metrics.weighted_jaccard_similarity,
+            metrics.overlap_coefficient
         ]
     }
 ]
+
 
 with open('./README.template.md') as f:
     TEMPLATE = f.read()
