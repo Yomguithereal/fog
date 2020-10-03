@@ -143,6 +143,16 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
                     if n1 >= n2:
                         continue
 
+                    # NOTE: if a threshold is given, this condition does
+                    # not work as expected since edges are not added to
+                    # the monopartite graph if they fall below the threshold
+                    # It is possible to store a set of failed edges but
+                    # it can cost a lot of memory and requires an additional
+                    # lookup. Furthermore the probability to test several times
+                    # the same failed edge is usually far lower than for a
+                    # valid one, which makes hard to know if spending memory
+                    # and lookups is better than actually computing the
+                    # similarity metric more times than necessary.
                     if monopartite.has_edge(n1, n2):
                         continue
 
