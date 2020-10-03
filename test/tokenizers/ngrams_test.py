@@ -3,6 +3,7 @@
 # =============================================================================
 import math
 from fog.tokenizers import ngrams, bigrams, trigrams, quadrigrams
+from fog.tokenizers.ngrams import join_ngrams
 
 ALIASES = [None, bigrams, trigrams, quadrigrams]
 
@@ -36,3 +37,7 @@ class TestNgrams(object):
             if alias is not None:
                 assert tuple(alias(STRING)) == STRING_TESTS[i]
                 assert tuple(alias(SENTENCE)) == SENTENCE_TEST[i]
+
+    def test_join(self):
+        for i in range(4):
+            assert join_ngrams(ngrams(i + 1, STRING)) == STRING

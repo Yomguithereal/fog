@@ -30,3 +30,14 @@ def ngrams(n, tokens):
 bigrams = partial(ngrams, 2)
 trigrams = partial(ngrams, 3)
 quadrigrams = partial(ngrams, 4)
+
+
+def join_grams_iter(grams):
+    yield next(grams)
+
+    for g in grams:
+        yield g[-1]
+
+
+def join_ngrams(grams):
+    return ''.join(join_grams_iter(grams))
