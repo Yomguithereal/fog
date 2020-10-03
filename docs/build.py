@@ -11,6 +11,7 @@ from docstring_parser import (
 
 import fog.graph as graph
 import fog.metrics as metrics
+import fog.key as key
 
 DOCS = [
     {
@@ -18,6 +19,13 @@ DOCS = [
         'fns': [
             graph.floatsam_sparsification,
             graph.monopartite_projection
+        ]
+    },
+    {
+        'title': 'Keyers',
+        'fns': [
+            key.omission_key,
+            key.skeleton_key
         ]
     },
     {

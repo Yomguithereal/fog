@@ -23,10 +23,11 @@ VOWELS = set('AEIOU')
 def omission_key(string):
     """
     Function returning a string's omission key which is constructed thusly:
-        1) First we record the string's set of consonant in an order
-        where most frequently mispelled consonants will be last.
-        2) Then we record the string's set of vowels in the order of
-        first appearance.
+
+    1. First we record the string's set of consonant in an order
+       where most frequently mispelled consonants will be last.
+    2. Then we record the string's set of vowels in the order of
+       first appearance.
 
     This key is very useful when searching for mispelled strings because
     if sorted using this key, similar strings will be next to each other.

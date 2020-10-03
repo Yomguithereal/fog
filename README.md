@@ -17,6 +17,9 @@ pip install fog
 * [Graph](#graph)
   * [floatsam_sparsification](#floatsam_sparsification)
   * [monopartite_projection](#monopartite_projection)
+* [Keyers](#keyers)
+  * [omission_key](#omission_key)
+  * [skeleton_key](#skeleton_key)
 * [Metrics](#metrics)
   * [cosine_similarity](#cosine_similarity)
   * [sparse_cosine_similarity](#sparse_cosine_similarity)
@@ -84,6 +87,35 @@ whether your graph is bipartite because it can get stuck in an
 infinite loop if given graph is not truly bipartite. Be sure to
 disable this kwarg if you know beforehand that your graph is
 bipartite and for better performance.
+
+### Keyers
+
+#### omission_key
+
+Function returning a string's omission key which is constructed thusly:
+1. First we record the string's set of consonant in an order
+   where most frequently mispelled consonants will be last.
+2. Then we record the string's set of vowels in the order of
+   first appearance.
+
+This key is very useful when searching for mispelled strings because
+if sorted using this key, similar strings will be next to each other.
+
+*Arguments*
+* **string** *str*: The string to encode.
+
+#### skeleton_key
+
+Function returning a string's skeleton key which is constructed thusly:
+1. The first letter of the string
+2. Unique consonants in order of appearance
+3. Unique vowels in order of appearance
+
+This key is very useful when searching for mispelled strings because
+if sorted using this key, similar strings will be next to each other.
+
+*Arguments*
+* **string** *str*: The string to encode.
 
 ### Metrics
 

@@ -22,9 +22,10 @@ VOWELS = set('AEIOU')
 def skeleton_key(string):
     """
     Function returning a string's skeleton key which is constructed thusly:
-        1) The first letter of the string
-        2) Unique consonants in order of appearance
-        3) Unique vowels in order of appearance
+
+    1. The first letter of the string
+    2. Unique consonants in order of appearance
+    3. Unique vowels in order of appearance
 
     This key is very useful when searching for mispelled strings because
     if sorted using this key, similar strings will be next to each other.
