@@ -16,7 +16,7 @@ NODES = [
     ('orange', 'color'),
     ('cyan', 'color'),
     ('magenta', 'color'),
-    ('green', 'color')
+    ('green', 'color'),
 ]
 
 EDGES = [
@@ -35,7 +35,7 @@ EDGES = [
     ('Anna', 'green', 1.0),
     ('Anna', 'orange', 6.5),
     ('Gabriel', 'green', 1.0),
-    # ('Marc', 'yellow', 0.1),
+    ('Marc', 'yellow', 0.1),
 ]
 
 bipartite = nx.Graph()
@@ -51,30 +51,28 @@ def bfs(g, data=None, default=None):
 
     def component_generator():
         while len(q) != 0:
-            n1 = q.popleft()
+            p, n1 = q.popleft()
 
             if data is None:
-                yield n1
+                yield p, n1
             else:
                 attr = g.nodes[n1]
+                attr = attr if data is True else attr.get(data, default)
 
-                if data is True:
-                    yield n1, attr
-                else:
-                    yield n1, attr.get(data, default)
+                yield p, n1, attr
 
-            for n2 in g.neighbors(n1):
+            for i, n2 in enumerate(g.neighbors(n1)):
                 if n2 in seen:
                     continue
 
                 seen.add(n2)
-                q.append(n2)
+                q.append((p + [(i, n1)], n2))
 
     for node in g.nodes:
         if node in seen:
             continue
 
-        q.append(node)
+        q.append(([], node))
         seen.add(node)
 
         yield component_generator()
@@ -82,8 +80,10 @@ def bfs(g, data=None, default=None):
 for component in bfs(bipartite, data='part'):
     component = list(component)
 
-    for node, part in component:
-        print(node, part)
+    for p, node, part in component:
+        # if part == 'color':
+        #     continue
+        print(node.ljust(8), ' - ', str(len(p)) + '::' + str(tuple(p)))
 
-    print('Path:: ', ' -> '.join(n for n, _ in component))
+    # print('Path:: ', ' -> '.join(n for _, n, _ in component))
     print()
