@@ -21,7 +21,8 @@ with Timer('quadratic'):
         part='node_type',
         metric='cosine',
         threshold=0.1,
-        bipartition_check=False
+        bipartition_check=False,
+        use_topology=False
     )
 
 print(monopartite.order(), monopartite.size())
@@ -31,7 +32,6 @@ with Timer('index'):
         part='node_type',
         metric='cosine',
         threshold=0.1,
-        use_index=True,
         bipartition_check=False
     )
 

@@ -40,7 +40,7 @@ def compute_metric(metric, vector1, vector2, norm1, norm2):
 
 # TODO: use passjoin prefix filtering as optimization scheme
 def monopartite_projection(bipartite, project, part='bipartite', weight='weight',
-                           metric=None, threshold=None, use_index=False,
+                           metric=None, threshold=None, use_topology=True,
                            bipartition_check=True):
     """
     Function computing a monopartite projection of the given bipartite graph.
@@ -63,11 +63,13 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
         threshold (float, optional): Optional similarity threshold under which
             edges won't be added to the monopartite projection.
             Defaults to no threshold.
-        use_index (bool, optional): Whether to use indexation techniques to
-            attempt a subquadratic time for the projection. This can consume
-            a lot of memory depending on your dataset. But if you can guarantee
-            that the probability that two nodes share the same neighbor is low,
-            then it can drastically improve your performance.
+        use_topology (bool, optional): Whether to use the bipartite graph's
+            topology to attempt a subquadratic time projection. Intuitively,
+            this works by not computing similarities of all pairs of nodes but
+            only of pairs of nodes that share at least a common neighbor.
+            It generally works better than the quadratic approach but can
+            sometimes hurt your performance by losing time on graph traversals
+            when your graph is very dense.
         bipartition_check (bool, optional): This function will start by checking
             whether your graph is bipartite because it can get stuck in an
             infinite loop if given graph is not truly bipartite. Be sure to
@@ -130,7 +132,7 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
                     vectors[node] = (s, neighbors)
 
     # Basic projection
-    if metric is None or use_index:
+    if metric is None or use_topology:
 
         for n1 in monopartite.nodes:
             norm1, vector1 = vectors.get(n1, EMPTY_COUPLE) if metric is not None else EMPTY_COUPLE
