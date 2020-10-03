@@ -132,7 +132,7 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
             else:
                 vectors[node] = (s, neighbors)
 
-    # Basic projection
+    # Version relying on graph traversals
     if use_topology:
 
         for n1, (norm1, vector1) in vectors.items():
