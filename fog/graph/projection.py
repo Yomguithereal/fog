@@ -169,15 +169,12 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
         return monopartite
 
     # Quadratic version
-    nodes = list(vectors.keys())
+    nodes = list(vectors.items())
     l = len(nodes)
 
-    for i, n1 in enumerate(nodes):
-        norm1, vector1 = vectors[n1]
-
+    for i, (n1, (norm1, vector1)) in enumerate(nodes):
         for j in range(i + 1, l):
-            n2 = nodes[j]
-            norm2, vector2 = vectors[n2]
+            (n2, (norm2, vector2)) = nodes[j]
 
             # NOTE: at this point, both norms should be > 0
             w = compute_metric(metric, vector1, vector2, norm1, norm2)
