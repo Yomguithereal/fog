@@ -82,7 +82,7 @@ def compute_overlap(x, y, require_overlap):
         else:
             posy += 1
 
-        return current_overlap
+    return current_overlap
 
 
 # TODO: possibility to degrade to allpairs
@@ -95,7 +95,8 @@ def ppjoin(records, threshold, metric='jaccard'):
     # First we need to order records by length and make them indexable
     # TODO: provide different ordering schemes & transform records to int
     # TODO: possibility to pass custom key (such as ngrams etc.)
-    records = sorted((sorted(record) for record in records), key=len)
+    # NOTE: you need to keep tokens sets as unique!
+    records = sorted((sorted(set(record)) for record in records), key=len)
 
     # State
     inverted_index = defaultdict(InvertedIndexItem)
