@@ -111,6 +111,7 @@ def ppjoin(records, threshold, metric='jaccard'):
             probe_length = helper.probe_length(record_size)
             index_length = helper.index_length(record_size)
 
+            # TODO: I feel we could avoid storing this in memory
             require_overlaps = [0] * (record_size + 1)
 
             for l in range(min_length, record_size + 1):
