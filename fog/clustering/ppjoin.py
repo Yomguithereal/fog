@@ -16,7 +16,7 @@ import math
 from collections import defaultdict
 
 EPSILON = 1e-6
-PRUNE_FLAG = -1
+PRUNE_FLAG = -7
 
 
 class MetricHelper(object):
@@ -163,6 +163,7 @@ def ppjoin(records, threshold, metric='jaccard'):
                 require_overlap = require_overlaps[candidate_size]
                 index_length = helper.index_length(candidate_size)
 
+                # TODO: beware of the ordering here
                 if candidate_record[index_length - 1] < record[probe_length - 1]:
                     if count + candidate_size - index_length < require_overlap:
                         continue
