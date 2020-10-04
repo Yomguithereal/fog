@@ -2,6 +2,7 @@ import csv
 import math
 from collections import defaultdict, Counter
 from fog.tokenizers import ngrams
+from fog.clustering.ppjoin import ppjoin
 
 with open('./data/universities.csv', 'r') as f:
     UNIVERSITIES = sorted(set([line['university'] for line in csv.DictReader(f)]))
@@ -46,73 +47,73 @@ def overlap_constraint(l1, l2, threshold):
 
 
 # TODO: need to chose a way to sort tokens according to random or frequency
-def ppjoin(records, threshold):
-    index = defaultdict(set)
-    candidates = set()
+# def ppjoin(records, threshold):
+#     index = defaultdict(set)
+#     candidates = set()
 
-    records = [sorted(record) for record in records]
-    order_map = infer_order(records)
+#     records = [sorted(record) for record in records]
+#     order_map = infer_order(records)
 
-    for record_index, record in enumerate(records):
+#     for record_index, record in enumerate(records):
 
-        # If record is empty
-        if not record:
-            continue
+#         # If record is empty
+#         if not record:
+#             continue
 
-        xp = prefix_length(record, threshold)
-        overlaps = Counter()
+#         xp = prefix_length(record, threshold)
+#         overlaps = Counter()
 
-        for i in range(xp):
-            item = record[i]
+#         for i in range(xp):
+#             item = record[i]
 
-            # TODO: optimize
-            for other_index, j in index.get(item, []):
-                other = records[other_index]
+#             # TODO: optimize
+#             for other_index, j in index.get(item, []):
+#                 other = records[other_index]
 
-                if len(other) < threshold * len(record):
-                    continue
+#                 if len(other) < threshold * len(record):
+#                     continue
 
-                alpha = overlap_constraint(len(record), len(other), threshold)
-                upper_bound = 1 + min(len(record) - i, len(other) - j)
+#                 alpha = overlap_constraint(len(record), len(other), threshold)
+#                 upper_bound = 1 + min(len(record) - i, len(other) - j)
 
-                if overlaps.get(other_index, 0) + upper_bound >= alpha:
-                    overlaps[other_index] += 1
-                else:
-                    overlaps[other_index] = 0 # Looks like a delete
+#                 if overlaps.get(other_index, 0) + upper_bound >= alpha:
+#                     overlaps[other_index] += 1
+#                 else:
+#                     overlaps[other_index] = 0 # Looks like a delete
 
-            index[item].add((record_index, i))
+#             index[item].add((record_index, i))
 
-        # Suffixes
-        for other_index, overlap in overlaps.items():
-            other = records[other_index]
+#         # Suffixes
+#         for other_index, overlap in overlaps.items():
+#             other = records[other_index]
 
-            yp = prefix_length(other, threshold)
+#             yp = prefix_length(other, threshold)
 
-            wx = record[xp - 1]
-            wy = other[yp - 1]
-            alpha = overlap_constraint(len(record), len(other), threshold)
-            rest = 0
+#             wx = record[xp - 1]
+#             wy = other[yp - 1]
+#             alpha = overlap_constraint(len(record), len(other), threshold)
+#             rest = 0
 
-            if order_map[wx] < order_map[wy]:
-                ubound = overlap + len(record) - xp
+#             if order_map[wx] < order_map[wy]:
+#                 ubound = overlap + len(record) - xp
 
-                # TODO: optimize intersection count
-                if ubound >= alpha:
-                    rest = len(set(other[overlap:]) & set(record[xp:]))
-            else:
-                ubound = overlap + len(other) - yp
+#                 # TODO: optimize intersection count
+#                 if ubound >= alpha:
+#                     rest = len(set(other[overlap:]) & set(record[xp:]))
+#             else:
+#                 ubound = overlap + len(other) - yp
 
-                if ubound >= alpha:
-                    rest = len(set(record[overlap:]) & set(other[yp:]))
+#                 if ubound >= alpha:
+#                     rest = len(set(record[overlap:]) & set(other[yp:]))
 
-            overlap += rest
+#             overlap += rest
 
-            if overlap >= alpha:
+#             if overlap >= alpha:
 
-                # TODO: check how often candidates are repeated
-                candidates.add((record_index, other_index))
+#                 # TODO: check how often candidates are repeated
+#                 candidates.add((record_index, other_index))
 
-    return [(records[i], records[j]) for i, j in candidates]
+#     return [(records[i], records[j]) for i, j in candidates]
 
 result = ppjoin(UNIVERSITIES_NGRAMS, THRESHOLD)
 
