@@ -34,6 +34,7 @@ DOCS = [
             metrics.cosine_similarity,
             metrics.sparse_cosine_similarity,
             metrics.sparse_dot_product,
+            metrics.dice_coefficient,
             metrics.jaccard_similarity,
             metrics.weighted_jaccard_similarity,
             metrics.overlap_coefficient

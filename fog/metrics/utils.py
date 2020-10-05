@@ -4,11 +4,18 @@
 #
 # Miscellaneous utility functions used to compute metrics
 #
+ACCEPTABLE_TYPES = (set, frozenset, dict)
 
 
 def intersection_size(A, B):
     if A is B:
         return len(A)
+
+    if not isinstance(A, ACCEPTABLE_TYPES):
+        A = set(A)
+
+    if not isinstance(B, ACCEPTABLE_TYPES):
+        B = set(B)
 
     if len(A) > len(B):
         A, B = B, A

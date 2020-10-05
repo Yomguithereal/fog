@@ -7,8 +7,7 @@
 # [Urls]:
 # https://en.wikipedia.org/wiki/Overlap_coefficient
 #
-
-ACCEPTABLE_TYPES = (set, frozenset, dict)
+from fog.metrics.utils import ACCEPTABLE_TYPES
 
 
 def overlap_coefficient(A, B):

@@ -3,6 +3,9 @@ from fog.metrics.cosine import (
     sparse_cosine_similarity,
     sparse_dot_product
 )
+from fog.metrics.dice import (
+    dice_coefficient
+)
 from fog.metrics.jaccard import (
     jaccard_similarity,
     weighted_jaccard_similarity

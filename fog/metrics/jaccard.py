@@ -14,8 +14,7 @@
 #
 # Ioffe, "Improved Consistent Sampling, Weighted Minhash and L1 Sketching".
 #
-
-ACCEPTABLE_TYPES = (set, frozenset, dict)
+from fog.metrics.utils import ACCEPTABLE_TYPES
 
 
 def jaccard_similarity(A, B):

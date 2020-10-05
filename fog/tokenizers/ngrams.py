@@ -21,7 +21,12 @@ def ngrams(n, tokens):
         tuple or string: A n-gram.
 
     """
-    limit = len(tokens) - n + 1
+    lt = len(tokens)
+
+    if lt < n:
+        yield tokens
+
+    limit = lt - n + 1
 
     for i in range(limit):
         yield tokens[i:i + n]

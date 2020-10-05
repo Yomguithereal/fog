@@ -24,6 +24,7 @@ pip install fog
   * [cosine_similarity](#cosine_similarity)
   * [sparse_cosine_similarity](#sparse_cosine_similarity)
   * [sparse_dot_product](#sparse_dot_product)
+  * [dice_coefficient](#dice_coefficient)
   * [jaccard_similarity](#jaccard_similarity)
   * [weighted_jaccard_similarity](#weighted_jaccard_similarity)
   * [overlap_coefficient](#overlap_coefficient)
@@ -157,6 +158,25 @@ Runs in O(n), n being the size of the smallest set.
 *Arguments*
 * **A** *Counter*: First weighted set.
 * **B** *Counter*: Second weighted set.
+
+#### dice_coefficient
+
+Function computing the Dice coefficient. That is to say twice the size of
+the intersection of both sets divided by the sum of both their sizes.
+
+Runs in O(n), n being the size of the smallest set.
+
+```python
+from fog.metrics import dice_coefficient
+
+# Basic
+dice_coefficient('context', 'contact')
+>>> ~0.727
+```
+
+*Arguments*
+* **A** *iterable*: First sequence.
+* **B** *iterable*: Second sequence.
 
 #### jaccard_similarity
 

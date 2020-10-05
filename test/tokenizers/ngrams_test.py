@@ -41,3 +41,6 @@ class TestNgrams(object):
     def test_join(self):
         for i in range(4):
             assert join_ngrams(ngrams(i + 1, STRING)) == STRING
+
+    def test_too_short(self):
+        assert list(ngrams(5, 'yop')) == ['yop']
