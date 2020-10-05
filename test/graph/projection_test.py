@@ -10,7 +10,8 @@ from fog.graph.projection import monopartite_projection, MONOPARTITE_PROJECTION_
 from fog.metrics import (
     sparse_cosine_similarity,
     jaccard_similarity,
-    overlap_coefficient
+    overlap_coefficient,
+    dice_coefficient
 )
 
 NODES = [
@@ -124,6 +125,17 @@ class TestGraphProjection(object):
             v = to_vector(BIPARTITE, v)
 
             assert c == approx(overlap_coefficient(u, v))
+
+    def test_dice(self):
+        mono = monopartite_projection(BIPARTITE, 'people', part='part', metric='dice')
+
+        assert set(mono.nodes) == PEOPLE_PART
+
+        for u, v, c in mono.edges(data='weight'):
+            u = to_vector(BIPARTITE, u)
+            v = to_vector(BIPARTITE, v)
+
+            assert c == approx(dice_coefficient(u, v))
 
     def test_not_use_topology(self):
 

@@ -10,7 +10,7 @@ import networkx as nx
 from fog.metrics.cosine import sparse_dot_product
 from fog.metrics.utils import intersection_size
 
-MONOPARTITE_PROJECTION_METRICS = ('cosine', 'jaccard', 'overlap')
+MONOPARTITE_PROJECTION_METRICS = ('cosine', 'jaccard', 'overlap', 'dice')
 
 
 def compute_metric(metric, vector1, vector2, norm1, norm2):
@@ -29,6 +29,9 @@ def compute_metric(metric, vector1, vector2, norm1, norm2):
 
     if metric == 'jaccard':
         return w / (norm1 + norm2 - w)
+
+    if metric == 'dice':
+        return (2 * w) / (norm1 + norm2)
 
     if metric == 'overlap':
         return w / min(norm1, norm2)
