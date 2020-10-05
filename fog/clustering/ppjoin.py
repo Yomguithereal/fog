@@ -46,6 +46,26 @@ class JaccardHelper(MetricHelper):
         return math.ceil(l * self.threshold - EPSILON)
 
 
+class DiceHelper(MetricHelper):
+    def index_length(self, l):
+        return int((1 - self.threshold) * l + 1 + EPSILON)
+
+    def probe_length(self, l):
+        return int((1 - self.threshold / (2 - self.threshold)) * l + 1 + EPSILON)
+
+    def require_overlap(self, l1, l2):
+        return math.ceil((l1 + l2) * self.threshold / 2.0 - EPSILON)
+
+    def compute_similarity(self, l1, l2, overlap):
+        return 2 * overlap / (l1 + l2) + EPSILON
+
+    def max_possible_length(self, l):
+        return int(l / self.threshold * (2 - self.threshold) + EPSILON)
+
+    def min_possible_length(self, l):
+        return math.ceil(l * self.threshold / (2 - self.threshold) - EPSILON)
+
+
 class InvertedIndexItem(object):
     __slots__ = ('pos', 'ids')
 
@@ -106,7 +126,12 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None):
 
     # Instantiating metric helper
     # TODO: overlap, cosine
-    helper = JaccardHelper(threshold)
+    if metric == 'jaccard':
+        helper = JaccardHelper(threshold)
+    elif metric == 'dice':
+        helper = DiceHelper(threshold)
+    else:
+        raise TypeError('fog.clustering.ppjoin: unsupported metric "%s"' % metric)
 
     # First we need to order records by length and make them indexable
     # TODO: provide different ordering schemes & transform records to int
