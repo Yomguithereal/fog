@@ -139,7 +139,11 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
             for np in bipartite.neighbors(n1):
                 for n2 in bipartite.neighbors(np):
 
-                    # Undirectedness
+                    # We test only (n1, n2) and not (n2, n1) which is pointless
+                    # since our metrics are symmetric. This is the basically
+                    # the same as cutting edges from n1 to np after you
+                    # traversed them.
+                    # We also avoid (n1, n1) since n1 is obv. a neighbor of np.
                     if n1 >= n2:
                         continue
 
