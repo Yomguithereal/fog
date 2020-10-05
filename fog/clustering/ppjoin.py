@@ -85,8 +85,24 @@ def compute_overlap(x, y, require_overlap):
     return current_overlap
 
 
+# TODO: custom sorting scheme
+def preprocess(records, tokenizer=None):
+    tokenized_records = [
+        sorted(set(record if tokenizer is None else tokenizer(record)))
+        for record
+        in records
+    ]
+
+    argsort = sorted(range(len(tokenized_records)), key=lambda i: len(tokenized_records[i]))
+
+    return tokenized_records, argsort
+
+
 # TODO: possibility to degrade to allpairs
-def ppjoin(records, threshold, metric='jaccard'):
+def ppjoin(records, threshold, metric='jaccard', tokenizer=None):
+
+    if tokenizer is not None and not callable(tokenizer):
+        raise TypeError('fog.clustering.ppjoin: tokenizer is not callable')
 
     # Instantiating metric helper
     # TODO: overlap, cosine
@@ -96,91 +112,91 @@ def ppjoin(records, threshold, metric='jaccard'):
     # TODO: provide different ordering schemes & transform records to int
     # TODO: possibility to pass custom key (such as ngrams etc.)
     # NOTE: you need to keep tokens sets as unique!
-    records = sorted((sorted(set(record)) for record in records), key=len)
+    if not isinstance(records, list):
+        records = list(records)
+
+    tokenized_records, argsort = preprocess(records, tokenizer)
 
     # State
     inverted_index = defaultdict(InvertedIndexItem)
 
-    def pairs():
+    # Performing the join
+    for k in argsort:
+        record = tokenized_records[k]
+        record_size = len(record)
 
-        # Performing the join
-        for k, record in enumerate(records):
-            record_size = len(record)
+        min_length = helper.min_possible_length(record_size)
+        probe_length = helper.probe_length(record_size)
+        index_length = helper.index_length(record_size)
 
-            min_length = helper.min_possible_length(record_size)
-            probe_length = helper.probe_length(record_size)
-            index_length = helper.index_length(record_size)
+        # TODO: I feel we could avoid storing this in memory
+        require_overlaps = [0] * (record_size + 1)
 
-            # TODO: I feel we could avoid storing this in memory
-            require_overlaps = [0] * (record_size + 1)
+        for l in range(min_length, record_size + 1):
+            require_overlaps[l] = helper.require_overlap(record_size, l)
 
-            for l in range(min_length, record_size + 1):
-                require_overlaps[l] = helper.require_overlap(record_size, l)
+        occurances = {}
 
-            occurances = {}
+        for t in range(0, probe_length):
+            token = record[t]
+            index_item = inverted_index[token]
+            ids = index_item.ids
 
-            for t in range(0, probe_length):
-                token = record[t]
-                index_item = inverted_index[token]
-                ids = index_item.ids
+            while index_item.pos < len(ids) and len(tokenized_records[ids[index_item.pos][0]]) < min_length:
+                index_item.pos += 1
 
-                while index_item.pos < len(ids) and len(records[ids[index_item.pos][0]]) < min_length:
-                    index_item.pos += 1
+            for p in range(index_item.pos, len(ids)):
+                candidate_id = ids[p][0]
+                candidate_pos = ids[p][1]
+                candidate_length = len(tokenized_records[candidate_id])
 
-                for p in range(index_item.pos, len(ids)):
-                    candidate_id = ids[p][0]
-                    candidate_pos = ids[p][1]
-                    candidate_length = len(records[candidate_id])
+                require_overlap = require_overlaps[candidate_length]
 
-                    require_overlap = require_overlaps[candidate_length]
+                value = occurances.get(candidate_id)
 
-                    value = occurances.get(candidate_id)
-
-                    if value is None:
-                        if (
-                            record_size - threshold < require_overlap
-                            or (candidate_length - candidate_pos) < require_overlap
-                        ):
-                            continue
-
-                        occurances[candidate_id] = 1
-                    else:
-                        if (
-                            value + (record_size - threshold) < require_overlap
-                            or value + (candidate_length - candidate_pos) < require_overlap
-                        ):
-                            occurances[candidate_id] = PRUNE_FLAG
-                        else:
-                            occurances[candidate_id] += 1
-
-                if threshold < index_length:
-                    ids.append((k, t))
-
-            for candidate, count in occurances.items():
-                if count == PRUNE_FLAG:
-                    continue
-
-                candidate_record = records[candidate]
-                candidate_size = len(candidate_record)
-                require_overlap = require_overlaps[candidate_size]
-                index_length = helper.index_length(candidate_size)
-
-                # TODO: beware of the ordering here
-                if candidate_record[index_length - 1] < record[probe_length - 1]:
-                    if count + candidate_size - index_length < require_overlap:
+                if value is None:
+                    if (
+                        record_size - threshold < require_overlap
+                        or (candidate_length - candidate_pos) < require_overlap
+                    ):
                         continue
+
+                    occurances[candidate_id] = 1
                 else:
-                    if count + record_size - probe_length < require_overlap:
-                        continue
+                    if (
+                        value + (record_size - threshold) < require_overlap
+                        or value + (candidate_length - candidate_pos) < require_overlap
+                    ):
+                        occurances[candidate_id] = PRUNE_FLAG
+                    else:
+                        occurances[candidate_id] += 1
 
-                real_overlap = compute_overlap(record, candidate_record, require_overlap)
+            if threshold < index_length:
+                ids.append((k, t))
 
-                if real_overlap == -1:
+        for candidate, count in occurances.items():
+            if count == PRUNE_FLAG:
+                continue
+
+            candidate_record = tokenized_records[candidate]
+            candidate_size = len(candidate_record)
+            require_overlap = require_overlaps[candidate_size]
+            index_length = helper.index_length(candidate_size)
+
+            # TODO: beware of the ordering here
+            if candidate_record[index_length - 1] < record[probe_length - 1]:
+                if count + candidate_size - index_length < require_overlap:
+                    continue
+            else:
+                if count + record_size - probe_length < require_overlap:
                     continue
 
-                similarity = helper.compute_similarity(record_size, candidate_size, real_overlap)
+            real_overlap = compute_overlap(record, candidate_record, require_overlap)
 
-                if similarity >= threshold:
-                    yield k, candidate
+            if real_overlap == -1:
+                continue
 
-    return list(pairs())
+            similarity = helper.compute_similarity(record_size, candidate_size, real_overlap)
+
+            if similarity >= threshold:
+                yield records[k], records[candidate]
