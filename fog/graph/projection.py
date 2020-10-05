@@ -28,16 +28,13 @@ def compute_metric(metric, vector1, vector2, norm1, norm2):
     if w == 0:
         return 0
 
-    if metric is None:
-        return w
-
     if metric == 'jaccard':
         return w / (norm1 + norm2 - w)
 
     if metric == 'overlap':
         return w / min(norm1, norm2)
 
-    raise NotImplementedError
+    return w
 
 
 # TODO: use passjoin prefix filtering as optimization scheme
