@@ -46,6 +46,11 @@ class JaccardHelper(MetricHelper):
         return math.ceil(l * self.threshold - EPSILON)
 
 
+class OverlapHelper(MetricHelper):
+    def compute_similarity(self, l1, l2, overlap):
+        return overlap / min(l1, l2) + EPSILON
+
+
 class DiceHelper(MetricHelper):
     def index_length(self, l):
         return int((1 - self.threshold) * l + 1 + EPSILON)
