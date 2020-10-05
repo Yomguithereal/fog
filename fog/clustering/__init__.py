@@ -13,6 +13,7 @@ from fog.clustering.pairwise import (
     pairwise_connected_components
 )
 from fog.clustering.passjoin import passjoin
+from fog.clustering.ppjoin import ppjoin
 from fog.clustering.quickjoin import quickjoin
 from fog.clustering.sorted_neighborhood import (
     sorted_neighborhood,
