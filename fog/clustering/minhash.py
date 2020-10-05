@@ -8,7 +8,6 @@
 # http://infolab.stanford.edu/~ullman/mmds/ch3.pdf
 #
 from collections import defaultdict
-import math
 
 from fog.clustering.utils import clusters_from_buckets
 from fog.lsh.minhash import MinHash

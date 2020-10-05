@@ -5,7 +5,6 @@
 # Logic of the cluster CLI action enabling the user to cluster the content of
 # a CSV file.
 #
-import re
 from collections import Counter
 from datetime import datetime
 from timeit import default_timer as timer

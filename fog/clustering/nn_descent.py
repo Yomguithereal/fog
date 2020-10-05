@@ -18,9 +18,8 @@
 #
 import math
 import random
-from functools import total_ordering
 from heapq import heapify, heapreplace
-from fog.clustering.utils import make_similarity_function, clusters_from_pairs
+from fog.clustering.utils import clusters_from_pairs
 
 # TODO: parallelize nn_descent_full
 

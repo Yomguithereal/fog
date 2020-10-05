@@ -1,6 +1,7 @@
 # Dev Dependencies
 cython==0.28.4
 docstring-parser==0.7.3
+importchecker==2.0
 progressbar2==3.38.0
 pycodestyle==2.4.0
 pytest==3.5.1

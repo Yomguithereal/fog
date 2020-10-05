@@ -20,7 +20,6 @@
 # [Urls]:
 # https://hpi.de/fileadmin/user_upload/fachgebiete/naumann/folien/SS13/DPDC/DPDC_14_SNM.pdf
 #
-from collections import defaultdict
 from fog.clustering.utils import make_similarity_function, clusters_from_pairs
 
 # TODO: parallelize

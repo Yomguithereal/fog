@@ -6,7 +6,6 @@
 #
 import math
 import networkx as nx
-from collections import defaultdict, Counter
 
 from fog.metrics.cosine import sparse_dot_product
 from fog.metrics.utils import intersection_size

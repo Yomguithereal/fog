@@ -14,7 +14,7 @@
 #
 import hashlib
 
-from fog.lsh.utils import is_power_of_two, popcount, popcount64
+from fog.lsh.utils import is_power_of_two, popcount
 
 # TODO: reimplement soundly by following:
 # https://github.com/reubano/changanya/blob/master/changanya/simhash.py
@@ -74,7 +74,6 @@ def simhash_similarity(A, B, f=128):
 if __name__ == '__main__':
     from fog.metrics import cosine_similarity
     from fog.tokenizers import ngrams
-    from collections import Counter
 
     TESTS = [
         (
