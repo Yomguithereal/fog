@@ -348,8 +348,8 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False
                 value = occurances.get(candidate_id)
 
                 # NOTE: this should be here in principle, but it does not change much?
-                # if value == PRUNE_FLAG:
-                #     continue
+                if value == PRUNE_FLAG:
+                    continue
 
                 # Suffix filtering
                 if plus:
