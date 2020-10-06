@@ -9,6 +9,7 @@
 # « Efficient Similarity Joins for Near-Duplicate Detection ». ACM Transactions
 # on Database Systems 36, no 3 (1 août 2011): 1‑41.
 # https://doi.org/10.1145/2000824.2000825.
+# https://web.archive.org/web/20170624090246/http://www.cse.unsw.edu.au/~weiw/project/simjoin.html
 #
 # https://github.com/TsinghuaDatabaseGroup/Similarity-Search-and-Join
 # http://www.vldb.org/pvldb/vol9/p636-mann.pdf
