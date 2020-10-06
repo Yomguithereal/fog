@@ -44,5 +44,3 @@ def sorted_uniq(seq, **kwargs):
             yield current
 
     return list(uniq())
-
-
