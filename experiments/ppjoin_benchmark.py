@@ -11,7 +11,6 @@ from experiments.utils import Timer
 
 JACCARD_TRIGRAMS_08_GROUND_TRUTH = [
     ('Adam Jones (musician)', 'Sam Jones (musician)'),
-    ('Alan Wilson (musician)', 'Ben Wilson (musician)'),
     ('Alan Wilson (musician)', 'Dan Wilson (musician)'),
     ('Alan Wilson (musician)', 'Ian Wilson (musician)'),
     ('Arsenie Todiraş', 'Arsenie Todiraș'),
@@ -55,8 +54,8 @@ JACCARD_TRIGRAMS_08_GROUND_TRUTH = [
 def compare(A, B):
     assert len(A) == len(B), 'len A = %i, while len B = %i' % (len(A), len(B))
 
-    A = set(sorted(t) for t in A)
-    B = set(sorted(t) for t in B)
+    A = set(tuple(sorted(t)) for t in A)
+    B = set(tuple(sorted(t)) for t in B)
 
     assert A == B
 
@@ -70,12 +69,14 @@ with open('./data/musicians.csv', 'r') as f:
 with Timer('All-Pairs'):
     pairs = list(all_pairs(ARTISTS, 0.8, tokenizer=trigrams))
 
-    # compare(pairs, JACCARD_TRIGRAMS_08_GROUND_TRUTH)
+compare(pairs, JACCARD_TRIGRAMS_08_GROUND_TRUTH)
 
 with Timer('PPJoin'):
-    pairs = list(ppjoin(ARTISTS, 0.799999, tokenizer=trigrams))
+    pairs = list(ppjoin(ARTISTS, 0.8, tokenizer=trigrams))
 
+compare(pairs, JACCARD_TRIGRAMS_08_GROUND_TRUTH)
 
+with Timer('PPJoin+'):
+    pairs = list(ppjoin_plus(ARTISTS, 0.8, tokenizer=trigrams))
 
-for p in sorted([tuple(sorted(p)) for p in pairs]):
-    print(p)
+compare(pairs, JACCARD_TRIGRAMS_08_GROUND_TRUTH)

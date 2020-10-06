@@ -215,6 +215,7 @@ def suffix_filter(x, y, x_start, x_end, y_start, y_end, hd, depth=0):
 
 
 # TODO: custom sorting scheme
+# TODO: sorted_uniq helper
 def preprocess(records, tokenizer=None):
     tokenized_records = [
         sorted(set(record if tokenizer is None else tokenizer(record)))
