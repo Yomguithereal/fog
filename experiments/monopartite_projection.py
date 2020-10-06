@@ -1,8 +1,10 @@
+import os
 import csv
 import networkx as nx
 from fog.graph import monopartite_projection, floatsam_sparsification
 from experiments.utils import Timer
 
+os.makedirs('./output', exist_ok=True)
 bipartite = nx.Graph()
 
 with open('./data/bipartite.csv') as f:
@@ -15,6 +17,8 @@ with open('./data/bipartite.csv') as f:
         bipartite.add_node(account, node_type='account')
         bipartite.add_node(url, node_type='url')
         bipartite.add_edge(account, url, weight=int(line['weight']))
+
+nx.write_gexf(bipartite, './output/bipartite.gexf')
 
 with Timer('quadratic'):
     monopartite = monopartite_projection(bipartite, 'account',
