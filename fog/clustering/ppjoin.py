@@ -227,7 +227,7 @@ def preprocess(records, tokenizer=None):
     return tokenized_records, argsort
 
 
-def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False,
+def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False,
            plus=False):
 
     if tokenizer is not None and not callable(tokenizer):
@@ -283,7 +283,7 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False,
             for p in range(index_item.pos, len(ids)):
                 candidate_id = ids[p][0]
 
-                if allpairs:
+                if all_pairs:
                     if candidate_id not in occurances:
                         occurances[candidate_id] = 1
                     else:
@@ -370,3 +370,11 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False,
 
             if similarity >= threshold:
                 yield records[k], records[candidate]
+
+
+def all_pairs(*args, **kwargs):
+    return ppjoin(*args, **kwargs, all_pairs=True)
+
+
+def ppjoin_plus(*args, **kwargs):
+    return ppjoin(*args, **kwargs, plus=True)

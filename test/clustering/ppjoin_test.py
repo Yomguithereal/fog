@@ -21,7 +21,7 @@ with open('./data/universities.csv', 'r') as f:
 
 CLUSTERINGS = [
     {},
-    {'allpairs': True},
+    {'all_pairs': True},
     {'plus': True}
 ]
 
