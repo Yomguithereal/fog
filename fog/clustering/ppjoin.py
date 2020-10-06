@@ -18,7 +18,7 @@ import math
 from collections import defaultdict
 
 EPSILON = 1e-6
-PRUNE_FLAG = -7
+PRUNE_FLAG = -1
 
 
 class MetricHelper(object):
