@@ -126,7 +126,7 @@ def preprocess(records, tokenizer=None):
 
 
 # TODO: possibility to degrade to allpairs
-def ppjoin(records, threshold, metric='jaccard', tokenizer=None):
+def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False):
 
     if tokenizer is not None and not callable(tokenizer):
         raise TypeError('fog.clustering.ppjoin: tokenizer is not callable')
@@ -137,6 +137,11 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None):
         helper = JaccardHelper(threshold)
     elif metric == 'dice':
         helper = DiceHelper(threshold)
+    elif metric == 'overlap':
+        if not allpairs:
+            raise NotImplementedError('fog.clustering.ppjoin: ppjoin is not implemented for overlap coefficient. Set `allpairs` to `True` instead.')
+
+        helper = OverlapHelper(threshold)
     else:
         raise TypeError('fog.clustering.ppjoin: unsupported metric "%s"' % metric)
 
@@ -179,6 +184,15 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None):
 
             for p in range(index_item.pos, len(ids)):
                 candidate_id = ids[p][0]
+
+                if allpairs:
+                    if candidate_id not in occurances:
+                        occurances[candidate_id] = 1
+                    else:
+                        occurances[candidate_id] += 1
+
+                    continue
+
                 candidate_pos = ids[p][1]
                 candidate_length = len(tokenized_records[candidate_id])
 

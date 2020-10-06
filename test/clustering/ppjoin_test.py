@@ -18,6 +18,11 @@ def tokenizer(r):
 with open('./data/universities.csv', 'r') as f:
     UNIVERSITIES = sorted(set([line['university'] for line in csv.DictReader(f)]))
 
+CLUSTERINGS = [
+    {},
+    {'allpairs': True}
+]
+
 JACCARD_5_GRAMS_T8_PAIRS = Clusters([
     ['Kansas State University', 'Arkansas State University'],
     ['Taylor University', 'Baylor University'],
@@ -66,17 +71,19 @@ DICE_5_GRAMS_T85_PAIRS = Clusters([
 
 class TestPPJoin(object):
     def test_jaccard(self):
-        pairs = Clusters(ppjoin(UNIVERSITIES, 0.8, metric='jaccard', tokenizer=tokenizer))
+        for kwargs in CLUSTERINGS:
+            pairs = Clusters(ppjoin(UNIVERSITIES, 0.8, metric='jaccard', tokenizer=tokenizer, **kwargs))
 
-        assert pairs == JACCARD_5_GRAMS_T8_PAIRS
+            assert pairs == JACCARD_5_GRAMS_T8_PAIRS
 
-        for A, B in pairs:
-            assert jaccard_similarity(tokenizer(A), tokenizer(B)) >= 0.8
+            for A, B in pairs:
+                assert jaccard_similarity(tokenizer(A), tokenizer(B)) >= 0.8
 
     def test_dice(self):
-        pairs = Clusters(ppjoin(UNIVERSITIES, 0.85, metric='dice', tokenizer=tokenizer))
+        for kwargs in CLUSTERINGS:
+            pairs = Clusters(ppjoin(UNIVERSITIES, 0.85, metric='dice', tokenizer=tokenizer, **kwargs))
 
-        assert pairs == DICE_5_GRAMS_T85_PAIRS
+            assert pairs == DICE_5_GRAMS_T85_PAIRS
 
-        for A, B in pairs:
-            assert dice_coefficient(tokenizer(A), tokenizer(B)) >= 0.85
+            for A, B in pairs:
+                assert dice_coefficient(tokenizer(A), tokenizer(B)) >= 0.85
