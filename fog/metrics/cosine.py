@@ -10,6 +10,8 @@
 from collections import Counter
 import math
 
+COSINE_ACCEPTABLE_TYPES = (dict, Counter)
+
 
 def sparse_cosine_similarity(A, B):
     """
@@ -112,7 +114,10 @@ def cosine_similarity(A, B):
     """
 
     # Computing frequencies
-    A = Counter(A)
-    B = Counter(B)
+    if not isinstance(A, COSINE_ACCEPTABLE_TYPES):
+        A = Counter(A)
+
+    if not isinstance(B, COSINE_ACCEPTABLE_TYPES):
+        B = Counter(B)
 
     return sparse_cosine_similarity(A, B)
