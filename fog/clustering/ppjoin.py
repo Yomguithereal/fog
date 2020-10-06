@@ -15,7 +15,7 @@
 # http://www.vldb.org/pvldb/vol9/p636-mann.pdf
 #
 import math
-from collections import defaultdict
+from collections import defaultdict, Counter
 from bisect import bisect_left
 
 from fog.utils import sorted_uniq
@@ -23,6 +23,8 @@ from fog.utils import sorted_uniq
 EPSILON = 1e-6
 PRUNE_FLAG = -1
 MAX_DEPTH = 2
+
+TOKEN_ORDERINGS = ('freq',)
 
 
 class MetricHelper(object):
@@ -216,13 +218,31 @@ def suffix_filter(x, y, x_start, x_end, y_start, y_end, hd, depth=0):
     return 0
 
 
-# TODO: custom sorting scheme
-def preprocess(records, tokenizer=None):
-    tokenized_records = [
-        sorted_uniq(record if tokenizer is None else tokenizer(record))
-        for record
-        in records
-    ]
+def preprocess(records, tokenizer=None, token_ordering=None):
+    freqs = Counter()
+    tokenized_records = []
+
+    for record in records:
+        if tokenizer is not None:
+            record = tokenizer(record)
+
+            if not isinstance(record, list):
+                record = list(record)
+
+            if token_ordering == 'freq':
+                for token in record:
+                    freqs[token] += 1
+
+        record = sorted_uniq(record)
+        tokenized_records.append(record)
+
+    if token_ordering == 'freq':
+        labels = {token: i for i, (token, _) in enumerate(sorted(freqs.items(), key=lambda x: (x[1], x[0])))}
+
+        tokenized_records = [
+            sorted(labels[token] for token in record)
+            for record in tokenized_records
+        ]
 
     argsort = sorted(range(len(tokenized_records)), key=lambda i: len(tokenized_records[i]))
 
@@ -230,10 +250,13 @@ def preprocess(records, tokenizer=None):
 
 
 def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False,
-           plus=False):
+           plus=False, token_ordering='freq'):
 
     if tokenizer is not None and not callable(tokenizer):
         raise TypeError('fog.clustering.ppjoin: tokenizer is not callable')
+
+    if token_ordering is not None and token_ordering not in TOKEN_ORDERINGS:
+        raise TypeError('fog.clustering.ppjoin: unknown token ordering "%s"' % token_ordering)
 
     # Instantiating metric helper
     if metric == 'jaccard':
@@ -253,7 +276,7 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False
     if not isinstance(records, list):
         records = list(records)
 
-    tokenized_records, argsort = preprocess(records, tokenizer)
+    tokenized_records, argsort = preprocess(records, tokenizer, token_ordering)
 
     # State
     inverted_index = defaultdict(InvertedIndexItem)

@@ -22,7 +22,8 @@ with open('./data/universities.csv', 'r') as f:
 CLUSTERINGS = [
     {},
     {'all_pairs': True},
-    {'plus': True}
+    {'plus': True},
+    {'token_ordering': None}
 ]
 
 JACCARD_5_GRAMS_T8_PAIRS = Clusters([
