@@ -250,6 +250,34 @@ def preprocess(records, tokenizer=None, token_ordering=None):
 
 def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False,
            plus=False, token_ordering='freq'):
+    """
+    Function returning an iterator over similar pairs of records found using
+    the All-Pairs, PPJoin or PPJoin+ algorithm.
+
+    Args:
+        records (iterable): The records to work on.
+        threshold (float): The similarity threshold under which pairs of
+            records won't be deemed similar enough.
+        metric (str, optional): The similarity metric to use. Can be `jaccard`,
+            `dice` or `binary_cosine`. Defaults to `jaccard`.
+        tokenizer (callable, optional): An optional tokenizer function processing
+            the records, such as ngrams etc. Defaults to `None`.
+        all_pairs (bool, optional): Whether to avoid leveraging PPJoin's
+            filtering strategies and only apply the simpler All-Pairs
+            algorithm instead. Defaults to `False`.
+        plus (bool, optional): Whether to use PPJoin+'s suffix filtering.
+            Defaults to `False`.
+        token_ordering (str, optional): Which kind of token global ordering
+            to use when sorting tokens for prefix filtering. Can be `None`,
+            `freq` or `crc32`. `None` mean sorting will be done alphabetically.
+            `freq` will sort tokens by increasing corpus frequency to
+            minimize collisions. Finally `crc32` will map tokens to their crc32
+            hash, meaning the order will be random. Defaults to `freq`.
+
+    Yields:
+        tuple: A similar pair.
+
+    """
 
     if tokenizer is not None and not callable(tokenizer):
         raise TypeError('fog.clustering.ppjoin: tokenizer is not callable')
@@ -268,10 +296,6 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False
         raise TypeError('fog.clustering.ppjoin: unsupported metric "%s"' % metric)
 
     # First we need to order records by length and make them indexable
-    # TODO: provide different ordering schemes & transform records to int
-    # TODO: possibility to pass custom key (such as ngrams etc.)
-    # TODO: document that you need to pass as unique
-    # NOTE: you need to keep tokens sets as unique!
     if not isinstance(records, list):
         records = list(records)
 
@@ -289,7 +313,7 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False
         probe_length = helper.probe_length(record_length)
         index_length = helper.index_length(record_length)
 
-        # TODO: I feel we could avoid storing this in memory
+        # NOTE: maybe we could try avoiding storing this in memory?
         require_overlaps = [0] * (record_length + 1)
 
         for l in range(min_length, record_length + 1):
@@ -378,7 +402,6 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False
             require_overlap = require_overlaps[candidate_size]
             index_length = helper.index_length(candidate_size)
 
-            # TODO: beware of the ordering here
             if candidate_record[index_length - 1] < record[probe_length - 1]:
                 if count + candidate_size - index_length < require_overlap:
                     continue
@@ -397,9 +420,25 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False
                 yield records[k], records[candidate]
 
 
-def all_pairs(*args, **kwargs):
-    return ppjoin(*args, **kwargs, all_pairs=True)
+def all_pairs(records, threshold, metric='jaccard', tokenizer=None,
+              token_ordering='freq'):
+    return ppjoin(
+        records,
+        threshold,
+        metric=metric,
+        tokenizer=tokenizer,
+        token_ordering=token_ordering,
+        all_pairs=True
+    )
 
 
-def ppjoin_plus(*args, **kwargs):
-    return ppjoin(*args, **kwargs, plus=True)
+def ppjoin_plus(records, threshold, metric='jaccard', tokenizer=None,
+                token_ordering='freq'):
+    return ppjoin(
+        records,
+        threshold,
+        metric=metric,
+        tokenizer=tokenizer,
+        token_ordering=token_ordering,
+        plus=True
+    )
