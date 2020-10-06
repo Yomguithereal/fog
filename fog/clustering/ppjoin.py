@@ -370,10 +370,10 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False
                         )
 
                         if sf > hamming_distance:
-                            if value is None:
-                                continue
-                            else:
+                            if value is not None:
                                 occurances[candidate_id] = PRUNE_FLAG
+
+                            continue
 
                 if value is None:
                     if (
