@@ -103,7 +103,7 @@ class TestPPJoin(object):
 
     def test_binary_cosine(self):
         for kwargs in CLUSTERINGS:
-            pairs = Clusters(ppjoin(UNIVERSITIES, 0.9, metric='cosine', tokenizer=tokenizer, **kwargs))
+            pairs = Clusters(ppjoin(UNIVERSITIES, 0.9, metric='binary_cosine', tokenizer=tokenizer, **kwargs))
 
             assert pairs == BINARY_COSINE_5_GRAMS_T9_PAIRS
 

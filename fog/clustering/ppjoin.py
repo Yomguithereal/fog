@@ -48,11 +48,6 @@ class JaccardHelper(MetricHelper):
         return math.ceil(l * self.threshold - EPSILON)
 
 
-class OverlapHelper(MetricHelper):
-    def compute_similarity(self, l1, l2, overlap):
-        return overlap / min(l1, l2) + EPSILON
-
-
 class DiceHelper(MetricHelper):
     def index_length(self, l):
         return int((1 - self.threshold) * l + 1 + EPSILON)
@@ -73,7 +68,7 @@ class DiceHelper(MetricHelper):
         return math.ceil(l * self.threshold / (2 - self.threshold) - EPSILON)
 
 
-class CosineHelper(MetricHelper):
+class BinaryCosineHelper(MetricHelper):
     def index_length(self, l):
         return int((1 - self.threshold) * l + 1 + EPSILON)
 
@@ -145,25 +140,18 @@ def preprocess(records, tokenizer=None):
     return tokenized_records, argsort
 
 
-# TODO: possibility to degrade to allpairs
 def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False):
 
     if tokenizer is not None and not callable(tokenizer):
         raise TypeError('fog.clustering.ppjoin: tokenizer is not callable')
 
     # Instantiating metric helper
-    # TODO: overlap, cosine
     if metric == 'jaccard':
         helper = JaccardHelper(threshold)
     elif metric == 'dice':
         helper = DiceHelper(threshold)
-    elif metric == 'cosine':
-        helper = CosineHelper(threshold)
-    elif metric == 'overlap':
-        if not allpairs:
-            raise NotImplementedError('fog.clustering.ppjoin: ppjoin is not implemented for overlap coefficient. Set `allpairs` to `True` instead.')
-
-        helper = OverlapHelper(threshold)
+    elif metric == 'binary_cosine':
+        helper = BinaryCosineHelper(threshold)
     else:
         raise TypeError('fog.clustering.ppjoin: unsupported metric "%s"' % metric)
 
