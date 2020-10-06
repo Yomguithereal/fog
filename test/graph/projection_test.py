@@ -9,6 +9,7 @@ from test.clustering.utils import Clusters
 from fog.graph.projection import monopartite_projection, MONOPARTITE_PROJECTION_METRICS
 from fog.metrics import (
     sparse_cosine_similarity,
+    sparse_binary_cosine_similarity,
     jaccard_similarity,
     overlap_coefficient,
     dice_coefficient
@@ -101,6 +102,17 @@ class TestGraphProjection(object):
 
         for _, _, c in mono.edges(data='weight'):
             assert c >= 0.3
+
+    def test_binary_cosine(self):
+        mono = monopartite_projection(BIPARTITE, 'people', part='part', metric='binary_cosine')
+
+        assert set(mono.nodes) == PEOPLE_PART
+
+        for u, v, c in mono.edges(data='weight'):
+            u = to_vector(BIPARTITE, u)
+            v = to_vector(BIPARTITE, v)
+
+            assert c == approx(sparse_binary_cosine_similarity(u, v))
 
     def test_jaccard(self):
         mono = monopartite_projection(BIPARTITE, 'people', part='part', metric='jaccard')

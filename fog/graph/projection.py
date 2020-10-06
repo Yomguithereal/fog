@@ -10,7 +10,7 @@ import networkx as nx
 from fog.metrics.cosine import sparse_dot_product
 from fog.metrics.utils import intersection_size
 
-MONOPARTITE_PROJECTION_METRICS = ('cosine', 'jaccard', 'overlap', 'dice')
+MONOPARTITE_PROJECTION_METRICS = ('cosine', 'jaccard', 'overlap', 'dice', 'binary_cosine')
 
 
 def compute_metric(metric, vector1, vector2, norm1, norm2):
@@ -36,6 +36,9 @@ def compute_metric(metric, vector1, vector2, norm1, norm2):
     if metric == 'overlap':
         return w / min(norm1, norm2)
 
+    if metric == 'binary_cosine':
+        return w / math.sqrt(norm1 * norm2)
+
     return w
 
 
@@ -59,8 +62,8 @@ def monopartite_projection(bipartite, project, part='bipartite', weight='weight'
         weight (str, optional): Name of the weight edge attribute.
             Defaults to "weight".
         metric (str, optional): Metric to use. If `None`, the basic projection
-            will be returned. Also accepts `jaccard`, `overlap` or `cosine`.
-            Defaults to None.
+            will be returned. Also accepts `jaccard`, `overlap`, `dice`,
+            `cosine` or `binary_cosine`. Defaults to None.
         threshold (float, optional): Optional similarity threshold under which
             edges won't be added to the monopartite projection.
             Defaults to None.

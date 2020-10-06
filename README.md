@@ -75,7 +75,8 @@ for instance.
 graph partition is built e.g. "color" or "type" etc.
 * **weight** *?str* [`weight`]: Name of the weight edge attribute.
 * **metric** *?str* [`None`]: Metric to use. If `None`, the basic projection
-will be returned. Also accepts `jaccard`, `overlap` or `cosine`.
+will be returned. Also accepts `jaccard`, `overlap`, `dice`,
+`cosine` or `binary_cosine`.
 * **threshold** *?float* [`None`]: Optional similarity threshold under which
 edges won't be added to the monopartite projection.
 * **use_topology** *?bool*: Whether to use the bipartite graph's
