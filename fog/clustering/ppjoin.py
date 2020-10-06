@@ -11,6 +11,7 @@
 # https://doi.org/10.1145/2000824.2000825.
 #
 # https://github.com/TsinghuaDatabaseGroup/Similarity-Search-and-Join
+# http://www.vldb.org/pvldb/vol9/p636-mann.pdf
 #
 import math
 from collections import defaultdict
