@@ -23,7 +23,8 @@ CLUSTERINGS = [
     {},
     {'all_pairs': True},
     {'plus': True},
-    {'token_ordering': None}
+    {'token_ordering': None},
+    {'token_ordering': 'crc32'}
 ]
 
 JACCARD_5_GRAMS_T8_PAIRS = Clusters([

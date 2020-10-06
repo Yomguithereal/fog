@@ -80,3 +80,18 @@ with Timer('PPJoin+'):
     pairs = list(ppjoin_plus(ARTISTS, 0.8, tokenizer=trigrams))
 
 compare(pairs, JACCARD_TRIGRAMS_08_GROUND_TRUTH)
+
+with Timer('All-Pairs crc32'):
+    pairs = list(all_pairs(ARTISTS, 0.8, tokenizer=trigrams, token_ordering='crc32'))
+
+compare(pairs, JACCARD_TRIGRAMS_08_GROUND_TRUTH)
+
+with Timer('PPJoin crc32'):
+    pairs = list(ppjoin(ARTISTS, 0.8, tokenizer=trigrams, token_ordering='crc32'))
+
+compare(pairs, JACCARD_TRIGRAMS_08_GROUND_TRUTH)
+
+with Timer('PPJoin+ crc32'):
+    pairs = list(ppjoin_plus(ARTISTS, 0.8, tokenizer=trigrams, token_ordering='crc32'))
+
+compare(pairs, JACCARD_TRIGRAMS_08_GROUND_TRUTH)

@@ -18,13 +18,14 @@ import math
 from collections import defaultdict, Counter
 from bisect import bisect_left
 
+from fog.lsh.utils import crc32
 from fog.utils import sorted_uniq
 
 EPSILON = 1e-6
 PRUNE_FLAG = -1
 MAX_DEPTH = 2
 
-TOKEN_ORDERINGS = ('freq',)
+TOKEN_ORDERINGS = ('freq', 'crc32')
 
 
 class MetricHelper(object):
@@ -228,6 +229,10 @@ def preprocess(records, tokenizer=None, token_ordering=None):
                     freqs[token] += 1
 
         record = sorted_uniq(record)
+
+        if token_ordering == 'crc32':
+            record = sorted(crc32(token) for token in record)
+
         tokenized_records.append(record)
 
     if token_ordering == 'freq':
