@@ -7,7 +7,8 @@ from fog.clustering import ppjoin
 from fog.tokenizers import ngrams
 from fog.metrics import (
     jaccard_similarity,
-    dice_coefficient
+    dice_coefficient,
+    binary_cosine_similarity
 )
 
 
@@ -53,6 +54,18 @@ DICE_5_GRAMS_T85_PAIRS = Clusters([
     ['University of Milan', 'University of Milan    ']
 ])
 
+BINARY_COSINE_5_GRAMS_T9_PAIRS = Clusters([
+    ['Arkansas State University', 'Kansas State University'],
+    ['Baylor University', 'Taylor University'],
+    ['De La Salle University', 'La Salle University'],
+    ['Eastern Kentucky University', 'Western Kentucky University'],
+    ['Eastern Michigan University', 'Western Michigan University'],
+    ['Eastern Washington University', 'Western Washington University'],
+    ['Iran University of Science and Technology', 'Jordan University of Science and Technology'],
+    ['The University of Western Australia', 'University of Western Australia'],
+    ['The University of Western Ontario', 'University of Western Ontario']
+])
+
 
 # def naive_pairwise():
 #     print()
@@ -63,7 +76,7 @@ DICE_5_GRAMS_T85_PAIRS = Clusters([
 #         for j in range(i + 1, len(UNIVERSITIES)):
 #             B = list(tokenizer(UNIVERSITIES[j]))
 
-#             if dice_coefficient(A, B) >= 0.85:
+#             if binary_cosine_similarity(A, B) >= 0.9:
 #                 print([UNIVERSITIES[i], UNIVERSITIES[j]])
 
 # naive_pairwise()
@@ -87,3 +100,12 @@ class TestPPJoin(object):
 
             for A, B in pairs:
                 assert dice_coefficient(tokenizer(A), tokenizer(B)) >= 0.85
+
+    def test_binary_cosine(self):
+        for kwargs in CLUSTERINGS:
+            pairs = Clusters(ppjoin(UNIVERSITIES, 0.9, metric='cosine', tokenizer=tokenizer, **kwargs))
+
+            assert pairs == BINARY_COSINE_5_GRAMS_T9_PAIRS
+
+            for A, B in pairs:
+                assert binary_cosine_similarity(tokenizer(A), tokenizer(B)) >= 0.9
