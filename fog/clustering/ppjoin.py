@@ -18,6 +18,8 @@ import math
 from collections import defaultdict
 from bisect import bisect_left
 
+from fog.utils import sorted_uniq
+
 EPSILON = 1e-6
 PRUNE_FLAG = -1
 MAX_DEPTH = 2
@@ -215,10 +217,9 @@ def suffix_filter(x, y, x_start, x_end, y_start, y_end, hd, depth=0):
 
 
 # TODO: custom sorting scheme
-# TODO: sorted_uniq helper
 def preprocess(records, tokenizer=None):
     tokenized_records = [
-        sorted(set(record if tokenizer is None else tokenizer(record)))
+        sorted_uniq(record if tokenizer is None else tokenizer(record))
         for record
         in records
     ]
