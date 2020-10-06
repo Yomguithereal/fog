@@ -73,6 +73,26 @@ class DiceHelper(MetricHelper):
         return math.ceil(l * self.threshold / (2 - self.threshold) - EPSILON)
 
 
+class CosineHelper(MetricHelper):
+    def index_length(self, l):
+        return int((1 - self.threshold) * l + 1 + EPSILON)
+
+    def probe_length(self, l):
+        return int((1 - self.threshold * self.threshold) * l + 1 + EPSILON)
+
+    def require_overlap(self, l1, l2):
+        return math.ceil(self.threshold * math.sqrt(l1 * l2) - EPSILON)
+
+    def compute_similarity(self, l1, l2, overlap):
+        return overlap / math.sqrt(l1 * l2) + EPSILON
+
+    def max_possible_length(self, l):
+        return int(l / self.threshold / self.threshold + EPSILON)
+
+    def min_possible_length(self, l):
+        return math.ceil(l * self.threshold * self.threshold - EPSILON)
+
+
 class InvertedIndexItem(object):
     __slots__ = ('pos', 'ids')
 
@@ -137,6 +157,8 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False)
         helper = JaccardHelper(threshold)
     elif metric == 'dice':
         helper = DiceHelper(threshold)
+    elif metric == 'cosine':
+        helper = CosineHelper(threshold)
     elif metric == 'overlap':
         if not allpairs:
             raise NotImplementedError('fog.clustering.ppjoin: ppjoin is not implemented for overlap coefficient. Set `allpairs` to `True` instead.')
