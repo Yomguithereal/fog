@@ -357,21 +357,23 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, all_pairs=False
                         (candidate_pos + t)
                     )
 
-                    sf = suffix_filter(
-                        tokenized_records[candidate_id],
-                        record,
-                        candidate_pos,
-                        candidate_length,
-                        t,
-                        record_length,
-                        hamming_distance
-                    )
+                    # NOTE: I am not completely sure I am not missing something here...
+                    if hamming_distance >= 0:
+                        sf = suffix_filter(
+                            tokenized_records[candidate_id],
+                            record,
+                            candidate_pos,
+                            candidate_length,
+                            t,
+                            record_length,
+                            hamming_distance
+                        )
 
-                    if sf > hamming_distance:
-                        if value is None:
-                            continue
-                        else:
-                            occurances[candidate_id] = PRUNE_FLAG
+                        if sf > hamming_distance:
+                            if value is None:
+                                continue
+                            else:
+                                occurances[candidate_id] = PRUNE_FLAG
 
                 if value is None:
                     if (
