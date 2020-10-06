@@ -16,9 +16,11 @@
 #
 import math
 from collections import defaultdict
+from bisect import bisect_left
 
 EPSILON = 1e-6
 PRUNE_FLAG = -1
+MAX_DEPTH = 2
 
 
 class MetricHelper(object):
@@ -127,6 +129,91 @@ def compute_overlap(x, y, require_overlap):
     return current_overlap
 
 
+def suffix_filter(x, y, x_start, x_end, y_start, y_end, hd, depth=0):
+    x_len = x_end - x_start
+    y_len = y_end - y_start
+
+    if x_end <= x_start or y_end <= y_start:
+        return abs(x_len - y_len)
+
+    left = 0
+    right = 0
+    offset = 0
+
+    hd_left = 0
+    hd_right = 0
+    hd_left_bound = 0
+    hd_right_bound = 0
+
+    mid = x_start + x_len // 2
+    token = x[mid]
+
+    if x_len >= y_len:
+        delta = x_len - y_len
+        offset = (hd - delta) // 2 + delta
+        left = y_start + x_len // 2 - offset
+        offset = (hd - delta) // 2
+        right = y_start + x_len // 2 + offset
+    else:
+        delta = y_len - x_len
+        offset = (hd - delta) // 2
+        left = y_start + x_len // 2 - offset
+        offset = (hd - delta) // 2 + delta
+        right = y_start + x_len // 2 + offset
+
+    if (
+        (left >= y_start and y[left] > token)
+        or (right < y_end and y[right] < token)
+    ):
+        return hd + 1
+
+    search_left = left if left >= y_start else y_start
+    search_right = right + 1 if right + 1 < y_end else y_end
+
+    pos = bisect_left(y, token, search_left, search_right)
+
+    if pos < y_end and y[pos] == token:
+        hd_left = hd_left_bound = abs((mid - x_start) - (pos - y_start))
+        hd_right = hd_right_bound = abs((x_end - mid - 1) - (y_end - pos - 1))
+
+        if hd_left_bound + hd_right_bound > hd:
+            return hd_left_bound + hd_right_bound
+
+        if depth < MAX_DEPTH:
+            hd_left = suffix_filter(x, y, x_start, mid, y_start, pos, hd - hd_right_bound, depth + 1)
+
+            if hd_left + hd_right_bound > hd:
+                return hd_left + hd_right_bound
+
+            hd_right = suffix_filter(x, y, mid + 1, x_end, pos + 1, y_end, hd - hd_left, depth + 1)
+
+        # if hd_left + hd_right > hd:
+        #     return hd_left + hd_right
+
+        return hd_left + hd_right
+    else:
+        hd_left = hd_left_bound = abs((mid - x_start) - (pos - y_start))
+        hd_right = hd_right_bound = abs((x_end - mid - 1) - (y_end - pos))
+
+        if hd_left_bound + hd_right_bound + 1 > hd:
+            return hd_left_bound + hd_right_bound + 1
+
+        if depth < MAX_DEPTH:
+            hd_left = suffix_filter(x, y, x_start, mid, y_start, pos, hd - hd_right_bound - 1, depth + 1)
+
+            if hd_left + hd_right_bound + 1 > hd:
+                return hd_left + hd_right_bound + 1
+
+            hd_right = suffix_filter(x, y, mid + 1, x_end, pos, y_end, hd - hd_left - 1, depth + 1)
+
+        # if hd_left + hd_right + 1 > hd:
+        #     return hd_left + hd_right + 1
+
+        return hd_left + hd_right + 1
+
+    return 0
+
+
 # TODO: custom sorting scheme
 def preprocess(records, tokenizer=None):
     tokenized_records = [
@@ -140,7 +227,8 @@ def preprocess(records, tokenizer=None):
     return tokenized_records, argsort
 
 
-def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False):
+def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False,
+           plus=False):
 
     if tokenizer is not None and not callable(tokenizer):
         raise TypeError('fog.clustering.ppjoin: tokenizer is not callable')
@@ -170,17 +258,17 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False)
     # Performing the join
     for k in argsort:
         record = tokenized_records[k]
-        record_size = len(record)
+        record_length = len(record)
 
-        min_length = helper.min_possible_length(record_size)
-        probe_length = helper.probe_length(record_size)
-        index_length = helper.index_length(record_size)
+        min_length = helper.min_possible_length(record_length)
+        probe_length = helper.probe_length(record_length)
+        index_length = helper.index_length(record_length)
 
         # TODO: I feel we could avoid storing this in memory
-        require_overlaps = [0] * (record_size + 1)
+        require_overlaps = [0] * (record_length + 1)
 
-        for l in range(min_length, record_size + 1):
-            require_overlaps[l] = helper.require_overlap(record_size, l)
+        for l in range(min_length, record_length + 1):
+            require_overlaps[l] = helper.require_overlap(record_length, l)
 
         occurances = {}
 
@@ -210,9 +298,35 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False)
 
                 value = occurances.get(candidate_id)
 
+                # Suffix filtering
+                if plus:
+                    hamming_distance = (
+                        candidate_length +
+                        record_length -
+                        2 * require_overlap +
+                        (0 if value is None else 2 * value) -
+                        (candidate_pos + t)
+                    )
+
+                    sf = suffix_filter(
+                        tokenized_records[candidate_id],
+                        record,
+                        candidate_pos,
+                        candidate_length,
+                        t,
+                        record_length,
+                        hamming_distance
+                    )
+
+                    if sf > hamming_distance:
+                        if value is None:
+                            continue
+                        else:
+                            occurances[candidate_id] = PRUNE_FLAG
+
                 if value is None:
                     if (
-                        record_size - threshold < require_overlap
+                        record_length - threshold < require_overlap
                         or (candidate_length - candidate_pos) < require_overlap
                     ):
                         continue
@@ -220,7 +334,7 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False)
                     occurances[candidate_id] = 1
                 else:
                     if (
-                        value + (record_size - threshold) < require_overlap
+                        value + (record_length - threshold) < require_overlap
                         or value + (candidate_length - candidate_pos) < require_overlap
                     ):
                         occurances[candidate_id] = PRUNE_FLAG
@@ -244,7 +358,7 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False)
                 if count + candidate_size - index_length < require_overlap:
                     continue
             else:
-                if count + record_size - probe_length < require_overlap:
+                if count + record_length - probe_length < require_overlap:
                     continue
 
             real_overlap = compute_overlap(record, candidate_record, require_overlap)
@@ -252,7 +366,7 @@ def ppjoin(records, threshold, metric='jaccard', tokenizer=None, allpairs=False)
             if real_overlap == -1:
                 continue
 
-            similarity = helper.compute_similarity(record_size, candidate_size, real_overlap)
+            similarity = helper.compute_similarity(record_length, candidate_size, real_overlap)
 
             if similarity >= threshold:
                 yield records[k], records[candidate]
