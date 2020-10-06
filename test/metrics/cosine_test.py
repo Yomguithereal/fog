@@ -6,7 +6,9 @@ from pytest import approx
 from fog.metrics import (
     cosine_similarity,
     sparse_cosine_similarity,
-    sparse_dot_product
+    sparse_dot_product,
+    sparse_binary_cosine_similarity,
+    binary_cosine_similarity
 )
 
 BASIC_TESTS = [
@@ -27,6 +29,14 @@ SEQUENCE_TESTS = [
     ('the cat sat on the mat', 'the cat sat on a mat', 0.97),
     ('whatever floats your goat', 'whatever floats your moat', 0.98),
     ('aaabbbc', 'zzzyyx', 0.0)
+]
+
+SPARSE_BINARY_TESTS = [
+    ({'A', 'B', 'C', 'D', 'E'}, {'F', 'B', 'C', 'D', 'E'}, 0.8)
+]
+
+BINARY_TESTS = [
+    ('ABCDEEEDECCCDEA', 'FBBBCDEDDDED', 0.8)
 ]
 
 
@@ -55,3 +65,10 @@ class TestSparseCosineSimilarity(object):
                 cosine = dotproduct / (A_norm * B_norm)
 
             assert cosine == approx(similarity, abs=1e-2)
+
+    def test_binary(self):
+        for A, B, similarity in SPARSE_BINARY_TESTS:
+            assert sparse_binary_cosine_similarity(A, B) == approx(similarity)
+
+        for A, B, similarity in BINARY_TESTS:
+            assert binary_cosine_similarity(A, B) == approx(similarity)

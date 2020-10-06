@@ -7,8 +7,10 @@
 # [Url]:
 # https://en.wikipedia.org/wiki/Cosine_similarity
 #
-from collections import Counter
 import math
+from collections import Counter
+
+from fog.metrics.utils import ACCEPTABLE_TYPES
 
 COSINE_ACCEPTABLE_TYPES = (dict, Counter)
 
@@ -16,7 +18,7 @@ COSINE_ACCEPTABLE_TYPES = (dict, Counter)
 def sparse_cosine_similarity(A, B):
     """
     Function computing cosine similarity on sparse weighted sets represented
-    by python dicts.
+    as python dicts.
 
     Runs in O(n), n being the sum of A & B's sizes.
 
@@ -63,6 +65,48 @@ def sparse_cosine_similarity(A, B):
     for v in B.values():
         weight = v
         yy += weight ** 2
+
+    return xy / math.sqrt(xx * yy)
+
+
+def sparse_binary_cosine_similarity(A, B):
+    """
+    Function computing binary cosine similarity on sparse vectors represented
+    as python sets.
+
+    Runs in O(n), n being the size of the smaller set.
+
+    Args:
+        A (Counter): First set.
+        B (Counter): Second set.
+
+    Returns:
+        float: Binary cosine similarity between A & B.
+
+    """
+
+    # Early termination
+    if A is B:
+        return 1.0
+
+    if len(A) == 0 or len(B) == 0:
+        return 0.0
+
+    xx = 0.0
+    xy = 0.0
+    yy = 0.0
+
+    # Swapping to iterate over smaller set and minimize lookups
+    if len(A) > len(B):
+        A, B = B, A
+
+    for k in A:
+        xx += 1
+
+        if k in B:
+            xy += 1
+
+    yy += len(B)
 
     return xy / math.sqrt(xx * yy)
 
@@ -121,3 +165,28 @@ def cosine_similarity(A, B):
         B = Counter(B)
 
     return sparse_cosine_similarity(A, B)
+
+
+def binary_cosine_similarity(A, B):
+    """
+    Function computing the binary cosine similarity of the given sequences.
+
+    Runs in O(n), n being the size of the smallest set.
+
+    Args:
+        A (iterable): First sequence.
+        B (iterable): Second sequence.
+
+    Returns:
+        float: Binary cosine similarity between A & B.
+
+    """
+
+    # Computing frequencies
+    if not isinstance(A, ACCEPTABLE_TYPES):
+        A = set(A)
+
+    if not isinstance(B, ACCEPTABLE_TYPES):
+        B = set(B)
+
+    return sparse_binary_cosine_similarity(A, B)

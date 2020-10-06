@@ -24,6 +24,8 @@ pip install fog
   * [cosine_similarity](#cosine_similarity)
   * [sparse_cosine_similarity](#sparse_cosine_similarity)
   * [sparse_dot_product](#sparse_dot_product)
+  * [binary_cosine_similarity](#binary_cosine_similarity)
+  * [sparse_binary_cosine_similarity](#sparse_binary_cosine_similarity)
   * [dice_coefficient](#dice_coefficient)
   * [jaccard_similarity](#jaccard_similarity)
   * [weighted_jaccard_similarity](#weighted_jaccard_similarity)
@@ -132,7 +134,7 @@ Runs in O(n), n being the sum of A & B's sizes.
 #### sparse_cosine_similarity
 
 Function computing cosine similarity on sparse weighted sets represented
-by python dicts.
+as python dicts.
 
 Runs in O(n), n being the sum of A & B's sizes.
 
@@ -158,6 +160,26 @@ Runs in O(n), n being the size of the smallest set.
 *Arguments*
 * **A** *Counter*: First weighted set.
 * **B** *Counter*: Second weighted set.
+
+#### binary_cosine_similarity
+
+Function computing the binary cosine similarity of the given sequences.
+Runs in O(n), n being the size of the smallest set.
+
+*Arguments*
+* **A** *iterable*: First sequence.
+* **B** *iterable*: Second sequence.
+
+#### sparse_binary_cosine_similarity
+
+Function computing binary cosine similarity on sparse vectors represented
+as python sets.
+
+Runs in O(n), n being the size of the smaller set.
+
+*Arguments*
+* **A** *Counter*: First set.
+* **B** *Counter*: Second set.
 
 #### dice_coefficient
 
