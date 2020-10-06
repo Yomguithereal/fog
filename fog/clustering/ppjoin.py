@@ -191,9 +191,6 @@ def suffix_filter(x, y, x_start, x_end, y_start, y_end, hd, depth=0):
 
             hd_right = suffix_filter(x, y, mid + 1, x_end, pos + 1, y_end, hd - hd_left, depth + 1)
 
-        # if hd_left + hd_right > hd:
-        #     return hd_left + hd_right
-
         return hd_left + hd_right
     else:
         hd_left = hd_left_bound = abs((mid - x_start) - (pos - y_start))
@@ -209,9 +206,6 @@ def suffix_filter(x, y, x_start, x_end, y_start, y_end, hd, depth=0):
                 return hd_left + hd_right_bound + 1
 
             hd_right = suffix_filter(x, y, mid + 1, x_end, pos, y_end, hd - hd_left - 1, depth + 1)
-
-        # if hd_left + hd_right + 1 > hd:
-        #     return hd_left + hd_right + 1
 
         return hd_left + hd_right + 1
 
