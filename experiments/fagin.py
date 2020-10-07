@@ -77,7 +77,7 @@ with Timer('sqrt indices'):
 
     neighbors = defaultdict(lambda: (0, None))
 
-    for _ in range(5):
+    for _ in range(1):
         pairs = sqrt_indexation_pairs(VECTORS)
 
         for i, j in pairs:
@@ -92,8 +92,8 @@ with Timer('sqrt indices'):
     T = 0
     P = 0
     for i in range(len(VECTORS)):
-        if GROUND_TRUTH[i][1] < 0.8:
-            continue
+        # if GROUND_TRUTH[i][1] < 0.8:
+        #     continue
 
         T += 1
 

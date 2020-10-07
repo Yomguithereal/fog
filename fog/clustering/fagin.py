@@ -164,6 +164,8 @@ def sqrt_indexation_pairs(vectors):
     for i, v in enumerate(vectors):
         leader = min(leaders, key=lambda x: 1.0 - sparse_cosine_similarity(v, vectors[x]))
 
+        yield i, leader
+
         l = proximities[leader]
 
         for j in l:
