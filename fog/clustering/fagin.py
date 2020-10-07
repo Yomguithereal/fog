@@ -76,7 +76,7 @@ def threshold_algorithm_k1(vectors):
         offset = 0
 
         t = 0.0
-        best = [None, None]
+        best = None
         t_vector = {}
 
         while True:
@@ -91,6 +91,15 @@ def threshold_algorithm_k1(vectors):
                 stop = False
 
                 w, j = l[offset]
+
+                if i == j:
+                    offset2 = offset + 1
+
+                    if offset2 >= len(l):
+                        continue
+
+                    w, j = l[offset2]
+
                 t_vector[d] = w
 
                 if j in visited:
@@ -99,27 +108,18 @@ def threshold_algorithm_k1(vectors):
                 cs = sparse_cosine_similarity(vector, vectors[j])
                 visited.add(j)
 
-                if best[0] is None:
-                    best[0] = (cs, j)
-                else:
-                    if cs > best[0][0]:
-                        best[1] = best[0]
-                        best[0] = (cs, j)
-                    else:
-                        if best[1] is None:
-                            best[1] = (cs, j)
-                        elif cs > best[1][0]:
-                            best[1] = (cs, j)
+                if best is None or cs > best[0]:
+                    best = (cs, j)
 
             # Final break + return self if best cos is 0.0
             if stop:
-                yield i, best[1][1] if best[1] is not None else best[0][1]
+                yield i, best[1] if best is not None else i
                 break
 
             t = sparse_cosine_similarity(vector, t_vector)
 
-            if best[1] is not None and best[1][0] >= t:
-                yield i, best[1][1] if best[1] is not None else best[0][1]
+            if best is not None and best[0] >= t:
+                yield i, best[1] if best is not None else i
                 break
 
             offset += 1

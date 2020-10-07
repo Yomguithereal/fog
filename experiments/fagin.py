@@ -12,7 +12,7 @@ with open('./data/universities.csv', 'r') as f:
 with open('./data/fagin_k1_ground_truth.csv') as f:
     GROUND_TRUTH = {int(row[0]): (int(row[1]), float(row[2])) for row in csv.reader(f)}
 
-VECTORS = [Counter(ngrams(5, chars)) for chars in UNIVERSITIES]
+VECTORS = [Counter(ngrams(2, chars)) for chars in UNIVERSITIES]
 
 with Timer('quadratic'):
     # with open('./data/fagin_k1_ground_truth.csv', 'w') as f:
