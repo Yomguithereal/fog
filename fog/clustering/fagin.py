@@ -162,7 +162,7 @@ def sqrt_indexation_pairs(vectors):
     proximities = defaultdict(list)
 
     for i, v in enumerate(vectors):
-        leader = max(leaders, key=lambda x: sparse_cosine_similarity(v, vectors[x]))
+        leader = min(leaders, key=lambda x: 1.0 - sparse_cosine_similarity(v, vectors[x]))
 
         l = proximities[leader]
 
