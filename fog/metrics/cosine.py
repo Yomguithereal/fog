@@ -142,6 +142,22 @@ def sparse_dot_product(A, B):
     return product
 
 
+def sparse_normalize(A):
+    length = 0.0
+
+    for w in A.values():
+        length += w * w
+
+    N = {}
+
+    length = math.sqrt(length)
+
+    for k, w in A.items():
+        N[k] = w / length
+
+    return N
+
+
 def cosine_similarity(A, B):
     """
     Function computing the cosine similarity of the given sequences.

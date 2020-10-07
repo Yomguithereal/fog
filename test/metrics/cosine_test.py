@@ -10,6 +10,7 @@ from fog.metrics import (
     sparse_binary_cosine_similarity,
     binary_cosine_similarity
 )
+from fog.metrics.cosine import sparse_normalize
 
 BASIC_TESTS = [
     ({}, {}, 0.0),
@@ -72,3 +73,16 @@ class TestSparseCosineSimilarity(object):
 
         for A, B, similarity in BINARY_TESTS:
             assert binary_cosine_similarity(A, B) == approx(similarity)
+
+    def test_sparse_normalize(self):
+        vector = {'A': 34, 'B': 78, 'C': -16}
+        unit = sparse_normalize(vector)
+
+        for w in unit.values():
+            assert w >= -1.0 and w <= 1.0
+
+        assert unit == approx({
+            'A': 0.39270291779351885,
+            'B': 0.900906693761602,
+            'C': -0.184801373079303
+        })
