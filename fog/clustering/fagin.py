@@ -20,7 +20,10 @@
 # http://homepages.inf.ed.ac.uk/libkin/teach/dataintegr09/topk.pdf
 # http://alumni.cs.ucr.edu/~skulhari/Top-k-Query.pdf
 # https://arxiv.org/pdf/1011.2807.pdf
+# https://nlp.stanford.edu/IR-book/html/htmledition/contents-1.html
 #
+import math
+from random import shuffle
 from collections import defaultdict, Counter
 
 from fog.metrics.cosine import sparse_cosine_similarity
@@ -146,3 +149,24 @@ def naive_cosine_pairs(vectors):
                 yield i, j
 
             l.append(i)
+
+
+def sqrt_indexation_pairs(vectors):
+    indices = list(range(len(vectors)))
+    shuffle(indices)
+
+    leaders_count = int(math.sqrt(len(vectors)))
+
+    leaders = indices[:leaders_count]
+
+    proximities = defaultdict(list)
+
+    for i, v in enumerate(vectors):
+        leader = max(leaders, key=lambda x: sparse_cosine_similarity(v, vectors[x]))
+
+        l = proximities[leader]
+
+        for j in l:
+            yield i, j
+
+        l.append(i)

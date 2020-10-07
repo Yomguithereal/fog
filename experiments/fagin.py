@@ -1,7 +1,12 @@
 import csv
 import pytest
 from collections import Counter
-from fog.clustering.fagin import fagin_k1, threshold_algorithm_k1, naive_cosine_pairs
+from fog.clustering.fagin import (
+    fagin_k1,
+    threshold_algorithm_k1,
+    naive_cosine_pairs,
+    sqrt_indexation_pairs
+)
 from fog.tokenizers import ngrams
 from fog.metrics import sparse_cosine_similarity
 from experiments.utils import Timer
@@ -61,3 +66,11 @@ with Timer('naive cosine pairs'):
     n = len(VECTORS) * (len(VECTORS) - 1) // 2
 
     print(len(pairs), n, len(pairs) / n)
+
+with Timer('sqrt indices'):
+    pairs = list(sqrt_indexation_pairs(VECTORS))
+    n = len(VECTORS) * (len(VECTORS) - 1) // 2
+
+    print(len(pairs), n, len(pairs) / n)
+
+    print(len(set(i for i, _ in pairs) | set(j for _, j in pairs)), len(VECTORS))
