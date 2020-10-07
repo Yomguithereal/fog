@@ -8,7 +8,7 @@ import math
 from fog.graph.utils import second_largest_component_size
 
 
-def floatsam_sparsification(graph, starting_treshold, learning_rate=0.05,
+def floatsam_sparsification(graph, starting_treshold=0.0, learning_rate=0.05,
                             max_drifter_size=None, weight='weight',
                             remove_edges=False):
     """
@@ -25,7 +25,8 @@ def floatsam_sparsification(graph, starting_treshold, learning_rate=0.05,
 
     Args:
         graph (nx.Graph): Graph to sparsify.
-        starting_treshold (float): Starting similarity threshold.
+        starting_treshold (float, optional): Starting similarity threshold.
+            Defaults to `0.0`.
         learning_rate (float, optional): How much to increase the threshold
             at each step of the algorithm. Defaults to `0.05`.
         max_drifter_size (int, optional): Max size of component to detach itself

@@ -48,7 +48,7 @@ function but it works decently for typical cases.
 
 *Arguments*
 * **graph** *nx.Graph*: Graph to sparsify.
-* **starting_treshold** *float*: Starting similarity threshold.
+* **starting_treshold** *?float* [`0.0`]: Starting similarity threshold.
 * **learning_rate** *?float* [`0.05`]: How much to increase the threshold
 at each step of the algorithm.
 * **max_drifter_size** *?int*: Max size of component to detach itself
