@@ -1,6 +1,7 @@
 import csv
+import pytest
 from collections import Counter
-from fog.clustering.fagin import fagin_k1
+from fog.clustering.fagin import fagin_k1, threshold_algorithm_k1
 from fog.tokenizers import ngrams
 from fog.metrics import sparse_cosine_similarity
 from experiments.utils import Timer
@@ -13,37 +14,44 @@ with open('./data/fagin_k1_ground_truth.csv') as f:
 
 VECTORS = [Counter(ngrams(5, chars)) for chars in UNIVERSITIES]
 
-with Timer('quadratic'):
-    with open('./data/fagin_k1_ground_truth.csv', 'w') as f:
-        # writer = csv.writer(f)
+# with Timer('quadratic'):
+#     with open('./data/fagin_k1_ground_truth.csv', 'w') as f:
+#         writer = csv.writer(f)
 
-        for i in range(len(VECTORS)):
-            v1 = VECTORS[i]
-            best = None
+#         for i in range(len(VECTORS)):
+#             v1 = VECTORS[i]
+#             best = None
 
-            for j in range(len(VECTORS)):
-                if i == j:
-                    continue
+#             for j in range(len(VECTORS)):
+#                 if i == j:
+#                     continue
 
-                v2 = VECTORS[j]
+#                 v2 = VECTORS[j]
 
-                c = sparse_cosine_similarity(v1, v2)
+#                 c = sparse_cosine_similarity(v1, v2)
 
-                # NOTE: this is stable and lower index wins
-                if best is None or c > best[0]:
-                    best = (c, j)
+#                 # NOTE: this is stable and lower index wins
+#                 if best is None or c > best[0]:
+#                     best = (c, j)
 
-            # print(UNIVERSITIES[i], UNIVERSITIES[best[1]])
-            # writer.writerow([i, best[1], str(best[0])])
+#             # print(UNIVERSITIES[i], UNIVERSITIES[best[1]])
+#             writer.writerow([i, best[1], str(best[0])])
 
-with Timer('Fagin'):
-    for i, candidates in fagin_k1(VECTORS):
-        v = VECTORS[i]
-        j = max(candidates, key=lambda c: sparse_cosine_similarity(v, VECTORS[c]))
+# with Timer('FA'):
+#     for i, candidates in fagin_k1(VECTORS):
+#         v = VECTORS[i]
+#         j = max(candidates, key=lambda c: sparse_cosine_similarity(v, VECTORS[c]))
 
-        # print("'%s'" % UNIVERSITIES[i])
-        # print("'%s'" % UNIVERSITIES[GROUND_TRUTH[i][0]])
-        # print("'%s'" % UNIVERSITIES[j])
-        # print(i, j, len(candidates), GROUND_TRUTH[i], sparse_cosine_similarity(v, VECTORS[j]))
+#         # print("'%s'" % UNIVERSITIES[i])
+#         # print("'%s'" % UNIVERSITIES[GROUND_TRUTH[i][0]])
+#         # print("'%s'" % UNIVERSITIES[j])
+#         # print(i, j, len(candidates), GROUND_TRUTH[i], sparse_cosine_similarity(v, VECTORS[j]))
 
-        assert j == GROUND_TRUTH[i][0]
+#         assert j == GROUND_TRUTH[i][0]
+
+with Timer('TA'):
+
+    # TODO: current heap comparison used is not stable
+    for i, j in threshold_algorithm_k1(VECTORS):
+        if i != j:
+            assert sparse_cosine_similarity(VECTORS[i], VECTORS[j]) == pytest.approx(GROUND_TRUTH[i][1])
