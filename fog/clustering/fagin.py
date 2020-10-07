@@ -5,6 +5,21 @@
 # Miscellaneous functions related to Fagin's algorithms in order to perform
 # top k queries and such.
 #
+# [Articles]:
+# Optimal aggregation algorithms for middleware
+# Ronald Fagin, Amnon Lotem, and Moni Naor
+#
+# Combining Fuzzy Information from Multiple Systems
+# Ronald Fagin
+#
+# Index-based, High-dimensional, Cosine Threshold Querying with Optimality
+# Guarantees. Yuliang Li, Jianguo Wang, Benjamin Pullman, Nuno Bandeira, and
+# Yannis Papakonstantinou
+#
+# [References]:
+# http://homepages.inf.ed.ac.uk/libkin/teach/dataintegr09/topk.pdf
+# http://alumni.cs.ucr.edu/~skulhari/Top-k-Query.pdf
+#
 from collections import defaultdict, Counter
 
 
