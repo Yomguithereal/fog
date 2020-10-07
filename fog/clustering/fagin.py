@@ -19,6 +19,7 @@
 # [References]:
 # http://homepages.inf.ed.ac.uk/libkin/teach/dataintegr09/topk.pdf
 # http://alumni.cs.ucr.edu/~skulhari/Top-k-Query.pdf
+# https://arxiv.org/pdf/1011.2807.pdf
 #
 from collections import defaultdict, Counter
 
@@ -93,6 +94,8 @@ def threshold_algorithm_k1(vectors):
                 w, j = l[offset]
 
                 if i == j:
+
+                    # TODO: probably ned to reset stop to take edge case into account
                     offset2 = offset + 1
 
                     if offset2 >= len(l):
