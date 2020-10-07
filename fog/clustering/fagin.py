@@ -123,3 +123,23 @@ def threshold_algorithm_k1(vectors):
                 break
 
             offset += 1
+
+
+def naive_cosine_pairs(vectors):
+    inverted_lists = defaultdict(list)
+
+    for i, vector in enumerate(vectors):
+        visited = set()
+
+        for d in vector:
+            l = inverted_lists[d]
+
+            for j in l:
+                if j in visited:
+                    continue
+
+                visited.add(j)
+
+                yield i, j
+
+            l.append(i)

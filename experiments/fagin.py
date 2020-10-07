@@ -1,7 +1,7 @@
 import csv
 import pytest
 from collections import Counter
-from fog.clustering.fagin import fagin_k1, threshold_algorithm_k1
+from fog.clustering.fagin import fagin_k1, threshold_algorithm_k1, naive_cosine_pairs
 from fog.tokenizers import ngrams
 from fog.metrics import sparse_cosine_similarity
 from experiments.utils import Timer
@@ -55,3 +55,9 @@ with Timer('TA'):
     for i, j in threshold_algorithm_k1(VECTORS):
         if i != j:
             assert sparse_cosine_similarity(VECTORS[i], VECTORS[j]) == pytest.approx(GROUND_TRUTH[i][1])
+
+with Timer('naive cosine pairs'):
+    pairs = list(naive_cosine_pairs(VECTORS))
+    n = len(VECTORS) * (len(VECTORS) - 1) // 2
+
+    print(len(pairs), n, len(pairs) / n)
