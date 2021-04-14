@@ -16,8 +16,8 @@ build-ext:
 clean:
 	rm -rf *.egg-info .pytest_cache .ipynb_checkpoints build dist
 	find . -name __pycache__ -type d | xargs rm -rf
-	find . -name *.c -type f | xargs rm
-	find . -name *.so -type f | xargs rm
+	find . -name *.c -type f | xargs rm -f
+	find . -name *.so -type f | xargs rm -f
 
 deps:
 	pip3 install -U pip
