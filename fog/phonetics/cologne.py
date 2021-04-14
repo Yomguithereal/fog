@@ -105,6 +105,7 @@ def cologne(name):
         elif letter == 'C':
 
             if (
+                len(name) > 1 and
                 (i == 0 and name[i + 1] in CFOLLOWING1)
                 or (i < last_i and name[i + 1] in CFOLLOWING2 and name[i - 1] not in CPREVIOUS)
             ):
