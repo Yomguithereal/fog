@@ -2,6 +2,8 @@ from fog.metrics.cosine import (
     cosine_similarity,
     sparse_cosine_similarity,
     sparse_dot_product,
+    sparse_norm,
+    sparse_normalize,
     binary_cosine_similarity,
     sparse_binary_cosine_similarity,
 )

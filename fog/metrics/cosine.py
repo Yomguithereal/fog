@@ -142,15 +142,17 @@ def sparse_dot_product(A, B):
     return product
 
 
+def sparse_norm(A):
+    return math.sqrt(sum(w * w for w in A.values()))
+
+
 def sparse_normalize(A):
-    length = 0.0
-
-    for w in A.values():
-        length += w * w
-
     N = {}
 
-    length = math.sqrt(length)
+    length = sparse_norm(A)
+
+    if length == 0:
+        return N
 
     for k, w in A.items():
         N[k] = w / length
