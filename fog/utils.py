@@ -24,23 +24,3 @@ def squeeze(string, keep_roman_numerals=False):
 
     """
     return (SQUEEZE_ROMAN_RE if keep_roman_numerals else SQUEEZE_RE).sub(r'\1', string)
-
-
-def sorted_uniq(seq, **kwargs):
-    """
-    Simple helper sorted the given sequence using builtin's `sorted` but then
-    scanning the result linearly to drop any duplicates.
-    """
-
-    def uniq():
-        current = None
-
-        for item in sorted(seq, **kwargs):
-            if item == current:
-                continue
-
-            current = item
-
-            yield current
-
-    return list(uniq())

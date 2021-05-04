@@ -17,9 +17,9 @@
 import math
 from collections import defaultdict, Counter
 from bisect import bisect_left
+from ebbe import sorted_uniq
 
 from fog.lsh.utils import crc32
-from fog.utils import sorted_uniq
 
 EPSILON = 1e-6
 PRUNE_FLAG = -1

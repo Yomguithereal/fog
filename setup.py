@@ -25,6 +25,7 @@ setup(name='fog',
     ext_modules=EXTENSIONS,
     install_requires=[
         'dill>=0.2.7.1',
+        'ebbe>=1.3.1',
         'networkx>=2',
         'phylactery>=0.1.1',
         'Unidecode>=1.0.22'
