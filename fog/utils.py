@@ -74,3 +74,6 @@ class OnlineMean(object):
             raise StatisticsError
 
         return self._sum / self._n
+
+    def __float__(self):
+        return self.peek()

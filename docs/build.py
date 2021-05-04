@@ -9,11 +9,18 @@ from docstring_parser import (
     DocstringDeprecated
 )
 
+import fog.evaluation as evaluation
 import fog.graph as graph
 import fog.metrics as metrics
 import fog.key as key
 
 DOCS = [
+    {
+        'title': 'Evaluation',
+        'fns': [
+            evaluation.best_matching
+        ]
+    },
     {
         'title': 'Graph',
         'fns': [

@@ -14,6 +14,8 @@ pip install fog
 
 ## Usage
 
+* [Evaluation](#evaluation)
+  * [best_matching](#best_matching)
 * [Graph](#graph)
   * [floatsam_sparsification](#floatsam_sparsification)
   * [monopartite_projection](#monopartite_projection)
@@ -30,6 +32,17 @@ pip install fog
   * [jaccard_similarity](#jaccard_similarity)
   * [weighted_jaccard_similarity](#weighted_jaccard_similarity)
   * [overlap_coefficient](#overlap_coefficient)
+
+### Evaluation
+
+#### best_matching
+
+Efficient implementation of the "best matching F1" evaluation metric for
+clusters.
+
+*Arguments*
+* **truth** *iterable*: the truth clusters.
+* **predicted** *iterable*: the predicted clusters.
 
 ### Graph
 
