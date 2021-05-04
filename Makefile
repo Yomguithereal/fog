@@ -27,6 +27,7 @@ deps:
 lint:
 	@echo Linting source code using pep8...
 	pycodestyle --ignore E501,E722,E731,E741,W503,W504 $(SOURCE) test
+	@echo
 	@echo Searching for unused imports...
 	importchecker fog | grep -v __init__ || true
 	importchecker cfog | grep -v __init__ || true
