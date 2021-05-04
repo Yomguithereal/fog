@@ -4,6 +4,9 @@
 from fog.metrics import overlap_coefficient
 
 TESTS = [
+    ('', '', 1.0),
+    ('abc', '', 0.0),
+    ('', 'abc', 0.0),
     ('abc', 'abc', 1.0),
     ('abc', 'def', 0.0),
     ('abc', 'abd', 2 / 3),
