@@ -68,10 +68,10 @@ def best_matching(
             candidates[candidate_cluster_index] += 1
 
         matching_cluster_index, true_positives = candidates.most_common(1)[0]
-        matching_cluser = truth[matching_cluster_index]
+        matching_cluster = truth[matching_cluster_index]
 
         false_positives = len(cluster) - true_positives
-        false_negatives = len(matching_cluser) - true_positives
+        false_negatives = len(matching_cluster) - true_positives
 
         precision = true_positives / (true_positives + false_positives)
         recall = true_positives / (true_positives + false_negatives)
