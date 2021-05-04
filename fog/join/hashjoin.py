@@ -4,7 +4,6 @@
 #
 # TODO: key(s) as iterable of fuctions ?
 #
-#
 from types import GeneratorType
 import warnings
 
