@@ -1,8 +1,6 @@
 # =============================================================================
 # Fog Levenshtein Distance Unit Tests
 # =============================================================================
-import math
-from pytest import approx
 from cfog.metrics import (
     levenshtein_distance,
     limited_levenshtein_distance,

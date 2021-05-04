@@ -1,7 +1,6 @@
 # =============================================================================
 # Fog Overlap Coefficient Unit Tests
 # =============================================================================
-from pytest import approx
 from fog.metrics import overlap_coefficient
 
 TESTS = [

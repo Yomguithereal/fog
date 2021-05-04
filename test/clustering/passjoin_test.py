@@ -1,7 +1,6 @@
 # =============================================================================
 # Fog PassJoin Unit Tests
 # =============================================================================
-import csv
 from Levenshtein import distance as levenshtein
 from test.clustering.utils import Clusters
 from fog.clustering import passjoin

@@ -1,7 +1,6 @@
 # =============================================================================
 # Fog Ngrams Unit Tests
 # =============================================================================
-import math
 from fog.tokenizers import ngrams, bigrams, trigrams, quadrigrams
 from fog.tokenizers.ngrams import join_ngrams
 

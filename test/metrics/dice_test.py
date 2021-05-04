@@ -1,7 +1,6 @@
 # =============================================================================
 # Fog Dice Coefficient Unit Tests
 # =============================================================================
-from pytest import approx
 from fog.metrics import dice_coefficient
 from fog.tokenizers import bigrams
 

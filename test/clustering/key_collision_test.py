@@ -2,7 +2,6 @@
 # Fog Key Collision Clustering Unit Tests
 # =============================================================================
 from test.clustering.utils import Clusters
-from Levenshtein import distance as levenshtein
 from fog.clustering import key_collision
 from fog.tokenizers import ngrams
 

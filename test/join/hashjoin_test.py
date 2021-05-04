@@ -1,6 +1,7 @@
+# =============================================================================
+# Fog Hashjoin Unit Tests
+# =============================================================================
 from fog.join.hashjoin import hashjoin
-from pprint import pprint
-
 
 A = {
     'Spartan Spears',

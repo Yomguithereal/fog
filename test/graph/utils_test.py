@@ -1,9 +1,8 @@
 # =============================================================================
 # Fog Graph Utils Unit Tests
 # =============================================================================
-import pytest
-
 import networkx as nx
+
 from fog.graph.utils import (
     component_sizes,
     second_largest_component_size

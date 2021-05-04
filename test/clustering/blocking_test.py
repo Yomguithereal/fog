@@ -1,7 +1,6 @@
 # =============================================================================
 # Fog Blocking Unit Tests
 # =============================================================================
-import csv
 from test.clustering.utils import Clusters
 from Levenshtein import distance as levenshtein
 from fog.clustering import blocking
