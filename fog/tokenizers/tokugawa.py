@@ -23,22 +23,35 @@ PUNCT = set(chr(i) for i in PUNCT_CODES)
 ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
 FRENCH_EXCEPTIONS = ['hui']
 ABBREVIATIONS = {
+    'apt',
+    'appt',
     'dr',
     'etc',
     'jr',
     'm',
     'mgr',
+    'min',
     'mr',
     'mrs',
     'ms',
     'mme',
     'mlle',
+    'no',
+    'p',
+    'pp',
     'prof',
     'sr',
     'st',
-    'p',
-    'pp'
+    'vs'
 }
+
+# TODO: fix single '-' token type
+# TODO: hyphen between tokens?
+# TODO: clean ascii junk
+# TODO: identifiers with - or _
+# TODO: hyphenation?
+# TODO: ellipsis?
+# TODO: chef-d'œuvre
 
 
 def is_ascii_junk(c):
