@@ -3,6 +3,7 @@
 # =============================================================================
 from pytest import approx, raises
 from statistics import mean, StatisticsError
+from random import random
 
 from fog.utils import squeeze, OnlineMean
 
@@ -64,3 +65,13 @@ class TestUtils(object):
         online_mean += remaining
 
         assert online_mean.peek() == approx(mean(values))
+
+    # def test_float_precision(self):
+    #     floats = [random() * 0.00001 for _ in range(10_000)]
+
+    #     online_mean = OnlineMean()
+
+    #     for f in floats:
+    #         online_mean.add(f)
+
+    #     print(mean(floats), sum(floats) / len(floats), online_mean.peek())
