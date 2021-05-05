@@ -3,7 +3,7 @@
 # =============================================================================
 from pytest import approx, raises
 from statistics import mean, StatisticsError
-from random import random
+# from random import random
 
 from fog.utils import squeeze, OnlineMean
 
