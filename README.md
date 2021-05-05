@@ -43,6 +43,10 @@ clusters.
 *Arguments*
 * **truth** *iterable*: the truth clusters.
 * **predicted** *iterable*: the predicted clusters.
+* **allow_additional_items** *?bool* [`False`]: Whether to allow additional items
+that don't exist in truth clusters to be found in predicted ones. Those
+additional items will then be ignored when computing the metrics instead
+of raising an error when found.
 
 ### Graph
 

@@ -20,7 +20,8 @@ from fog.utils import OnlineMean
 
 def best_matching(
     truth: Iterable[Iterable[Hashable]],
-    predicted: Iterable[Iterable[Hashable]]
+    predicted: Iterable[Iterable[Hashable]],
+    allow_additional_items: bool = False
 ) -> Tuple[float, float, float]:
     """
     Efficient implementation of the "best matching F1" evaluation metric for
@@ -29,6 +30,10 @@ def best_matching(
     Args:
         truth (iterable): the truth clusters.
         predicted (iterable): the predicted clusters.
+        allow_additional_items (bool, optional): Whether to allow additional items
+            that don't exist in truth clusters to be found in predicted ones. Those
+            additional items will then be ignored when computing the metrics instead
+            of raising an error when found. Defaults to False.
 
     Returns:
         tuple of floats: precision, recall and f1 score.
@@ -58,19 +63,28 @@ def best_matching(
 
         # Finding best matching cluster from truth
         candidates = Counter()
+        cluster_size = 0
 
         for item in cluster:
-            try:
-                candidate_cluster_index = index[item]
-            except KeyError:
-                raise TypeError('predicted clusters don\'t have the same items as truth ones')
+            candidate_cluster_index = index.get(item)
+
+            if candidate_cluster_index is None:
+                if not allow_additional_items:
+                    raise TypeError('predicted clusters don\'t have the same items as truth ones')
+                else:
+                    continue
 
             candidates[candidate_cluster_index] += 1
+            cluster_size += 1
+
+        if len(candidates) == 0:
+            assert allow_additional_items
+            continue
 
         matching_cluster_index, true_positives = candidates.most_common(1)[0]
         matching_cluster = truth[matching_cluster_index]
 
-        false_positives = len(cluster) - true_positives
+        false_positives = cluster_size - true_positives
         false_negatives = len(matching_cluster) - true_positives
 
         precision = true_positives / (true_positives + false_positives)

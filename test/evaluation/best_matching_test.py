@@ -19,6 +19,13 @@ CLUSTERS = [
     ['D1', 'D2', 'D3', 'D4']
 ]
 
+CLUSTERS_WITH_ADDITIONAL_ITEMS = [
+    ['A1', 'B1', 'A2', 'A3'],
+    ['B2', 'C1', 'E1'],
+    ['D1', 'D2', 'D3', 'D4', 'E2'],
+    ['E3', 'E4']
+]
+
 
 class TestBestMatching(object):
     def test_exceptions(self):
@@ -36,6 +43,11 @@ class TestBestMatching(object):
             0.83,
             0.78
         ), rel=1e-2)
+
+    def test_allow_additional_items(self):
+        result = best_matching(TRUTH, CLUSTERS_WITH_ADDITIONAL_ITEMS, allow_additional_items=True)
+
+        assert result == best_matching(TRUTH, CLUSTERS)
 
     def test_identity(self):
         result = best_matching(TRUTH, TRUTH)
