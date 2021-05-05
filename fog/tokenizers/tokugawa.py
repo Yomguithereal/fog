@@ -11,7 +11,7 @@ APOSTROPHES = ['\'', '’']
 IRISH = ['O', 'o']
 ASCII_ALPHA_RE = re.compile(r'^[A-Za-z]$')
 TWITTER_CHAR_RE = re.compile(r'^[A-Za-z0-9_]$')
-VOWELS_PATTERN = 'aáàâäąåoôóøeéèëêęiíïîuúùûüyÿæœAÁÀÂÄĄÅOÓÔØEÉÈËÊĘIÍÏÎYŸUÚÙÛÜÆŒ'
+VOWELS_PATTERN = 'aáàâäąåoôóøeéèëêęiíïîıuúùûüyÿæœAÁÀÂÄĄÅOÓÔØEÉÈËÊĘIİÍÏÎYŸUÚÙÛÜÆŒ'
 VOWELS_RE = re.compile(r'^[%s]$' % VOWELS_PATTERN)
 CONSONANTS_RE = re.compile(r'^[^%s]$' % VOWELS_PATTERN)
 
@@ -19,9 +19,11 @@ ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
 FRENCH_EXCEPTIONS = ['hui']
 
 # TODO: exceptions, abbreviations, urls, mails, negatives, chomping junk mid word? smileys?
-# TODO: trailing point number, drop lang to support all contractions
+# TODO: trailing point number
 # TODO: consuming functions?
 # TODO: tagged tokens
+# TODO: test l'#@
+# TODO: what about lists: 1), 1, etc.
 
 
 def is_ascii_junk(c):
@@ -102,11 +104,25 @@ class TokugawaTokenizer(object):
 
             # Numerical token
             elif c.isdigit():
-                while (
-                    j < l and
-                    not c.isspace() and
-                    (string[j].isdigit() or string[j] in DECIMALS)
-                ):
+                digit_separator = None
+
+                while j < l:
+                    if c.isspace():
+                        break
+
+                    if string[j] in DECIMALS:
+                        if digit_separator is not None:
+                            if string[j] != digit_separator:
+                                break
+                        else:
+                            digit_separator = string[j]
+
+                        j += 1
+                        continue
+
+                    if not string[j].isdigit():
+                        break
+
                     j += 1
 
             # Alphanumerical token

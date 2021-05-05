@@ -41,6 +41,10 @@ TESTS = [
         'tokens': ['Control', ':', 'ok', '?', 'Wo', 'rd']
     },
     {
+        'text': 'This is.Another',
+        'tokens': ['This', 'is', '.', 'Another']
+    },
+    {
         'text': '',
         'tokens': []
     },
@@ -85,6 +89,14 @@ TESTS = [
     {
         'text': 'D\'mitr N\'Guyen O\'Doherty O\'Hara Mbappé M\'bappé M\'Leod N\'diaye N\'Djaména L\'Arrivée m\'appeler sur l\'herbe',
         'tokens': ["D'mitr", "N'Guyen", "O'Doherty", "O'Hara", 'Mbappé', "M'bappé", "M'Leod", "N'diaye", "N'Djaména", "L'Arrivée", "m'", 'appeler', 'sur', "l'", 'herbe']
+    },
+    {
+        'text': 'Those numbers 4.5, 5,6 and 2.3.4 and 2.3. and 2.5.5.3. or 4.5.stop',
+        'tokens': ['Those', 'numbers', '4.5', ',', '5,6', 'and', '2.3.4', 'and', '2.3.', 'and', '2.5.5.3.', 'or', '4.5.', 'stop']
+    },
+    {
+        'text': '1. Whatever, 2. something else?',
+        'tokens': ['1.', 'Whatever', ',', '2.', 'something', 'else', '?']
     }
 ]
 
