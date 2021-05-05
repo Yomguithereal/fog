@@ -40,12 +40,9 @@ def best_matching(
 
     """
 
-    # We need for the truth to be indexable to speed up computations
-    if not isinstance(truth, list):
-        truth = list(truth)
-
     # Indexing truth clusters
     index = {}
+    truth_cluster_sizes = {}
 
     for i, cluster in enumerate(truth):
         for item in cluster:
@@ -53,6 +50,8 @@ def best_matching(
                 raise TypeError('truth clusters are fuzzy (i.e. one item can be found in multiple clusters)')
 
             index[item] = i
+
+        truth_cluster_sizes[i] = len(cluster)
 
     # Aggregating scores
     P = OnlineMean()
@@ -82,10 +81,10 @@ def best_matching(
             continue
 
         matching_cluster_index, true_positives = candidates.most_common(1)[0]
-        matching_cluster = truth[matching_cluster_index]
+        matching_cluster_size = truth_cluster_sizes[matching_cluster_index]
 
         false_positives = cluster_size - true_positives
-        false_negatives = len(matching_cluster) - true_positives
+        false_negatives = matching_cluster_size - true_positives
 
         precision = true_positives / (true_positives + false_positives)
         recall = true_positives / (true_positives + false_negatives)
