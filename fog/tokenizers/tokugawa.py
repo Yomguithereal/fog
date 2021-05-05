@@ -17,12 +17,26 @@ CONSONANTS_RE = re.compile(r'^[^%s]$' % VOWELS_PATTERN)
 
 ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
 FRENCH_EXCEPTIONS = ['hui']
+ABBREVIATIONS = {
+    'dr',
+    'etc',
+    'jr',
+    'm',
+    'mgr',
+    'mr',
+    'mrs',
+    'ms',
+    'mme',
+    'mlle',
+    'prof',
+    'sr',
+    'st',
+    'p',
+    'pp'
+}
 
-# TODO: exceptions, abbreviations, urls, mails, negatives, chomping junk mid word? smileys?
-# TODO: trailing point number
-# TODO: consuming functions?
+# TODO: urls, mails, negatives, chomping junk mid word? smileys?
 # TODO: tagged tokens
-# TODO: test l'#@
 # TODO: what about lists: 1), 1, etc.
 
 
@@ -140,10 +154,10 @@ class TokugawaTokenizer(object):
 
                     j += 1
 
-            # Handling contractions
-            if j > i and j < l and string[j] in APOSTROPHES:
-                before = string[i:j]
+            before = string[i:j]
 
+            # Handling contractions
+            if j < l and string[j] in APOSTROPHES:
                 k = j + 1
 
                 while k < l:
@@ -152,7 +166,7 @@ class TokugawaTokenizer(object):
 
                     k += 1
 
-                if k > j:
+                if k > j + 1:
                     after = string[j + 1:k]
 
                     if after in ENGLISH_CONTRACTIONS:
@@ -188,8 +202,14 @@ class TokugawaTokenizer(object):
 
                 j = k
 
-            elif j > i:
-                yield string[i:j]
+            # Handling abbreviations
+            elif j < l - 1 and string[j] == '.' and before.lower() in ABBREVIATIONS:
+                yield before + '.'
+                j += 1
+
+            # Handling regular word
+            else:
+                yield before
 
             i = j
 

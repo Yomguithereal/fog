@@ -97,6 +97,14 @@ TESTS = [
     {
         'text': '1. Whatever, 2. something else?',
         'tokens': ['1.', 'Whatever', ',', '2.', 'something', 'else', '?']
+    },
+    {
+        'text': 'Mr. Goldberg is dead with mlle. Jordan etc. What a day!',
+        'tokens': ['Mr.', 'Goldberg', 'is', 'dead', 'with', 'mlle.', 'Jordan', 'etc.', 'What', 'a', 'day', '!']
+    },
+    {
+        'text': 'L\'#amour appartient à l\'@ange!',
+        'tokens': ['L', '#amour', 'appartient', 'à', 'l', '@ange', '!']
     }
 ]
 
