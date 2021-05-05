@@ -75,7 +75,7 @@ def best_matching(
 
         precision = true_positives / (true_positives + false_positives)
         recall = true_positives / (true_positives + false_negatives)
-        f1 = 2 * precision * recall / (precision + recall)  # TODO: can this mean be computed outside the loop?
+        f1 = 2 * precision * recall / (precision + recall)
 
         P.add(precision)
         R.add(recall)
