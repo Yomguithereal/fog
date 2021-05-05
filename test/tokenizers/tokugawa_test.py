@@ -136,8 +136,4 @@ class TestTokugawaTokenizer(object):
         tokenizer = TokugawaTokenizer()
 
         for test in TESTS:
-            # print()
-            # print(test['text'])
-            # print(list(tokenizer(test['text'])))
-            # print()
-            assert list(tokenizer(test['text'])) == test['tokens']
+            assert list(token for _, token in tokenizer(test['text'])) == test['tokens']
