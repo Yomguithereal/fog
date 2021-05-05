@@ -111,6 +111,22 @@ TESTS = [
     {
         'text': 'email:john@whatever.net',
         'tokens': ['email', ':', 'john@whatever.net']
+    },
+    {
+        'text': 'Checkout this ----> https://www.facebook.com, <--',
+        'tokens': ['Checkout', 'this', '---->', 'https://www.facebook.com', ',', '<--']
+    },
+    {
+        'text': 'Love you :). Bye <3',
+        'tokens': ['Love', 'you', ':)', '.', 'Bye', '<3']
+    },
+    {
+        'text': 'This is a cooool #dummysmiley: :-) :-P <3 and some arrows < > -> <--',
+        'tokens': ['This', 'is', 'a', 'cooool', '#dummysmiley', ':', ':-)', ':-P', '<3', 'and', 'some', 'arrows', '<', '>', '->', '<--']
+    },
+    {
+        'text': 'Such a nice kiss: :3 :\'(',
+        'tokens': ['Such', 'a', 'nice', 'kiss', ':', ':3', ":'("]
     }
 ]
 

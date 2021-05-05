@@ -16,6 +16,7 @@ VOWELS_RE = re.compile(r'^[%s]$' % VOWELS_PATTERN)
 CONSONANTS_RE = re.compile(r'^[^%s]$' % VOWELS_PATTERN)
 URL_START_RE = re.compile(r'^https?://')
 EMAIL_LOOKAHEAD_RE = re.compile(r'^[A-Za-z0-9!#$%&*+\-/=?^_`{|}~]{1,64}@')
+EMOTICON_RE = re.compile(r'^(?:[\-]+>|<[\-]+|[<>]?[:;=8][\-o\*\']?[\)\]\(\[dDpP/\:\}\{@\|\\]|[\)\]\(\[dDpP/\:\}\{@\|\\][\-o\*\']?[:;=8]|[<:]3)')
 
 ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
 FRENCH_EXCEPTIONS = ['hui']
@@ -92,6 +93,16 @@ class TokugawaTokenizer(object):
             can_be_mention = c == '@'
             can_be_hashtag = (c == '#' or c == '$')
 
+            lookahead = string[i:i + 8]
+
+            # Emoticons?
+            m = EMOTICON_RE.match(lookahead)
+
+            if m is not None:
+                yield string[i:i + m.end()]
+                i += m.end()
+                continue
+
             # Guarding some cases
             if can_be_mention or can_be_hashtag:
                 pass
@@ -144,7 +155,11 @@ class TokugawaTokenizer(object):
                     if string[j].isspace():
                         break
 
-                    if not could_be_url and not could_be_email and not string[j].isalnum():
+                    if could_be_url or could_be_email:
+                        if string[j] == ',':
+                            break
+
+                    elif not string[j].isalnum():
 
                         # Handling acronyms
                         if string[j] == '.' and string[j - 1].isupper():
