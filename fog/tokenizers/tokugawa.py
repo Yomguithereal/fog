@@ -121,7 +121,7 @@ class TokugawaTokenizer(object):
             # Consuming token
             j = i + 1
 
-            if can_be_hashtag and not is_ascii_alpha(string[j]):
+            if j < l and can_be_hashtag and not is_ascii_alpha(string[j]):
                 yield ('punct', c)
                 i += 1
                 continue

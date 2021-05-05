@@ -127,6 +127,14 @@ TESTS = [
     {
         'text': 'Such a nice kiss: :3 :\'(',
         'tokens': ['Such', 'a', 'nice', 'kiss', ':', ':3', ":'("]
+    },
+    {
+        'text': 'This ends with #',
+        'tokens': ['This', 'ends', 'with', '#']
+    },
+    {
+        'text': 'This ends with @',
+        'tokens': ['This', 'ends', 'with', '@']
     }
 ]
 
