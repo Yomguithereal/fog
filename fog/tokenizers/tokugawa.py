@@ -8,22 +8,26 @@
 DECIMALS = '.,'
 APOSTROPHES = '\'’'
 
-# TODO: ascii junk, tabs, squeeze, exceptions, abbreviations, acronyms, hashtags, mentions, urls
+# TODO: exceptions, abbreviations, hashtags, mentions, urls
+
+
+def is_ascii_junk(c):
+    return ord(c) <= 0x1F
 
 
 class TokugawaTokenizer(object):
     def __init__(self, *, lang='en'):
         self.lang = lang
 
-    def __call__(self, string):
+    def tokenize(self, string):
         i = 0
         l = len(string)
 
         while i < l:
             c = string[i]
 
-            # Chomping spaces
-            if c.isspace():
+            # Chomping spaces and ASCII junk
+            if c.isspace() or is_ascii_junk(c):
                 i += 1
                 continue
 
@@ -53,18 +57,27 @@ class TokugawaTokenizer(object):
 
             # Alphanumerical token
             else:
-                while (
-                    j < l and
-                    not string[j].isspace() and
-                    string[j].isalnum()
-                ):
+                while j < l:
+                    if string[j].isspace():
+                        break
+
+                    if not string[j].isalnum():
+                        if string[j] == '.' and string[j - 1].isupper():
+                            j += 1
+                            continue
+
+                        break
+
                     j += 1
 
             # Handling contractions
-            if self.lang != 'en' and string[j] in APOSTROPHES:
+            if j < l and self.lang != 'en' and string[j] in APOSTROPHES:
                 j += 1
 
             if j > i:
                 yield string[i:j]
 
             i = j
+
+    def __call__(self, string):
+        return self.tokenize(string)

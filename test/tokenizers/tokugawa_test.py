@@ -36,6 +36,31 @@ TESTS = [
     {
         'text': 'This is a very nice cat 🐱! No? Family: 👨‍👨‍👧‍👧!',
         'tokens': ['This', 'is', 'a', 'very', 'nice', 'cat', '🐱', '!', 'No', '?', 'Family', ':', '👨‍👨‍👧‍👧', '!']
+    },
+    {
+        'text': 'Control:\x01\t\t\n ok? Wo\x10rd',
+        'tokens': ['Control', ':', 'ok', '?', 'Wo', 'rd']
+    },
+    {
+        'text': '',
+        'tokens': []
+    },
+    {
+        'text': 'hello world',
+        'tokens': ['hello', 'world']
+    },
+    {
+        'text': 'O.N.U. La vie.est foutue',
+        'tokens': ['O.N.U.', 'La', 'vie', '.', 'est', 'foutue']
+    },
+    {
+        'text': 'L\'O.N.U est dans la place',
+        'tokens': ['L\'', 'O.N.U', 'est', 'dans', 'la', 'place'],
+        'lang': 'fr'
+    },
+    {
+        'text': 'Les É.U. sont nuls.',
+        'tokens': ['Les', 'É.U.', 'sont', 'nuls', '.']
     }
 ]
 
