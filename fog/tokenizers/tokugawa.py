@@ -50,8 +50,14 @@ ABBREVIATIONS = {
 # TODO: clean ascii junk
 # TODO: identifiers with - or _
 # TODO: hyphenation?
-# TODO: ellipsis?
+# TODO: ellipsis? or .!? grouper
 # TODO: chef-d'œuvre
+# TODO: PUTAIN CHAMPION JE VOUS AIMES PLUS QUE TOUT⚽️⚽️🤩🇫🇷#ÉpopéeRusse
+# TODO: Ce soir je suis au calme devant ma tv, et je réalise que PUTAIN ON CHAMPIONS DU MONDE. ⭐️🇫🇷⭐️  #ÉpopéeRusse
+# TODO: ordinal 7e 1er 7eme 7ème 7th 1st 3rd 2nd 2d 11º
+# TODO: @ThibautLe_Gal @RemyGudin @GenerationsMvt @EELV Jadot désigné tête de liste par EELV. Pas de liste commune.
+# TODO: tweet drop RT token
+# TODO: Ça fait plaise d’être né en 98 ça fait on a connu les 2 étoiles 🙏⭐️⭐️
 
 
 def is_ascii_junk(c):
