@@ -14,7 +14,7 @@ TESTS = [
     },
     {
         'text': 'hi, my name can\'t hello,',
-        'tokens': ['hi', ',', 'my', 'name', 'can', '\'t', 'hello', ',']
+        'tokens': ['hi', ',', 'my', 'name', 'can\'t', 'hello', ',']
     },
     {
         'text': '"Hello", Good sir (this is appaling)...',
@@ -22,8 +22,7 @@ TESTS = [
     },
     {
         'text': 'L\'amour de l’amour naît pendant l\'été!',
-        'tokens': ['L\'', 'amour', 'de', 'l’', 'amour', 'naît', 'pendant', 'l\'', 'été', '!'],
-        'lang': 'fr'
+        'tokens': ['L\'', 'amour', 'de', 'l’', 'amour', 'naît', 'pendant', 'l\'', 'été', '!']
     },
     {
         'text': 'It all started during the 90\'s!',
@@ -31,7 +30,7 @@ TESTS = [
     },
     {
         'text': 'This is some it\'s sentence. This is incredible "ok" (very) $2,4 2.4 Aujourd\'hui This, is very cruel',
-        'tokens': ['This', 'is', 'some', 'it', '\'s', 'sentence', '.', 'This', 'is', 'incredible', '"', 'ok', '"', '(', 'very', ')', '$', '2,4', '2.4', 'Aujourd', '\'hui', 'This', ',', 'is', 'very', 'cruel']
+        'tokens': ['This', 'is', 'some', 'it', '\'s', 'sentence', '.', 'This', 'is', 'incredible', '"', 'ok', '"', '(', 'very', ')', '$', '2,4', '2.4', 'Aujourd\'hui', 'This', ',', 'is', 'very', 'cruel']
     },
     {
         'text': 'This is a very nice cat 🐱! No? Family: 👨‍👨‍👧‍👧!',
@@ -55,8 +54,7 @@ TESTS = [
     },
     {
         'text': 'L\'O.N.U est dans la place',
-        'tokens': ['L\'', 'O.N.U', 'est', 'dans', 'la', 'place'],
-        'lang': 'fr'
+        'tokens': ['L\'', 'O.N.U', 'est', 'dans', 'la', 'place']
     },
     {
         'text': 'Les É.U. sont nuls.',
@@ -71,6 +69,14 @@ TESTS = [
         'tokens': ['@', 'start', '/', 'over', '#', '123', 'This', 'is', 'so', '#', 'javascript', '@', 'Yomguithereal', '!', '$', 'cash'],
         'mentions': False,
         'hashtags': False
+    },
+    {
+        'text': 'I\'ve been. I\'ll be. You\'re mean. You\'ve lost. I\'d be. I\'m nice. It\'s a shame!',
+        'tokens': ['I', "'ve", 'been', '.', 'I', "'ll", 'be', '.', 'You', "'re", 'mean', '.', 'You', "'ve", 'lost', '.', 'I', "'d", 'be', '.', 'I', "'m", 'nice', '.', 'It', "'s", 'a', 'shame', '!']
+    },
+    {
+        'text': '\'Tis but a jest. \'twas in vain alas! But \'tis ok!',
+        'tokens': ["'Tis", 'but', 'a', 'jest', '.', "'twas", 'in', 'vain', 'alas', '!', 'But', "'tis", 'ok', '!']
     }
 ]
 
@@ -79,7 +85,6 @@ class TestTokugawaTokenizer(object):
     def test_basics(self):
         for test in TESTS:
             tokenizer = TokugawaTokenizer(
-                lang=test.get('lang', 'en'),
                 mentions=test.get('mentions', True),
                 hashtags=test.get('hashtags', True)
             )
