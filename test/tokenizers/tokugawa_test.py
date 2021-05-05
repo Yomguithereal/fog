@@ -69,12 +69,6 @@ TESTS = [
         'tokens': ['@start', '/', 'over', '#', '123', 'This', 'is', 'so', '#javascript', '@Yomguithereal', '!', '$cash']
     },
     {
-        'text': '@start/over #123 This is so #javascript @Yomguithereal! $cash',
-        'tokens': ['@', 'start', '/', 'over', '#', '123', 'This', 'is', 'so', '#', 'javascript', '@', 'Yomguithereal', '!', '$', 'cash'],
-        'mentions': False,
-        'hashtags': False
-    },
-    {
         'text': 'I\'ve been. I\'ll be. You\'re mean. You\'ve lost. I\'d be. I\'m nice. It\'s a shame!',
         'tokens': ['I', "'ve", 'been', '.', 'I', "'ll", 'be', '.', 'You', "'re", 'mean', '.', 'You', "'ve", 'lost', '.', 'I', "'d", 'be', '.', 'I', "'m", 'nice', '.', 'It', "'s", 'a', 'shame', '!']
     },
@@ -92,11 +86,11 @@ TESTS = [
     },
     {
         'text': 'Those numbers 4.5, 5,6 and 2.3.4 and 2.3. and 2.5.5.3. or 4.5.stop',
-        'tokens': ['Those', 'numbers', '4.5', ',', '5,6', 'and', '2.3.4', 'and', '2.3.', 'and', '2.5.5.3.', 'or', '4.5.', 'stop']
+        'tokens': ['Those', 'numbers', '4.5', ',', '5,6', 'and', '2.3.4', 'and', '2.3', '.', 'and', '2.5.5.3', '.', 'or', '4.5', '.', 'stop']
     },
     {
         'text': '1. Whatever, 2. something else?',
-        'tokens': ['1.', 'Whatever', ',', '2.', 'something', 'else', '?']
+        'tokens': ['1', '.', 'Whatever', ',', '2', '.', 'something', 'else', '?']
     },
     {
         'text': 'Mr. Goldberg is dead with mlle. Jordan etc. What a day!',
@@ -105,17 +99,23 @@ TESTS = [
     {
         'text': 'L\'#amour appartient à l\'@ange!',
         'tokens': ['L', '#amour', 'appartient', 'à', 'l', '@ange', '!']
+    },
+    {
+        'text': 'La température est de -23. Il est -sûr que cela va arriver.',
+        'tokens': ['La', 'température', 'est', 'de', '-23', '.', 'Il', 'est', '-', 'sûr', 'que', 'cela', 'va', 'arriver', '.']
+    },
+    {
+        'text': 'One url: https://lemonde.fr/test another one http://www.lemonde.fr/protect.html',
+        'tokens': ['One', 'url', ':', 'https://lemonde.fr/test', 'another', 'one', 'http://www.lemonde.fr/protect.html']
     }
 ]
 
 
 class TestTokugawaTokenizer(object):
     def test_basics(self):
+        tokenizer = TokugawaTokenizer()
+
         for test in TESTS:
-            tokenizer = TokugawaTokenizer(
-                mentions=test.get('mentions', True),
-                hashtags=test.get('hashtags', True)
-            )
             # print()
             # print(test['text'])
             # print(list(tokenizer(test['text'])))

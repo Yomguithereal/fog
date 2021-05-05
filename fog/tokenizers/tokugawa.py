@@ -14,6 +14,7 @@ TWITTER_CHAR_RE = re.compile(r'^[A-Za-z0-9_]$')
 VOWELS_PATTERN = 'aáàâäąåoôóøeéèëêęiíïîıuúùûüyÿæœAÁÀÂÄĄÅOÓÔØEÉÈËÊĘIİÍÏÎYŸUÚÙÛÜÆŒ'
 VOWELS_RE = re.compile(r'^[%s]$' % VOWELS_PATTERN)
 CONSONANTS_RE = re.compile(r'^[^%s]$' % VOWELS_PATTERN)
+URL_START_RE = re.compile(r'^https?://')
 
 ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
 FRENCH_EXCEPTIONS = ['hui']
@@ -35,9 +36,8 @@ ABBREVIATIONS = {
     'pp'
 }
 
-# TODO: urls, mails, negatives, chomping junk mid word? smileys?
+# TODO: mails, chomping junk mid word? smileys?
 # TODO: tagged tokens
-# TODO: what about lists: 1), 1, etc.
 
 
 def is_ascii_junk(c):
@@ -60,6 +60,10 @@ def is_consonant(c):
     return bool(CONSONANTS_RE.match(c))
 
 
+def starts_as_url(string, i):
+    return bool(URL_START_RE.match(string[i:i + 8]))
+
+
 def string_get(string, i):
     try:
         return string[i]
@@ -68,10 +72,6 @@ def string_get(string, i):
 
 
 class TokugawaTokenizer(object):
-    def __init__(self, *, mentions=True, hashtags=True):
-        self.mentions = mentions
-        self.hashtags = hashtags
-
     def tokenize(self, string):
         i = 0
         l = len(string)
@@ -84,15 +84,15 @@ class TokugawaTokenizer(object):
                 i += 1
                 continue
 
-            can_be_mention = self.mentions and c == '@'
-            can_be_hashtag = self.hashtags and (c == '#' or c == '$')
+            can_be_mention = c == '@'
+            can_be_hashtag = (c == '#' or c == '$')
 
             # Guarding some cases
             if can_be_mention or can_be_hashtag:
                 pass
 
             # Breaking punctuation apart
-            elif not c.isalnum() and c not in APOSTROPHES:
+            elif not c.isalnum() and c not in APOSTROPHES and c != '-':
 
                 # Surrogates
                 while i + 1 < l and string[i + 1] == '\u200d':
@@ -117,35 +117,28 @@ class TokugawaTokenizer(object):
                     j += 1
 
             # Numerical token
-            elif c.isdigit():
-                digit_separator = None
-
+            elif c.isdigit() or c == '-':
                 while j < l:
                     if c.isspace():
                         break
 
-                    if string[j] in DECIMALS:
-                        if digit_separator is not None:
-                            if string[j] != digit_separator:
-                                break
-                        else:
-                            digit_separator = string[j]
-
-                        j += 1
-                        continue
-
-                    if not string[j].isdigit():
+                    if not string[j].isdigit() and string[j] not in DECIMALS:
                         break
 
                     j += 1
 
+                if j > i + 1 and string[j - 1] in DECIMALS:
+                    j -= 1
+
             # Alphanumerical token
             else:
+                could_be_url = starts_as_url(string, i)
+
                 while j < l:
                     if string[j].isspace():
                         break
 
-                    if not string[j].isalnum():
+                    if not could_be_url and not string[j].isalnum():
                         if string[j] == '.' and string[j - 1].isupper():
                             j += 1
                             continue
