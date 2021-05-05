@@ -130,6 +130,11 @@ class TokugawaTokenizer(object):
 
             # Mention and hashtag token
             if can_be_mention or can_be_hashtag:
+                if can_be_mention:
+                    token_type = 'mention'
+                else:
+                    token_type = 'hashtag'
+
                 while j < l and is_valid_twitter_char(string[j]):
                     j += 1
 

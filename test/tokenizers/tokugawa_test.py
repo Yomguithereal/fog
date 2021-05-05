@@ -137,3 +137,23 @@ class TestTokugawaTokenizer(object):
 
         for test in TESTS:
             assert list(token for _, token in tokenizer(test['text'])) == test['tokens']
+
+    def test_token_types(self):
+        tokenizer = TokugawaTokenizer()
+
+        tokens = list(tokenizer('This 2.9 2,5, -34, :-) https://www.lemonde.fr yomgui@github.net 🐱 #test @yomgui'))
+
+        assert tokens == [
+            ('word', 'This'),
+            ('number', '2.9'),
+            ('number', '2,5'),
+            ('punct', ','),
+            ('number', '-34'),
+            ('punct', ','),
+            ('smiley', ':-)'),
+            ('url', 'https://www.lemonde.fr'),
+            ('email', 'yomgui@github.net'),
+            ('emoji', '🐱'),
+            ('hashtag', '#test'),
+            ('mention', '@yomgui')
+        ]
