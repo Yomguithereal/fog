@@ -28,6 +28,14 @@ TESTS = [
     {
         'text': 'It all started during the 90\'s!',
         'tokens': ['It', 'all', 'started', 'during', 'the', '90', '\'s', '!']
+    },
+    {
+        'text': 'This is some it\'s sentence. This is incredible "ok" (very) $2,4 2.4 Aujourd\'hui This, is very cruel',
+        'tokens': ['This', 'is', 'some', 'it', '\'s', 'sentence', '.', 'This', 'is', 'incredible', '"', 'ok', '"', '(', 'very', ')', '$', '2,4', '2.4', 'Aujourd', '\'hui', 'This', ',', 'is', 'very', 'cruel']
+    },
+    {
+        'text': 'This is a very nice cat 🐱! No? Family: 👨‍👨‍👧‍👧!',
+        'tokens': ['This', 'is', 'a', 'very', 'nice', 'cat', '🐱', '!', 'No', '?', 'Family', ':', '👨‍👨‍👧‍👧', '!']
     }
 ]
 
@@ -38,6 +46,6 @@ class TestTokugawaTokenizer(object):
             tokenizer = TokugawaTokenizer(lang=test.get('lang', 'en'))
             # print()
             # print(test['text'])
-            # print(tokenizer(test['text']))
+            # print(list(tokenizer(test['text'])))
             # print()
-            assert tokenizer(test['text']) == test['tokens']
+            assert list(tokenizer(test['text'])) == test['tokens']

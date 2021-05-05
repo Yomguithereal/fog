@@ -8,14 +8,14 @@
 DECIMALS = '.,'
 APOSTROPHES = '\'’'
 
+# TODO: ascii junk, tabs, squeeze, exceptions, abbreviations, acronyms, hashtags, mentions, urls
+
 
 class TokugawaTokenizer(object):
     def __init__(self, *, lang='en'):
         self.lang = lang
 
     def __call__(self, string):
-        tokens = []
-
         i = 0
         l = len(string)
 
@@ -29,7 +29,13 @@ class TokugawaTokenizer(object):
 
             # Breaking punctuation apart
             elif not c.isalnum() and c not in APOSTROPHES:
-                tokens.append(c)
+
+                # Surrogates
+                while i + 1 < l and string[i + 1] == '\u200d':
+                    c += string[i + 1:i + 3]
+                    i += 2
+
+                yield c
                 i += 1
                 continue
 
@@ -58,9 +64,7 @@ class TokugawaTokenizer(object):
             if self.lang != 'en' and string[j] in APOSTROPHES:
                 j += 1
 
-            if j > i + 1:
-                tokens.append(string[i:j])
+            if j > i:
+                yield string[i:j]
 
             i = j
-
-        return tokens
