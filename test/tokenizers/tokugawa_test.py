@@ -75,8 +75,16 @@ TESTS = [
         'tokens': ['I', "'ve", 'been', '.', 'I', "'ll", 'be', '.', 'You', "'re", 'mean', '.', 'You', "'ve", 'lost', '.', 'I', "'d", 'be', '.', 'I', "'m", 'nice', '.', 'It', "'s", 'a', 'shame', '!']
     },
     {
+        'text': 'Aren\'t I?',
+        'tokens': ['Aren\'t', 'I', '?']
+    },
+    {
         'text': '\'Tis but a jest. \'twas in vain alas! But \'tis ok!',
         'tokens': ["'Tis", 'but', 'a', 'jest', '.', "'twas", 'in', 'vain', 'alas', '!', 'But', "'tis", 'ok', '!']
+    },
+    {
+        'text': 'D\'mitr N\'Guyen O\'Doherty O\'Hara Mbappé M\'bappé M\'Leod N\'diaye N\'Djaména L\'Arrivée m\'appeler sur l\'herbe',
+        'tokens': ["D'mitr", "N'Guyen", "O'Doherty", "O'Hara", 'Mbappé', "M'bappé", "M'Leod", "N'diaye", "N'Djaména", "L'Arrivée", "m'", 'appeler', 'sur', "l'", 'herbe']
     }
 ]
 
