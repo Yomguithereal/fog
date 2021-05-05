@@ -107,6 +107,10 @@ TESTS = [
     {
         'text': 'One url: https://lemonde.fr/test another one http://www.lemonde.fr/protect.html',
         'tokens': ['One', 'url', ':', 'https://lemonde.fr/test', 'another', 'one', 'http://www.lemonde.fr/protect.html']
+    },
+    {
+        'text': 'email:john@whatever.net',
+        'tokens': ['email', ':', 'john@whatever.net']
     }
 ]
 

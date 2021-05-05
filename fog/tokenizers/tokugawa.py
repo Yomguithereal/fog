@@ -15,6 +15,7 @@ VOWELS_PATTERN = 'aáàâäąåoôóøeéèëêęiíïîıuúùûüyÿæœAÁÀ�
 VOWELS_RE = re.compile(r'^[%s]$' % VOWELS_PATTERN)
 CONSONANTS_RE = re.compile(r'^[^%s]$' % VOWELS_PATTERN)
 URL_START_RE = re.compile(r'^https?://')
+EMAIL_LOOKAHEAD_RE = re.compile(r'^[A-Za-z0-9!#$%&*+\-/=?^_`{|}~]{1,64}@')
 
 ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
 FRENCH_EXCEPTIONS = ['hui']
@@ -36,7 +37,7 @@ ABBREVIATIONS = {
     'pp'
 }
 
-# TODO: mails, chomping junk mid word? smileys?
+# TODO: smileys?
 # TODO: tagged tokens
 
 
@@ -62,6 +63,10 @@ def is_consonant(c):
 
 def starts_as_url(string, i):
     return bool(URL_START_RE.match(string[i:i + 8]))
+
+
+def email_lookahead(string, i):
+    return bool(EMAIL_LOOKAHEAD_RE.match(string[i:i + 64]))
 
 
 def string_get(string, i):
@@ -133,12 +138,15 @@ class TokugawaTokenizer(object):
             # Alphanumerical token
             else:
                 could_be_url = starts_as_url(string, i)
+                could_be_email = email_lookahead(string, i)
 
                 while j < l:
                     if string[j].isspace():
                         break
 
-                    if not could_be_url and not string[j].isalnum():
+                    if not could_be_url and not could_be_email and not string[j].isalnum():
+
+                        # Handling acronyms
                         if string[j] == '.' and string[j - 1].isupper():
                             j += 1
                             continue
