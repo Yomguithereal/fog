@@ -61,6 +61,16 @@ TESTS = [
     {
         'text': 'Les É.U. sont nuls.',
         'tokens': ['Les', 'É.U.', 'sont', 'nuls', '.']
+    },
+    {
+        'text': '@start/over #123 This is so #javascript @Yomguithereal! $cash',
+        'tokens': ['@start', '/', 'over', '#', '123', 'This', 'is', 'so', '#javascript', '@Yomguithereal', '!', '$cash']
+    },
+    {
+        'text': '@start/over #123 This is so #javascript @Yomguithereal! $cash',
+        'tokens': ['@', 'start', '/', 'over', '#', '123', 'This', 'is', 'so', '#', 'javascript', '@', 'Yomguithereal', '!', '$', 'cash'],
+        'mentions': False,
+        'hashtags': False
     }
 ]
 
@@ -68,7 +78,11 @@ TESTS = [
 class TestTokugawaTokenizer(object):
     def test_basics(self):
         for test in TESTS:
-            tokenizer = TokugawaTokenizer(lang=test.get('lang', 'en'))
+            tokenizer = TokugawaTokenizer(
+                lang=test.get('lang', 'en'),
+                mentions=test.get('mentions', True),
+                hashtags=test.get('hashtags', True)
+            )
             # print()
             # print(test['text'])
             # print(list(tokenizer(test['text'])))
