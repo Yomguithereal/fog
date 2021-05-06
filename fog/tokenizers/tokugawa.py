@@ -108,8 +108,12 @@ def punct_emoji_iter(string):
             continue
 
         # Emoji combinator
-        # TODO: test current is emoji
-        if next_item is not None and next_item[0] == 'punct' and ord(next_item[1]) == 65039:
+        if (
+            next_item is not None and
+            item[0] == 'emoji' and
+            next_item[0] == 'punct' and
+            ord(next_item[1]) == 65039
+        ):
             skip_next = True
             yield ('emoji', item[1] + next_item[1])
 
