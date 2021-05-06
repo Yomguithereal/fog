@@ -50,8 +50,6 @@ ABBREVIATIONS = {
 # TODO: we don't deal with grapheme clusters u̲n̲d̲e̲r̲l̲i̲n̲e̲d̲
 # TODO: what about ārrive
 # TODO: what about hyphenation (carriage return mid token) and junk mid token?
-# TODO: PUTAIN CHAMPION JE VOUS AIMES PLUS QUE TOUT⚽️⚽️🤩🇫🇷#ÉpopéeRusse
-# TODO: Ce soir je suis au calme devant ma tv, et je réalise que PUTAIN ON CHAMPIONS DU MONDE. ⭐️🇫🇷⭐️  #ÉpopéeRusse
 # TODO: @ThibautLe_Gal @RemyGudin @GenerationsMvt @EELV Jadot désigné tête de liste par EELV. Pas de liste commune.
 
 
@@ -163,7 +161,7 @@ class TokugawaTokenizer(object):
 
             # Hashtags
             if can_be_hashtag:
-                if j >= l or not is_ascii_alpha(string[j]):
+                if j >= l or not string[j].isalpha():
                     yield ('punct', c)
 
                     i += 1
@@ -171,7 +169,7 @@ class TokugawaTokenizer(object):
 
                 token_type = 'hashtag'
 
-                while j < l and is_valid_twitter_char(string[j]):
+                while j < l and string[j].isalnum():
                     j += 1
 
                 already_consumed = True

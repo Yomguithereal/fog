@@ -168,10 +168,14 @@ TESTS = [
         'text': 'Ça fait plaise d’être né en 98 ça fait on a connu les 2 étoiles 🙏⭐️⭐️',
         'tokens': ['Ça', 'fait', 'plaise', 'd’', 'être', 'né', 'en', '98', 'ça', 'fait', 'on', 'a', 'connu', 'les', '2', 'étoiles', '🙏', '⭐', '⭐']
     },
-    # {
-    #     'text': 'PUTAIN CHAMPION JE VOUS AIMES PLUS QUE TOUT⚽️⚽️🤩🇫🇷#ÉpopéeRusse',
-    #     'tokens': ['PUTAIN', 'CHAMPION', 'JE', 'VOUS', 'AIMES', 'PLUS', 'QUE', 'TOUT', '⚽', '⚽', '🤩', '🇫🇷', '#ÉpopéeRusse']
-    # }
+    {
+        'text': 'PUTAIN CHAMPION JE VOUS AIMES PLUS QUE TOUT⚽️⚽️🤩🇫🇷#ÉpopéeRusse',
+        'tokens': ['PUTAIN', 'CHAMPION', 'JE', 'VOUS', 'AIMES', 'PLUS', 'QUE', 'TOUT', '⚽', '⚽', '🤩', '🇫🇷', '#ÉpopéeRusse']
+    },
+    {
+        'text': 'Ce soir je suis au calme devant ma tv, et je réalise que PUTAIN ON CHAMPIONS DU MONDE. ⭐️🇫🇷⭐️  #ÉpopéeRusse',
+        'tokens': ['Ce', 'soir', 'je', 'suis', 'au', 'calme', 'devant', 'ma', 'tv', ',', 'et', 'je', 'réalise', 'que', 'PUTAIN', 'ON', 'CHAMPIONS', 'DU', 'MONDE.', '⭐', '🇫🇷', '⭐', '#ÉpopéeRusse']
+    }
 ]
 
 
