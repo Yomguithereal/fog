@@ -28,7 +28,6 @@ APOSTROPHES = ['\'', '’']
 IRISH = ['O', 'o']
 VOWELS_PATTERN = 'aáàâäąåoôóøeéèëêęiíïîıuúùûüyÿæœAÁÀÂÄĄÅOÓÔØEÉÈËÊĘIİÍÏÎYŸUÚÙÛÜÆŒ'
 CONSONANTS_RE = re.compile(r'^[^%s]$' % VOWELS_PATTERN)
-URL_START_RE = re.compile(r'^https?://')
 EMAIL_LOOKAHEAD_RE = re.compile(r'^[A-Za-z0-9!#$%&*+\-/=?^_`{|}~]{1,64}@')
 SMILEY_RE = re.compile(r'^(?:[\-]+>|<[\-]+|[<>]?[:;=8][\-o\*\']?[\)\]\(\[dDpP/\:\}\{@\|\\]|[\)\]\(\[dDpP/\:\}\{@\|\\][\-o\*\']?[:;=8]|[<:]3)')
 EMOJI_RE = get_emoji_regexp()
@@ -80,7 +79,7 @@ def is_consonant(c):
 
 
 def starts_as_url(string):
-    return bool(URL_START_RE.match(string))
+    return string.startswith('http://') or string.startswith('https://')
 
 
 def email_lookahead(string):
