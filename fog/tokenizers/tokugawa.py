@@ -45,13 +45,14 @@ ABBREVIATIONS = {
     'vs'
 }
 
-# TODO: fix single '-' token type
 # TODO: hyphen between tokens?
 # TODO: clean ascii junk
 # TODO: identifiers with - or _
 # TODO: hyphenation?
 # TODO: ellipsis? or .!? grouper
 # TODO: chef-d'œuvre
+# TODO: type of dangling # @
+# TODO: test arabic and japanese examples
 # TODO: PUTAIN CHAMPION JE VOUS AIMES PLUS QUE TOUT⚽️⚽️🤩🇫🇷#ÉpopéeRusse
 # TODO: Ce soir je suis au calme devant ma tv, et je réalise que PUTAIN ON CHAMPIONS DU MONDE. ⭐️🇫🇷⭐️  #ÉpopéeRusse
 # TODO: ordinal 7e 1er 7eme 7ème 7th 1st 3rd 2nd 2d 11º
@@ -159,7 +160,7 @@ class TokugawaTokenizer(object):
 
             # Numerical token
             elif c.isdigit() or c == '-':
-                token_type = 'number'
+                token_type = 'punct'
 
                 while j < l:
                     if c.isspace():
@@ -168,6 +169,7 @@ class TokugawaTokenizer(object):
                     if not string[j].isdigit() and string[j] not in DECIMALS:
                         break
 
+                    token_type = 'number'
                     j += 1
 
                 if j > i + 1 and string[j - 1] in DECIMALS:

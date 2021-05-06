@@ -149,7 +149,7 @@ class TestTokugawaTokenizer(object):
     def test_token_types(self):
         tokenizer = TokugawaTokenizer()
 
-        tokens = list(tokenizer('This 2.9 2,5, -34, :-) https://www.lemonde.fr yomgui@github.net 🐱 #test @yomgui'))
+        tokens = list(tokenizer('This 2.9 2,5, -34, :-) https://www.lemonde.fr - yomgui@github.net 🐱 #test @yomgui'))
 
         assert tokens == [
             ('word', 'This'),
@@ -160,6 +160,7 @@ class TestTokugawaTokenizer(object):
             ('punct', ','),
             ('smiley', ':-)'),
             ('url', 'https://www.lemonde.fr'),
+            ('punct', '-'),
             ('email', 'yomgui@github.net'),
             ('emoji', '🐱'),
             ('hashtag', '#test'),
