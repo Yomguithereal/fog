@@ -62,7 +62,7 @@ ABBREVIATIONS = {
 # TODO: quid de 20m2
 # TODO: facturé €4 Millions
 # TODO: un Boeing 747-400
-# TODO: l33t, "5.6, 6.7", "5,6. 6,7", "5,6.6,7" '5,6,7"
+# TODO: "5.6, 6.7", "5,6. 6,7", "5,6.6,7" '5,6,7"
 
 
 def is_ascii_junk(c):

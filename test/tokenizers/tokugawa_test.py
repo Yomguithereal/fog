@@ -157,8 +157,8 @@ TESTS = [
         'tokens': ['7e', '1er', '7eme', '7ème', '7th', '1st', '3rd', '2nd', '2d', '11º']
     },
     {
-        'text': '7even e11even',
-        'tokens': ['7even', 'e11even']
+        'text': '7even e11even l33t',
+        'tokens': ['7even', 'e11even', 'l33t']
     },
     {
         'text': 'qu\'importe le flacon pourvu qu\'on ait l\'ivresse!',
