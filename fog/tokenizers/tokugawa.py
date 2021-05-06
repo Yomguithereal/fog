@@ -60,6 +60,8 @@ ABBREVIATIONS = {
     'vs'
 }
 
+# TODO: va-t-on est-il 15-20-minute talk peut-on
+
 
 def is_ascii_junk(c):
     return ord(c) <= 0x1F
@@ -73,19 +75,12 @@ def is_consonant(c):
     return bool(CONSONANTS_RE.match(c))
 
 
-def starts_as_url(string, i):
-    return bool(URL_START_RE.match(string[i:i + 8]))
+def starts_as_url(string):
+    return bool(URL_START_RE.match(string))
 
 
-def email_lookahead(string, i):
-    return bool(EMAIL_LOOKAHEAD_RE.match(string[i:i + 64]))
-
-
-def string_get(string, i):
-    try:
-        return string[i]
-    except IndexError:
-        return None
+def email_lookahead(string):
+    return bool(EMAIL_LOOKAHEAD_RE.match(string))
 
 
 def with_holes(gen, string):
@@ -113,6 +108,7 @@ def punct_emoji_iter(string):
             continue
 
         # Emoji combinator
+        # TODO: test current is emoji
         if next_item is not None and next_item[0] == 'punct' and ord(next_item[1]) == 65039:
             skip_next = True
             yield ('emoji', item[1] + next_item[1])
@@ -137,7 +133,7 @@ class TokugawaTokenizer(object):
             can_be_mention = c == '@'
             can_be_hashtag = (c == '#' or c == '$')
 
-            lookahead = string[i:i + 8]
+            lookahead = string[i:i + 64]  # NOTE: 64 because of emails
 
             # Smileys?
             m = SMILEY_RE.match(lookahead)
@@ -257,8 +253,8 @@ class TokugawaTokenizer(object):
             can_be_acronym = False
 
             if not already_consumed:
-                could_be_url = starts_as_url(string, i)
-                could_be_email = email_lookahead(string, i)
+                could_be_url = starts_as_url(lookahead)
+                could_be_email = email_lookahead(lookahead)
 
                 if could_be_url:
                     token_type = 'url'
