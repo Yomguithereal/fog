@@ -203,6 +203,10 @@ TESTS = [
     {
         'text': 'facturé €4 Millions',
         'tokens': ['facturé', '€', '4', 'Millions']
+    },
+    {
+        'text': 'va-t-on est-il 15-20-minute talk peut-on dis-moi dis-le dis-lui vas-y dit-elle',
+        'tokens': ['va', 't', 'on', 'est', 'il', '15-20-minute', 'talk', 'peut', 'on', 'dis', 'moi', 'dis', 'le', 'dis', 'lui', 'vas', 'y', 'dit', 'elle']
     }
 ]
 

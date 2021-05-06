@@ -3,16 +3,18 @@
 # =============================================================================
 #
 # A general purpose word tokenizer able to consider a lot of edge case and
-# typical entities all while remaining mostly language agnostic when working on
-# languages separating its word token using whitespace (not the asian languages,
-# for instance).
+# typical entities all while remaining mostly language agnostic wrt languages
+# separating their words using whitespace (not the asian languages, for instance).
+#
+# It was mostly designed for French and English, but it probably works with
+# other latin languages out of the box.
 #
 # The resulting token streams are tagged by entity types (not part-of-speech).
 #
 # Some design choices:
-#  * We chose to parse and tag as numbers only strings that could be parsed
-#    as such without ambiguity. This means word tokens may contain things that
-#    could be considered as numbers, but you can parse them down the line.
+#  * We chose to only tag as numbers strings that could be parsed as ints or floats
+#    without ambiguity. This means word tokens may contain things that
+#    could be considered as numbers, but you can analyze them further down the line.
 #
 # Here is a list of things we don't handle (yet):
 #   * Complex graphemes such as: u̲n̲d̲e̲r̲l̲i̲n̲e̲d̲ or ārrive
@@ -36,6 +38,25 @@ POINT_SPLITTER_RE = re.compile(r'(\.)')
 
 ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
 FRENCH_EXCEPTIONS = ['hui']
+FRENCH_UNION_TARGETS = {
+    'je',
+    'tu',
+    'il',
+    'ils',
+    'elle',
+    'elles',
+    'nous',
+    'vous',
+    'ils',
+    'on',
+    'le',
+    'la',
+    'les',
+    'moi',
+    'toi',
+    'lui',
+    'y'
+}
 ABBREVIATIONS = {
     'apt',
     'appt',
@@ -58,8 +79,6 @@ ABBREVIATIONS = {
     'st',
     'vs'
 }
-
-# TODO: va-t-on est-il 15-20-minute talk peut-on
 
 
 def is_ascii_junk(c):
@@ -366,7 +385,26 @@ class TokugawaTokenizer(object):
 
             # Handling regular word
             else:
-                yield (token_type, before)
+
+                # Handling unions that should be split
+                hyphens = before.count('-')
+
+                if hyphens == 2 and '-t-' in before:
+                    for t in before.split('-'):
+                        yield (token_type, t)
+
+                elif hyphens == 1:
+                    a, b = before.split('-')
+
+                    if b in FRENCH_UNION_TARGETS:
+                        yield (token_type, a)
+                        yield (token_type, b)
+
+                    else:
+                        yield (token_type, before)
+
+                else:
+                    yield (token_type, before)
 
             i = j
 
