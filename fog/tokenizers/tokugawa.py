@@ -60,9 +60,6 @@ ABBREVIATIONS = {
     'vs'
 }
 
-# TODO: facturé €4 Millions
-# TODO: @f_i_t_s_l_h
-
 
 def is_ascii_junk(c):
     return ord(c) <= 0x1F

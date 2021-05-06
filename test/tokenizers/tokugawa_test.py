@@ -195,6 +195,14 @@ TESTS = [
     {
         'text': '🙏,🙏, ,🙏,,,🙏',
         'tokens': ['🙏', ',', '🙏', ',', ',', '🙏', ',', ',', ',', '🙏']
+    },
+    {
+        'text': '.@f_i_t_s_l_h: hello',
+        'tokens': ['.', '@f_i_t_s_l_h', ':', 'hello']
+    },
+    {
+        'text': 'facturé €4 Millions',
+        'tokens': ['facturé', '€', '4', 'Millions']
     }
 ]
 
