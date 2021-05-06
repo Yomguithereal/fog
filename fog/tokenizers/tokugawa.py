@@ -45,11 +45,8 @@ ABBREVIATIONS = {
     'vs'
 }
 
-# TODO: hyphen between tokens?
 # TODO: clean ascii junk
-# TODO: identifiers with - or _
 # TODO: hyphenation?
-# TODO: chef-d'œuvre
 # TODO: PUTAIN CHAMPION JE VOUS AIMES PLUS QUE TOUT⚽️⚽️🤩🇫🇷#ÉpopéeRusse
 # TODO: Ce soir je suis au calme devant ma tv, et je réalise que PUTAIN ON CHAMPIONS DU MONDE. ⭐️🇫🇷⭐️  #ÉpopéeRusse
 # TODO: ordinal 7e 1er 7eme 7ème 7th 1st 3rd 2nd 2d 11º
@@ -192,7 +189,7 @@ class TokugawaTokenizer(object):
                         if string[j] == ',':
                             break
 
-                    elif not string[j].isalnum():
+                    elif not string[j].isalnum() and string[j] != '-' and string[j] != '_':
 
                         # Handling acronyms
                         if string[j] == '.' and string[j - 1].isupper():
@@ -224,7 +221,8 @@ class TokugawaTokenizer(object):
 
                     elif (
                         (before.endswith('n') and after == 't') or
-                        after in FRENCH_EXCEPTIONS
+                        after in FRENCH_EXCEPTIONS or
+                        '-' in before
                     ):
                         yield (token_type, string[i:k])
 

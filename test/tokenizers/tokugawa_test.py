@@ -135,6 +135,18 @@ TESTS = [
     {
         'text': 'This ends with @',
         'tokens': ['This', 'ends', 'with', '@']
+    },
+    {
+        'text': 'This is my mother-in-law.',
+        'tokens': ['This', 'is', 'my', 'mother-in-law', '.']
+    },
+    {
+        'text': 'This is a very_cool_identifier',
+        'tokens': ['This', 'is', 'a', 'very_cool_identifier']
+    },
+    {
+        'text': 'Un véritable chef-d\'œuvre!',
+        'tokens': ['Un', 'véritable', "chef-d'œuvre", '!']
     }
 ]
 
