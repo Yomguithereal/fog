@@ -1,7 +1,7 @@
 # =============================================================================
 # Fog Tokugawa Tokenizer Unit Tests
 # =============================================================================
-from fog.tokenizers.tokugawa import TokugawaTokenizer
+from fog.tokenizers.tokugawa import TokugawaTokenizer, punct_emoji_iter
 
 TESTS = [
     {
@@ -170,15 +170,15 @@ TESTS = [
     },
     {
         'text': 'Ça fait plaise d’être né en 98 ça fait on a connu les 2 étoiles 🙏⭐️⭐️',
-        'tokens': ['Ça', 'fait', 'plaise', 'd’', 'être', 'né', 'en', '98', 'ça', 'fait', 'on', 'a', 'connu', 'les', '2', 'étoiles', '🙏', '⭐', '⭐']
+        'tokens': ['Ça', 'fait', 'plaise', 'd’', 'être', 'né', 'en', '98', 'ça', 'fait', 'on', 'a', 'connu', 'les', '2', 'étoiles', '🙏', '⭐️', '⭐️']
     },
     {
         'text': 'PUTAIN CHAMPION JE VOUS AIMES PLUS QUE TOUT⚽️⚽️🤩🇫🇷#ÉpopéeRusse',
-        'tokens': ['PUTAIN', 'CHAMPION', 'JE', 'VOUS', 'AIMES', 'PLUS', 'QUE', 'TOUT', '⚽', '⚽', '🤩', '🇫🇷', '#ÉpopéeRusse']
+        'tokens': ['PUTAIN', 'CHAMPION', 'JE', 'VOUS', 'AIMES', 'PLUS', 'QUE', 'TOUT', '⚽️', '⚽️', '🤩', '🇫🇷', '#ÉpopéeRusse']
     },
     {
         'text': 'Ce soir je suis au calme devant ma tv, et je réalise que PUTAIN ON CHAMPIONS DU MONDE. ⭐️🇫🇷⭐️  #ÉpopéeRusse',
-        'tokens': ['Ce', 'soir', 'je', 'suis', 'au', 'calme', 'devant', 'ma', 'tv', ',', 'et', 'je', 'réalise', 'que', 'PUTAIN', 'ON', 'CHAMPIONS', 'DU', 'MONDE', '.', '⭐', '🇫🇷', '⭐', '#ÉpopéeRusse']
+        'tokens': ['Ce', 'soir', 'je', 'suis', 'au', 'calme', 'devant', 'ma', 'tv', ',', 'et', 'je', 'réalise', 'que', 'PUTAIN', 'ON', 'CHAMPIONS', 'DU', 'MONDE', '.', '⭐️', '🇫🇷', '⭐️', '#ÉpopéeRusse']
     },
     {
         'text': 'Test OF.',
@@ -191,11 +191,25 @@ TESTS = [
     {
         'text': "Le Fonds pour L'Oréal et l’Industrie et l’Innovation d’Australie",
         'tokens': ['Le', 'Fonds', 'pour', "L'", 'Oréal', 'et', 'l’', 'Industrie', 'et', 'l’', 'Innovation', 'd’', 'Australie']
+    },
+    {
+        'text': '🙏,🙏, ,🙏,,,🙏',
+        'tokens': ['🙏', ',', '🙏', ',', ',', '🙏', ',', ',', ',', '🙏']
     }
 ]
 
 
 class TestTokugawaTokenizer(object):
+    def test_punct_emoji_iter(self):
+        results = list(punct_emoji_iter('🙏,🙏,'))
+        assert results == [('emoji', '🙏'), ('punct', ','), ('emoji', '🙏'), ('punct', ',')]
+
+        results = list(punct_emoji_iter(',🙏,,,🙏,'))
+        assert results == [('punct', ','), ('emoji', '🙏'), ('punct', ','), ('punct', ','), ('punct', ','), ('emoji', '🙏'), ('punct', ',')]
+
+        results = list(punct_emoji_iter('⭐️.🙏⭐️⭐️,⭐️'))
+        assert results == [('emoji', '⭐️'), ('punct', '.'), ('emoji', '🙏'), ('emoji', '⭐️'), ('emoji', '⭐️'), ('punct', ','), ('emoji', '⭐️')]
+
     def test_basics(self):
         tokenizer = TokugawaTokenizer()
 
@@ -224,8 +238,8 @@ class TestTokugawaTokenizer(object):
             ('url', 'https://www.lemonde.fr'),
             ('punct', '-'),
             ('emoji', '🙏'),
-            ('emoji', '⭐'),
-            ('emoji', '⭐'),
+            ('emoji', '⭐️'),
+            ('emoji', '⭐️'),
             ('email', 'yomgui@github.net'),
             ('emoji', '🐱'),
             ('hashtag', '#test'),
