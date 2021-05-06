@@ -166,7 +166,7 @@ TESTS = [
     },
     {
         'text': 'Ça fait plaise d’être né en 98 ça fait on a connu les 2 étoiles 🙏⭐️⭐️',
-        'tokens': ['Ça', 'fait', 'plaise', 'd’', 'être', 'né', 'en', '98', 'ça', 'fait', 'on', 'a', 'connu', 'les', '2', 'étoiles', '🙏⭐️⭐️']
+        'tokens': ['Ça', 'fait', 'plaise', 'd’', 'être', 'né', 'en', '98', 'ça', 'fait', 'on', 'a', 'connu', 'les', '2', 'étoiles', '🙏', '⭐', '⭐']
     }
 ]
 
@@ -176,12 +176,17 @@ class TestTokugawaTokenizer(object):
         tokenizer = TokugawaTokenizer()
 
         for test in TESTS:
+
+            # print()
+            # print(test['text'])
+            # print(list(token for _, token in tokenizer(test['text'])))
+
             assert list(token for _, token in tokenizer(test['text'])) == test['tokens']
 
     def test_token_types(self):
         tokenizer = TokugawaTokenizer()
 
-        tokens = list(tokenizer('This 1st 2.9 2,5, -34, :-) https://www.lemonde.fr - yomgui@github.net 🐱 #test @yomgui # @'))
+        tokens = list(tokenizer('This 1st 2.9 2,5, -34, :-) https://www.lemonde.fr - 🙏⭐️⭐️ yomgui@github.net 🐱 #test @yomgui # @'))
 
         assert tokens == [
             ('word', 'This'),
@@ -194,6 +199,9 @@ class TestTokugawaTokenizer(object):
             ('smiley', ':-)'),
             ('url', 'https://www.lemonde.fr'),
             ('punct', '-'),
+            ('emoji', '🙏'),
+            ('emoji', '⭐'),
+            ('emoji', '⭐'),
             ('email', 'yomgui@github.net'),
             ('emoji', '🐱'),
             ('hashtag', '#test'),
