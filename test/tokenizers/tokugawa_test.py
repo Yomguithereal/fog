@@ -161,6 +161,10 @@ TESTS = [
         'tokens': ['7even', 'e11even']
     },
     {
+        'text': 'qu\'importe le flacon pourvu qu\'on ait l\'ivresse!',
+        'tokens': ["qu'", 'importe', 'le', 'flacon', 'pourvu', "qu'", 'on', 'ait', "l'", 'ivresse', '!']
+    },
+    {
         'text': '4.5...',
         'tokens': ['4.5', '.', '.', '.']
     },
@@ -174,7 +178,15 @@ TESTS = [
     },
     {
         'text': 'Ce soir je suis au calme devant ma tv, et je réalise que PUTAIN ON CHAMPIONS DU MONDE. ⭐️🇫🇷⭐️  #ÉpopéeRusse',
-        'tokens': ['Ce', 'soir', 'je', 'suis', 'au', 'calme', 'devant', 'ma', 'tv', ',', 'et', 'je', 'réalise', 'que', 'PUTAIN', 'ON', 'CHAMPIONS', 'DU', 'MONDE.', '⭐', '🇫🇷', '⭐', '#ÉpopéeRusse']
+        'tokens': ['Ce', 'soir', 'je', 'suis', 'au', 'calme', 'devant', 'ma', 'tv', ',', 'et', 'je', 'réalise', 'que', 'PUTAIN', 'ON', 'CHAMPIONS', 'DU', 'MONDE', '.', '⭐', '🇫🇷', '⭐', '#ÉpopéeRusse']
+    },
+    {
+        'text': 'Test OF.',
+        'tokens': ['Test', 'OF', '.']
+    },
+    {
+        'text': '@ThibautLe_Gal @RemyGudin @GenerationsMvt @EELV Jadot désigné tête de liste par EELV. Pas de liste commune.',
+        'tokens': ['@ThibautLe_Gal', '@RemyGudin', '@GenerationsMvt', '@EELV', 'Jadot', 'désigné', 'tête', 'de', 'liste', 'par', 'EELV', '.', 'Pas', 'de', 'liste', 'commune', '.']
     }
 ]
 
