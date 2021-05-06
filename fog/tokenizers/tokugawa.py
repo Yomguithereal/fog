@@ -45,6 +45,7 @@ ABBREVIATIONS = {
     'vs'
 }
 
+# TODO: we don't deal with grapheme clusters u̲n̲d̲e̲r̲l̲i̲n̲e̲d̲
 # TODO: what about hyphenation (carriage return mid token) and junk mid token?
 # TODO: PUTAIN CHAMPION JE VOUS AIMES PLUS QUE TOUT⚽️⚽️🤩🇫🇷#ÉpopéeRusse
 # TODO: Ce soir je suis au calme devant ma tv, et je réalise que PUTAIN ON CHAMPIONS DU MONDE. ⭐️🇫🇷⭐️  #ÉpopéeRusse
@@ -120,10 +121,23 @@ class TokugawaTokenizer(object):
             # Breaking punctuation apart
             elif not c.isalnum() and c not in APOSTROPHES and c != '-':
 
-                # Surrogates
-                while i + 1 < l and string[i + 1] == '\u200d':
-                    c += string[i + 1:i + 3]
-                    i += 2
+                # Emojis
+                while i + 1 < l:
+                    n = string[i + 1]
+
+                    # Surrogates
+                    if n == '\u200d':
+                        c += string[i + 1:i + 3]
+                        i += 2
+                        continue
+
+                    # Emoji characters
+                    if not n.isspace() and not n.isalnum() and n not in PUNCT and not is_ascii_junk(n):
+                        c += n
+                        i += 1
+                        continue
+
+                    break
 
                 yield ('punct' if c in PUNCT else 'emoji', c)
                 i += 1

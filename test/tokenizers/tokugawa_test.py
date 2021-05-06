@@ -163,6 +163,10 @@ TESTS = [
     {
         'text': '4.5...',
         'tokens': ['4.5', '.', '.', '.']
+    },
+    {
+        'text': 'Ça fait plaise d’être né en 98 ça fait on a connu les 2 étoiles 🙏⭐️⭐️',
+        'tokens': ['Ça', 'fait', 'plaise', 'd’', 'être', 'né', 'en', '98', 'ça', 'fait', 'on', 'a', 'connu', 'les', '2', 'étoiles', '🙏⭐️⭐️']
     }
 ]
 
