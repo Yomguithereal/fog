@@ -59,6 +59,12 @@ ABBREVIATIONS = {
 }
 
 
+# TODO: Le Fonds pour L'Oréal et l’Industrie et l’Innovation d’Australie
+# TODO: benchmark emoji regex to drop PUNCT data if necessary
+# TODO: quid de 20m2
+# TODO: facturé €4 Millions
+# TODO: un Boeing 747-400
+
 def is_ascii_junk(c):
     return ord(c) <= 0x1F
 
