@@ -158,27 +158,38 @@ class TokugawaTokenizer(object):
 
             # Consuming token
             j = i + 1
-
-            if j < l and can_be_hashtag and not is_ascii_alpha(string[j]):
-                yield ('punct', c)
-                i += 1
-                continue
-
             token_type = 'word'
             already_consumed = False
 
-            # Mention and hashtag token
-            if can_be_mention or can_be_hashtag:
+            # Hashtags
+            if can_be_hashtag:
+                if j >= l or not is_ascii_alpha(string[j]):
+                    yield ('punct', c)
+
+                    i += 1
+                    continue
+
+                token_type = 'hashtag'
+
                 while j < l and is_valid_twitter_char(string[j]):
                     j += 1
 
-                if j > i + 1:
-                    if can_be_mention:
-                        token_type = 'mention'
-                    else:
-                        token_type = 'hashtag'
-                else:
-                    token_type = 'punct'
+                already_consumed = True
+
+            # Mentions
+            elif can_be_mention:
+                if j >= l or not is_valid_twitter_char(string[j]):
+                    yield ('punct', c)
+
+                    i += 1
+                    continue
+
+                token_type = 'mention'
+
+                while j < l and is_valid_twitter_char(string[j]):
+                    j += 1
+
+                already_consumed = True
 
             # Numerical token
             elif c.isdigit() or c == '-':
