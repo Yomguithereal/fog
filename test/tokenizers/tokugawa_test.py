@@ -147,6 +147,10 @@ TESTS = [
     {
         'text': 'Un véritable chef-d\'œuvre!',
         'tokens': ['Un', 'véritable', "chef-d'œuvre", '!']
+    },
+    {
+        'text': 'This is -not cool- ok-',
+        'tokens': ['This', 'is', '-', 'not', 'cool', '-', 'ok', '-']
     }
 ]
 

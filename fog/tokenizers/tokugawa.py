@@ -45,8 +45,7 @@ ABBREVIATIONS = {
     'vs'
 }
 
-# TODO: clean ascii junk
-# TODO: hyphenation?
+# TODO: what about hyphenation (carriage return mid token) and junk mid token?
 # TODO: PUTAIN CHAMPION JE VOUS AIMES PLUS QUE TOUT⚽️⚽️🤩🇫🇷#ÉpopéeRusse
 # TODO: Ce soir je suis au calme devant ma tv, et je réalise que PUTAIN ON CHAMPIONS DU MONDE. ⭐️🇫🇷⭐️  #ÉpopéeRusse
 # TODO: ordinal 7e 1er 7eme 7ème 7th 1st 3rd 2nd 2d 11º
@@ -189,7 +188,17 @@ class TokugawaTokenizer(object):
                         if string[j] == ',':
                             break
 
-                    elif not string[j].isalnum() and string[j] != '-' and string[j] != '_':
+                    elif string[j] == '-' or string[j] == '_':
+                        if j + 1 >= l:
+                            break
+
+                        if string[j + 1].isspace():
+                            break
+
+                        j += 1
+                        continue
+
+                    elif not string[j].isalnum():
 
                         # Handling acronyms
                         if string[j] == '.' and string[j - 1].isupper():
