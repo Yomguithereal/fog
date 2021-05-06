@@ -26,7 +26,6 @@ from ebbe import with_next
 DECIMALS = ['.', ',']
 APOSTROPHES = ['\'', '’']
 IRISH = ['O', 'o']
-TWITTER_CHAR_RE = re.compile(r'^[A-Za-z0-9_]$')
 VOWELS_PATTERN = 'aáàâäąåoôóøeéèëêęiíïîıuúùûüyÿæœAÁÀÂÄĄÅOÓÔØEÉÈËÊĘIİÍÏÎYŸUÚÙÛÜÆŒ'
 CONSONANTS_RE = re.compile(r'^[^%s]$' % VOWELS_PATTERN)
 URL_START_RE = re.compile(r'^https?://')
@@ -64,11 +63,16 @@ ABBREVIATIONS = {
 
 
 def is_ascii_junk(c):
-    return ord(c) <= 0x1F
+    return c <= '\x1f'
 
 
 def is_valid_twitter_char(c):
-    return bool(TWITTER_CHAR_RE.match(c))
+    return (
+        c == '_' or
+        (c >= '0' and c <= '9') or
+        (c >= 'a' and c <= 'z') or
+        (c >= 'A' and c <= 'Z')
+    )
 
 
 def is_consonant(c):
@@ -112,7 +116,7 @@ def punct_emoji_iter(string):
             next_item is not None and
             item[0] == 'emoji' and
             next_item[0] == 'punct' and
-            ord(next_item[1]) == 65039
+            next_item[1] == '\ufe0f'
         ):
             skip_next = True
             yield ('emoji', item[1] + next_item[1])
