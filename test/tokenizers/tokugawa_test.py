@@ -82,7 +82,7 @@ TESTS = [
     },
     {
         'text': 'D\'mitr N\'Guyen O\'Doherty O\'Hara Mbappé M\'bappé M\'Leod N\'diaye N\'Djaména L\'Arrivée m\'appeler sur l\'herbe',
-        'tokens': ["D'mitr", "N'Guyen", "O'Doherty", "O'Hara", 'Mbappé', "M'bappé", "M'Leod", "N'diaye", "N'Djaména", "L'Arrivée", "m'", 'appeler', 'sur', "l'", 'herbe']
+        'tokens': ["D'mitr", "N'Guyen", "O'Doherty", "O'Hara", 'Mbappé', "M'bappé", "M'Leod", "N'diaye", "N'Djaména", "L'", 'Arrivée', "m'", 'appeler', 'sur', "l'", 'herbe']
     },
     {
         'text': 'Those numbers 4.5, 5,6 and 2.3.4 and 2.3. and 2.5.5.3. or 4.5.stop',
@@ -187,6 +187,10 @@ TESTS = [
     {
         'text': '@ThibautLe_Gal @RemyGudin @GenerationsMvt @EELV Jadot désigné tête de liste par EELV. Pas de liste commune.',
         'tokens': ['@ThibautLe_Gal', '@RemyGudin', '@GenerationsMvt', '@EELV', 'Jadot', 'désigné', 'tête', 'de', 'liste', 'par', 'EELV', '.', 'Pas', 'de', 'liste', 'commune', '.']
+    },
+    {
+        'text': "Le Fonds pour L'Oréal et l’Industrie et l’Innovation d’Australie",
+        'tokens': ['Le', 'Fonds', 'pour', "L'", 'Oréal', 'et', 'l’', 'Industrie', 'et', 'l’', 'Innovation', 'd’', 'Australie']
     }
 ]
 

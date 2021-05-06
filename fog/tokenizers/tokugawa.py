@@ -58,13 +58,12 @@ ABBREVIATIONS = {
     'vs'
 }
 
-
-# TODO: Le Fonds pour L'Oréal et l’Industrie et l’Innovation d’Australie
 # TODO: benchmark emoji regex to drop PUNCT data if necessary
 # TODO: quid de 20m2
 # TODO: facturé €4 Millions
 # TODO: un Boeing 747-400
 # TODO: l33t, "5.6, 6.7", "5,6. 6,7", "5,6.6,7" '5,6,7"
+
 
 def is_ascii_junk(c):
     return ord(c) <= 0x1F
@@ -314,14 +313,11 @@ class TokugawaTokenizer(object):
                     ):
                         yield (token_type, string[i:k])
 
-                    # NOTE: maybe this condition needs to check before is one letter long and an uppercase letter?
                     elif (
                         (
+                            after[0] != 'h' and
                             is_consonant(before[-1]) and
-                            (
-                                (after[0].isupper() and string_get(string, k) != '.') or
-                                (is_consonant(after[0]) and after[0] != 'h')
-                            )
+                            is_consonant(after[0])
                         ) or
                         before in IRISH
                     ):
