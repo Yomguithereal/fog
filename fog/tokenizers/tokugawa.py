@@ -9,10 +9,15 @@
 #
 # The resulting token streams are tagged by entity types (not part-of-speech).
 #
+# Some design choices:
+#  * We chose to parse and tag as numbers only strings that could be parsed
+#    as such without ambiguity. This means word tokens may contain things that
+#    could be considered as numbers, but you can parse them down the line.
+#
 # Here is a list of things we don't handle (yet):
 #   * Complex graphemes such as: u̲n̲d̲e̲r̲l̲i̲n̲e̲d̲ or ārrive
 #   * Multi-line hyphenation schemes
-#   * Junk placed mid-token
+#   * Junk found in the middle of a word token
 #
 import re
 from emoji import get_emoji_regexp
@@ -59,10 +64,7 @@ ABBREVIATIONS = {
 }
 
 # TODO: benchmark emoji regex to drop PUNCT data if necessary
-# TODO: quid de 20m2
 # TODO: facturé €4 Millions
-# TODO: un Boeing 747-400
-# TODO: "5.6, 6.7", "5,6. 6,7", "5,6.6,7" '5,6,7"
 
 
 def is_ascii_junk(c):
@@ -206,6 +208,7 @@ class TokugawaTokenizer(object):
                 already_consumed = True
                 token_type = 'punct'
                 last_char = c
+                chosen_decimal = None
 
                 while j < l:
                     if string[j].isspace():
@@ -218,7 +221,11 @@ class TokugawaTokenizer(object):
 
                         if (
                             last_char != '-' and
-                            string[j].isalpha()
+                            (
+                                string[j].isalpha() or
+                                string[j] == '-' or
+                                string[j] == '_'
+                            )
                         ):
                             already_consumed = False
                             token_type = 'word'
@@ -226,6 +233,12 @@ class TokugawaTokenizer(object):
 
                         elif string[j] not in DECIMALS:
                             break
+
+                        elif chosen_decimal is not None:
+                            break
+
+                        else:
+                            chosen_decimal = string[j]
 
                     last_char = string[j]
                     token_type = 'number'

@@ -86,7 +86,7 @@ TESTS = [
     },
     {
         'text': 'Those numbers 4.5, 5,6 and 2.3.4 and 2.3. and 2.5.5.3. or 4.5.stop',
-        'tokens': ['Those', 'numbers', '4.5', ',', '5,6', 'and', '2.3.4', 'and', '2.3', '.', 'and', '2.5.5.3', '.', 'or', '4.5', '.', 'stop']
+        'tokens': ['Those', 'numbers', '4.5', ',', '5,6', 'and', '2.3', '.', '4', 'and', '2.3', '.', 'and', '2.5', '.', '5.3', '.', 'or', '4.5', '.', 'stop']
     },
     {
         'text': '1. Whatever, 2. something else?',
@@ -232,4 +232,46 @@ class TestTokugawaTokenizer(object):
             ('mention', '@yomgui'),
             ('punct', '#'),
             ('punct', '@')
+        ]
+
+    def test_tricky_numbers(self):
+        tokenizer = TokugawaTokenizer()
+
+        tokens = list(tokenizer('20m2 747-400 5.6, 6.7 5,6. 6,7 5,6.6,7 5,6,7 10_000 4.5, 5,6 and 2.3.4 and 2.3. and 2.5.5.3. or 4.5.stop'))
+
+        assert tokens == [
+            ('word', '20m2'),
+            ('word', '747-400'),
+            ('number', '5.6'),
+            ('punct', ','),
+            ('number', '6.7'),
+            ('number', '5,6'),
+            ('punct', '.'),
+            ('number', '6,7'),
+            ('number', '5,6'),
+            ('punct', '.'),
+            ('number', '6,7'),
+            ('number', '5,6'),
+            ('punct', ','),
+            ('punct', '7'),
+            ('word', '10_000'),
+            ('number', '4.5'),
+            ('punct', ','),
+            ('number', '5,6'),
+            ('word', 'and'),
+            ('number', '2.3'),
+            ('punct', '.'),
+            ('punct', '4'),
+            ('word', 'and'),
+            ('number', '2.3'),
+            ('punct', '.'),
+            ('word', 'and'),
+            ('number', '2.5'),
+            ('punct', '.'),
+            ('number', '5.3'),
+            ('punct', '.'),
+            ('word', 'or'),
+            ('number', '4.5'),
+            ('punct', '.'),
+            ('word', 'stop')
         ]
