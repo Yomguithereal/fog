@@ -159,6 +159,10 @@ TESTS = [
     {
         'text': '7even e11even',
         'tokens': ['7even', 'e11even']
+    },
+    {
+        'text': '4.5...',
+        'tokens': ['4.5', '.', '.', '.']
     }
 ]
 

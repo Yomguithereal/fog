@@ -164,7 +164,14 @@ class TokugawaTokenizer(object):
                         break
 
                     if not string[j].isdigit():
-                        if last_char not in DECIMALS and last_char != '-' and string[j].isalpha():
+                        if last_char in DECIMALS:
+                            j -= 1
+                            break
+
+                        if (
+                            last_char != '-' and
+                            string[j].isalpha()
+                        ):
                             already_consumed = False
                             token_type = 'word'
                             break
