@@ -49,15 +49,11 @@ ABBREVIATIONS = {
 # TODO: clean ascii junk
 # TODO: identifiers with - or _
 # TODO: hyphenation?
-# TODO: ellipsis? or .!? grouper
 # TODO: chef-d'œuvre
-# TODO: type of dangling # @
-# TODO: test arabic and japanese examples
 # TODO: PUTAIN CHAMPION JE VOUS AIMES PLUS QUE TOUT⚽️⚽️🤩🇫🇷#ÉpopéeRusse
 # TODO: Ce soir je suis au calme devant ma tv, et je réalise que PUTAIN ON CHAMPIONS DU MONDE. ⭐️🇫🇷⭐️  #ÉpopéeRusse
 # TODO: ordinal 7e 1er 7eme 7ème 7th 1st 3rd 2nd 2d 11º
 # TODO: @ThibautLe_Gal @RemyGudin @GenerationsMvt @EELV Jadot désigné tête de liste par EELV. Pas de liste commune.
-# TODO: tweet drop RT token
 # TODO: Ça fait plaise d’être né en 98 ça fait on a connu les 2 étoiles 🙏⭐️⭐️
 
 
@@ -150,13 +146,16 @@ class TokugawaTokenizer(object):
 
             # Mention and hashtag token
             if can_be_mention or can_be_hashtag:
-                if can_be_mention:
-                    token_type = 'mention'
-                else:
-                    token_type = 'hashtag'
-
                 while j < l and is_valid_twitter_char(string[j]):
                     j += 1
+
+                if j > i + 1:
+                    if can_be_mention:
+                        token_type = 'mention'
+                    else:
+                        token_type = 'hashtag'
+                else:
+                    token_type = 'punct'
 
             # Numerical token
             elif c.isdigit() or c == '-':
