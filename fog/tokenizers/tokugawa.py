@@ -156,10 +156,10 @@ class TokugawaTokenizer(object):
 
             # Breaking punctuation apart and tokenizing emojis
             elif not c.isalnum() and c not in APOSTROPHES and c != '-':
-                i += 1
+                j = i + 1
 
-                while i < l:
-                    n = string[i]
+                while j < l:
+                    n = string[j]
 
                     if (
                         n.isspace() or
@@ -170,10 +170,10 @@ class TokugawaTokenizer(object):
                     ):
                         break
 
-                    c += n
-                    i += 1
+                    j += 1
 
-                yield from punct_emoji_iter(c)
+                yield from punct_emoji_iter(string[i:j])
+                i = j
 
                 continue
 
