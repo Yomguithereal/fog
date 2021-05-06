@@ -24,6 +24,7 @@ from emoji import get_emoji_regexp
 from ebbe import with_next
 
 DECIMALS = ['.', ',']
+IDENTIFIER_PARTS = ['-', '_']
 APOSTROPHES = ['\'', '’']
 IRISH = ['O', 'o']
 VOWELS_PATTERN = 'aáàâäąåoôóøeéèëêęiíïîıuúùûüyÿæœAÁÀÂÄĄÅOÓÔØEÉÈËÊĘIİÍÏÎYŸUÚÙÛÜÆŒ'
@@ -220,10 +221,12 @@ class TokugawaTokenizer(object):
                 chosen_decimal = None
 
                 while j < l:
-                    if string[j].isspace():
+                    n = string[j]
+
+                    if n.isspace():
                         break
 
-                    if not string[j].isdigit():
+                    if not n.isdigit():
                         if last_char in DECIMALS:
                             j -= 1
                             break
@@ -231,25 +234,24 @@ class TokugawaTokenizer(object):
                         if (
                             last_char != '-' and
                             (
-                                string[j].isalpha() or
-                                string[j] == '-' or
-                                string[j] == '_'
+                                n.isalpha() or
+                                n in IDENTIFIER_PARTS
                             )
                         ):
                             already_consumed = False
                             token_type = 'word'
                             break
 
-                        elif string[j] not in DECIMALS:
+                        elif n not in DECIMALS:
                             break
 
                         elif chosen_decimal is not None:
                             break
 
                         else:
-                            chosen_decimal = string[j]
+                            chosen_decimal = n
 
-                    last_char = string[j]
+                    last_char = n
                     token_type = 'number'
                     j += 1
 
@@ -269,14 +271,16 @@ class TokugawaTokenizer(object):
                     token_type = 'email'
 
                 while j < l:
-                    if string[j].isspace():
+                    n = string[j]
+
+                    if n.isspace():
                         break
 
                     if could_be_url or could_be_email:
-                        if string[j] == ',':
+                        if n == ',':
                             break
 
-                    elif string[j] == '-' or string[j] == '_':
+                    elif n in IDENTIFIER_PARTS:
                         if j + 1 >= l:
                             break
 
@@ -286,10 +290,10 @@ class TokugawaTokenizer(object):
                         j += 1
                         continue
 
-                    elif not string[j].isalnum():
+                    elif not n.isalnum():
 
                         # Handling acronyms
-                        if string[j] == '.' and string[j - 1].isupper():
+                        if n == '.' and string[j - 1].isupper():
                             j += 1
                             can_be_acronym = True
                             continue
