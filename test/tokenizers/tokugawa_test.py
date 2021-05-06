@@ -151,7 +151,15 @@ TESTS = [
     {
         'text': 'This is -not cool- ok-',
         'tokens': ['This', 'is', '-', 'not', 'cool', '-', 'ok', '-']
-    }
+    },
+    {
+        'text': '7e 1er 7eme 7ème 7th 1st 3rd 2nd 2d 11º',
+        'tokens': ['7e', '1er', '7eme', '7ème', '7th', '1st', '3rd', '2nd', '2d', '11º']
+    },
+    # {
+    #     'text': '7even e11even',
+    #     'tokens': []
+    # }
 ]
 
 
@@ -165,10 +173,11 @@ class TestTokugawaTokenizer(object):
     def test_token_types(self):
         tokenizer = TokugawaTokenizer()
 
-        tokens = list(tokenizer('This 2.9 2,5, -34, :-) https://www.lemonde.fr - yomgui@github.net 🐱 #test @yomgui # @'))
+        tokens = list(tokenizer('This 1st 2.9 2,5, -34, :-) https://www.lemonde.fr - yomgui@github.net 🐱 #test @yomgui # @'))
 
         assert tokens == [
             ('word', 'This'),
+            ('word', '1st'),
             ('number', '2.9'),
             ('number', '2,5'),
             ('punct', ','),
