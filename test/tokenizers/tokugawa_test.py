@@ -156,10 +156,10 @@ TESTS = [
         'text': '7e 1er 7eme 7ème 7th 1st 3rd 2nd 2d 11º',
         'tokens': ['7e', '1er', '7eme', '7ème', '7th', '1st', '3rd', '2nd', '2d', '11º']
     },
-    # {
-    #     'text': '7even e11even',
-    #     'tokens': []
-    # }
+    {
+        'text': '7even e11even',
+        'tokens': ['7even', 'e11even']
+    }
 ]
 
 
