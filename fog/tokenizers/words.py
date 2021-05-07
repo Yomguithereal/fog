@@ -25,7 +25,7 @@ import re
 from emoji import get_emoji_regexp
 from unidecode import unidecode
 from ebbe import with_next
-from typing import Optional
+from typing import Optional, Iterable
 
 DECIMALS = ['.', ',']
 IDENTIFIER_PARTS = ['-', '_']
@@ -163,18 +163,28 @@ class WordTokenizer(object):
         self,
         lower: bool = False,
         unidecode: bool = False,
-        min_word_length: Optional[int] = None
+        min_word_length: Optional[int] = None,
+        stoplist: Optional[Iterable[str]] = None
     ):
         self.lower = lower
         self.unidecode = unidecode
         self.min_word_length = min_word_length
+        self.stoplist = stoplist
+
+        if self.stoplist is not None:
+            if not isinstance(self.stoplist, set):
+                self.stoplist = set(self.stoplist)
+
+            if self.lower:
+                self.stoplist = set(token.lower() for token in self.stoplist)
 
         self.__only_defaults = True
 
         if (
             self.lower or
             self.unidecode or
-            self.min_word_length is not None
+            self.min_word_length is not None or
+            self.stoplist is not None
         ):
             self.__only_defaults = False
 
@@ -460,6 +470,9 @@ class WordTokenizer(object):
                     continue
 
                 token = (token_type, token_value)
+
+            if self.stoplist is not None and token_value in self.stoplist:
+                continue
 
             yield token
 

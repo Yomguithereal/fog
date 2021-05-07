@@ -222,6 +222,17 @@ TESTS = [
         'text': 'A mouse eats the cheese.',
         'min_word_length': 4,
         'tokens': ['mouse', 'eats', 'cheese', '.']
+    },
+    {
+        'text': 'A mouse eats the cheese 🙏.',
+        'stoplist': ['a', 'the', '🙏'],
+        'tokens': ['A', 'mouse', 'eats', 'cheese', '.']
+    },
+    {
+        'text': 'A mouse eats the cheese 🙏.',
+        'stoplist': ['a', 'THE', '🙏'],
+        'lower': True,
+        'tokens': ['mouse', 'eats', 'cheese', '.']
     }
 ]
 
@@ -242,7 +253,8 @@ class TestWordTokenizer(object):
             tokenizer = WordTokenizer(
                 lower=test.get('lower', False),
                 unidecode=test.get('unidecode', False),
-                min_word_length=test.get('min_word_length')
+                min_word_length=test.get('min_word_length'),
+                stoplist=test.get('stoplist')
             )
 
             # print()
