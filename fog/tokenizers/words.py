@@ -485,10 +485,10 @@ class WordTokenizer(object):
             if self.keep is not None and token_type not in self.keep:
                 continue
 
-            if self.drop is not None and token_type in self.drop:
+            elif self.drop is not None and token_type in self.drop:
                 continue
 
-            if token_type == 'word':
+            elif token_type == 'word':
                 if self.lower:
                     token_value = token_value.lower()
 
