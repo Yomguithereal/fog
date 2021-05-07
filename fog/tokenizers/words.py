@@ -1,5 +1,5 @@
 # =============================================================================
-# Fog Tokugawa Tokenizer
+# Fog Word Tokenizer
 # =============================================================================
 #
 # A general purpose word tokenizer able to consider a lot of edge case and
@@ -144,7 +144,7 @@ def punct_emoji_iter(string):
             yield item
 
 
-class TokugawaTokenizer(object):
+class WordTokenizer(object):
     def tokenize(self, string):
         i = 0
         l = len(string)

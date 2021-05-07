@@ -5,3 +5,4 @@ from fog.tokenizers.fingerprint import (
     ngrams_fingerprint_tokenizer
 )
 from fog.tokenizers.ngrams import ngrams, bigrams, trigrams, quadrigrams
+from fog.tokenizers.words import WordTokenizer

@@ -1,7 +1,7 @@
 # =============================================================================
-# Fog Tokugawa Tokenizer Unit Tests
+# Fog Word Tokenizer Unit Tests
 # =============================================================================
-from fog.tokenizers.tokugawa import TokugawaTokenizer, punct_emoji_iter
+from fog.tokenizers.words import WordTokenizer, punct_emoji_iter
 
 TESTS = [
     {
@@ -211,7 +211,7 @@ TESTS = [
 ]
 
 
-class TestTokugawaTokenizer(object):
+class TestWordTokenizer(object):
     def test_punct_emoji_iter(self):
         results = list(punct_emoji_iter('🙏,🙏,'))
         assert results == [('emoji', '🙏'), ('punct', ','), ('emoji', '🙏'), ('punct', ',')]
@@ -223,7 +223,7 @@ class TestTokugawaTokenizer(object):
         assert results == [('emoji', '⭐️'), ('punct', '.'), ('emoji', '🙏'), ('emoji', '⭐️'), ('emoji', '⭐️'), ('punct', ','), ('emoji', '⭐️')]
 
     def test_basics(self):
-        tokenizer = TokugawaTokenizer()
+        tokenizer = WordTokenizer()
 
         for test in TESTS:
 
@@ -234,7 +234,7 @@ class TestTokugawaTokenizer(object):
             assert list(token for _, token in tokenizer(test['text'])) == test['tokens']
 
     def test_token_types(self):
-        tokenizer = TokugawaTokenizer()
+        tokenizer = WordTokenizer()
 
         tokens = list(tokenizer('This 1st 2.9 2,5, -34, :-) https://www.lemonde.fr - 🙏⭐️⭐️ yomgui@github.net 🐱 #test @yomgui # @'))
 
@@ -261,7 +261,7 @@ class TestTokugawaTokenizer(object):
         ]
 
     def test_tricky_numbers(self):
-        tokenizer = TokugawaTokenizer()
+        tokenizer = WordTokenizer()
 
         tokens = list(tokenizer('20m2 747-400 5.6, 6.7 5,6. 6,7 5,6.6,7 5,6,7 10_000 4.5, 5,6 and 2.3.4 and 2.3. and 2.5.5.3. or 4.5.stop'))
 
