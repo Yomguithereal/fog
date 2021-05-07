@@ -170,6 +170,20 @@ def validate_token_types(types):
             raise TypeError('unknown token type: %s' % token_type)
 
 
+def split_hashtag(string):
+    offset = 1
+
+    it = enumerate(string)
+    next(it)
+
+    for i, c in it:
+        if c.isupper() and offset < i:
+            yield string[offset:i]
+            offset = i
+
+    yield string[offset:]
+
+
 class WordTokenizer(object):
     def __init__(
         self,
@@ -181,6 +195,7 @@ class WordTokenizer(object):
         normalize_hashtags: bool = False,
         mentions_as_words: bool = False,
         hashtags_as_words: bool = False,
+        split_hashtags: bool = False,
         min_word_length: Optional[int] = None,
         max_word_length: Optional[int] = None,
         stoplist: Optional[Iterable[str]] = None,
@@ -195,6 +210,7 @@ class WordTokenizer(object):
         self.normalize_hashtags = normalize_hashtags
         self.mentions_as_words = mentions_as_words
         self.hashtags_as_words = hashtags_as_words
+        self.split_hashtags = split_hashtags
         self.min_word_length = min_word_length
         self.max_word_length = max_word_length
         self.stoplist = stoplist
@@ -482,24 +498,34 @@ class WordTokenizer(object):
             # Handling regular word
             else:
 
-                # Handling unions that should be split
-                hyphens = before.count('-')
+                if token_type == 'word':
 
-                if hyphens == 2 and '-t-' in before:
-                    for t in before.split('-'):
-                        yield (token_type, t)
+                    # Handling unions that should be split
+                    hyphens = before.count('-')
 
-                elif hyphens == 1:
-                    a, b = before.split('-')
+                    if hyphens == 2 and '-t-' in before:
+                        for t in before.split('-'):
+                            yield (token_type, t)
 
-                    if b in FRENCH_UNION_TARGETS:
-                        yield (token_type, a)
-                        yield (token_type, b)
+                    elif hyphens == 1:
+                        a, b = before.split('-')
+
+                        if b in FRENCH_UNION_TARGETS:
+                            yield (token_type, a)
+                            yield (token_type, b)
+
+                        else:
+                            yield (token_type, before)
 
                     else:
                         yield (token_type, before)
 
+                elif token_type == 'hashtag' and self.split_hashtags:
+                    for sub_token in split_hashtag(before):
+                        yield ('word', sub_token)
+
                 else:
+
                     yield (token_type, before)
 
             i = j

@@ -3,7 +3,7 @@
 # =============================================================================
 from pytest import raises
 
-from fog.tokenizers.words import WordTokenizer, punct_emoji_iter
+from fog.tokenizers.words import WordTokenizer, punct_emoji_iter, split_hashtag
 
 TESTS = [
     {
@@ -286,6 +286,24 @@ TESTS = [
         'hashtags_as_words': True,
         'min_word_length': 5,
         'tokens': ['@Yomguithereal']
+    },
+    {
+        'text': 'url: http://www.lemonde.fr/va-t-il',
+        'with_types': True,
+        'tokens': [('word', 'url'), ('punct', ':'), ('url', 'http://www.lemonde.fr/va-t-il')]
+    },
+    {
+        'text': '#ExampleTo',
+        'split_hashtags': True,
+        'with_types': True,
+        'tokens': [('word', 'Example'), ('word', 'To')]
+    },
+    {
+        'text': '#ExampleTo',
+        'split_hashtags': True,
+        'stoplist': ['to'],
+        'lower': True,
+        'tokens': ['example']
     }
 ]
 
@@ -303,6 +321,18 @@ class TestWordTokenizer(object):
 
         with raises(TypeError, match='length'):
             WordTokenizer(min_word_length=45, max_word_length=4)
+
+    def test_split_hashtag(self):
+        assert list(split_hashtag('#test')) == ['test']
+        assert list(split_hashtag('#Test')) == ['Test']
+        assert list(split_hashtag('#t')) == ['t']
+        assert list(split_hashtag('#T')) == ['T']
+        assert list(split_hashtag('#TestWhatever')) == ['Test', 'Whatever']
+        assert list(split_hashtag('#testWhatever')) == ['test', 'Whatever']
+        assert list(split_hashtag('#ÉpopéeRusse')) == ['Épopée', 'Russe']
+        assert list(split_hashtag('#TestOkFinal')) == ['Test', 'Ok', 'Final']
+        assert list(split_hashtag('#TestOkFinalT')) == ['Test', 'Ok', 'Final', 'T']
+        assert list(split_hashtag('#Test123Whatever')) == ['Test123', 'Whatever']
 
     def test_punct_emoji_iter(self):
         results = list(punct_emoji_iter('🙏,🙏,'))
@@ -325,6 +355,7 @@ class TestWordTokenizer(object):
                 normalize_hashtags=test.get('normalize_hashtags', False),
                 mentions_as_words=test.get('mentions_as_words', False),
                 hashtags_as_words=test.get('hashtags_as_words', False),
+                split_hashtags=test.get('split_hashtags', False),
                 min_word_length=test.get('min_word_length'),
                 max_word_length=test.get('max_word_length'),
                 stoplist=test.get('stoplist'),
