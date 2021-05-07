@@ -80,6 +80,18 @@ ABBREVIATIONS = {
     'vs'
 }
 
+TOKEN_TYPES = {
+    'word',
+    'number',
+    'punct',
+    'emoji',
+    'smiley',
+    'url',
+    'email',
+    'hashtag',
+    'mention'
+}
+
 
 def is_ascii_junk(c):
     return c <= '\x1f'
@@ -145,7 +157,13 @@ def punct_emoji_iter(string):
 
 
 class WordTokenizer(object):
-    def tokenize(self, string):
+    def __init__(
+        self,
+        lower: bool = False
+    ):
+        self.lower = lower
+
+    def __tokenize(self, string):
         i = 0
         l = len(string)
 
@@ -407,6 +425,15 @@ class WordTokenizer(object):
                     yield (token_type, before)
 
             i = j
+
+    def tokenize(self, string):
+        for token in self.__tokenize(string):
+            token_type, token_value = token
+
+            if self.lower and token_type == 'word':
+                token = (token_type, token_value.lower())
+
+            yield token
 
     def __call__(self, string):
         return self.tokenize(string)

@@ -207,6 +207,11 @@ TESTS = [
     {
         'text': 'va-t-on est-il 15-20-minute talk peut-on dis-moi dis-le dis-lui vas-y dit-elle',
         'tokens': ['va', 't', 'on', 'est', 'il', '15-20-minute', 'talk', 'peut', 'on', 'dis', 'moi', 'dis', 'le', 'dis', 'lui', 'vas', 'y', 'dit', 'elle']
+    },
+    {
+        'text': 'This is VERY 2.5 🙏 importANT!',
+        'lower': True,
+        'tokens': ['this', 'is', 'very', '2.5', '🙏', 'important', '!']
     }
 ]
 
@@ -223,9 +228,10 @@ class TestWordTokenizer(object):
         assert results == [('emoji', '⭐️'), ('punct', '.'), ('emoji', '🙏'), ('emoji', '⭐️'), ('emoji', '⭐️'), ('punct', ','), ('emoji', '⭐️')]
 
     def test_basics(self):
-        tokenizer = WordTokenizer()
-
         for test in TESTS:
+            tokenizer = WordTokenizer(
+                lower=test.get('lower', False)
+            )
 
             # print()
             # print(test['text'])
