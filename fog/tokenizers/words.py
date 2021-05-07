@@ -158,18 +158,31 @@ def punct_emoji_iter(string):
             yield item
 
 
+def validate_token_types(types):
+    for token_type in types:
+        if token_type not in TOKEN_TYPES:
+            raise TypeError('unknown token type: %s' % token_type)
+
+
 class WordTokenizer(object):
     def __init__(
         self,
         lower: bool = False,
         unidecode: bool = False,
         min_word_length: Optional[int] = None,
-        stoplist: Optional[Iterable[str]] = None
+        stoplist: Optional[Iterable[str]] = None,
+        keep: Optional[Iterable[str]] = None,
+        drop: Optional[Iterable[str]] = None
     ):
         self.lower = lower
         self.unidecode = unidecode
         self.min_word_length = min_word_length
         self.stoplist = stoplist
+        self.keep = keep
+        self.drop = drop
+
+        if self.keep is not None and self.drop is not None:
+            raise TypeError('giving both `keep` and `drop` makes no sense')
 
         if self.stoplist is not None:
             if not isinstance(self.stoplist, set):
@@ -178,13 +191,23 @@ class WordTokenizer(object):
             if self.lower:
                 self.stoplist = set(token.lower() for token in self.stoplist)
 
+        if self.keep:
+            self.keep = set(self.keep)
+            validate_token_types(self.keep)
+
+        if self.drop:
+            self.drop = set(self.drop)
+            validate_token_types(self.drop)
+
         self.__only_defaults = True
 
         if (
             self.lower or
             self.unidecode or
             self.min_word_length is not None or
-            self.stoplist is not None
+            self.stoplist is not None or
+            self.keep is not None or
+            self.drop is not None
         ):
             self.__only_defaults = False
 
@@ -458,6 +481,12 @@ class WordTokenizer(object):
 
         for token in self.__tokenize(string):
             token_type, token_value = token
+
+            if self.keep is not None and token_type not in self.keep:
+                continue
+
+            if self.drop is not None and token_type in self.drop:
+                continue
 
             if token_type == 'word':
                 if self.lower:

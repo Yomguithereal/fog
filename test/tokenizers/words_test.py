@@ -1,6 +1,8 @@
 # =============================================================================
 # Fog Word Tokenizer Unit Tests
 # =============================================================================
+from pytest import raises
+
 from fog.tokenizers.words import WordTokenizer, punct_emoji_iter
 
 TESTS = [
@@ -233,11 +235,31 @@ TESTS = [
         'stoplist': ['a', 'THE', '🙏'],
         'lower': True,
         'tokens': ['mouse', 'eats', 'cheese', '.']
+    },
+    {
+        'text': 'A mouse eats the 3.4 cheese 🙏.',
+        'keep': ['emoji', 'punct'],
+        'tokens': ['🙏', '.']
+    },
+    {
+        'text': 'A mouse eats the 3.4 cheese 🙏.',
+        'drop': ['emoji', 'punct', 'number'],
+        'tokens': ['A', 'mouse', 'eats', 'the', 'cheese']
     }
 ]
 
 
 class TestWordTokenizer(object):
+    def test_exceptions(self):
+        with raises(TypeError, match='unknown'):
+            WordTokenizer(keep=['test'])
+
+        with raises(TypeError, match='unknown'):
+            WordTokenizer(drop=['test'])
+
+        with raises(TypeError, match='both'):
+            WordTokenizer(keep=['word'], drop=['emoji'])
+
     def test_punct_emoji_iter(self):
         results = list(punct_emoji_iter('🙏,🙏,'))
         assert results == [('emoji', '🙏'), ('punct', ','), ('emoji', '🙏'), ('punct', ',')]
@@ -254,7 +276,9 @@ class TestWordTokenizer(object):
                 lower=test.get('lower', False),
                 unidecode=test.get('unidecode', False),
                 min_word_length=test.get('min_word_length'),
-                stoplist=test.get('stoplist')
+                stoplist=test.get('stoplist'),
+                keep=test.get('keep'),
+                drop=test.get('drop')
             )
 
             # print()
