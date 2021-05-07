@@ -23,7 +23,9 @@
 #
 import re
 from emoji import get_emoji_regexp
+from unidecode import unidecode
 from ebbe import with_next
+from typing import Optional
 
 DECIMALS = ['.', ',']
 IDENTIFIER_PARTS = ['-', '_']
@@ -159,9 +161,22 @@ def punct_emoji_iter(string):
 class WordTokenizer(object):
     def __init__(
         self,
-        lower: bool = False
+        lower: bool = False,
+        unidecode: bool = False,
+        min_word_length: Optional[int] = None
     ):
         self.lower = lower
+        self.unidecode = unidecode
+        self.min_word_length = min_word_length
+
+        self.__only_defaults = True
+
+        if (
+            self.lower or
+            self.unidecode or
+            self.min_word_length is not None
+        ):
+            self.__only_defaults = False
 
     def __tokenize(self, string):
         i = 0
@@ -427,11 +442,24 @@ class WordTokenizer(object):
             i = j
 
     def tokenize(self, string):
+        if self.__only_defaults:
+            yield from self.__tokenize(string)
+            return
+
         for token in self.__tokenize(string):
             token_type, token_value = token
 
-            if self.lower and token_type == 'word':
-                token = (token_type, token_value.lower())
+            if token_type == 'word':
+                if self.lower:
+                    token_value = token_value.lower()
+
+                if self.unidecode:
+                    token_value = unidecode(token_value)
+
+                if self.min_word_length is not None and len(token_value) < self.min_word_length:
+                    continue
+
+                token = (token_type, token_value)
 
             yield token
 

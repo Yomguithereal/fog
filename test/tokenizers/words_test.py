@@ -212,6 +212,16 @@ TESTS = [
         'text': 'This is VERY 2.5 🙏 importANT!',
         'lower': True,
         'tokens': ['this', 'is', 'very', '2.5', '🙏', 'important', '!']
+    },
+    {
+        'text': 'élémentaire non?',
+        'unidecode': True,
+        'tokens': ['elementaire', 'non', '?']
+    },
+    {
+        'text': 'A mouse eats the cheese.',
+        'min_word_length': 4,
+        'tokens': ['mouse', 'eats', 'cheese', '.']
     }
 ]
 
@@ -230,7 +240,9 @@ class TestWordTokenizer(object):
     def test_basics(self):
         for test in TESTS:
             tokenizer = WordTokenizer(
-                lower=test.get('lower', False)
+                lower=test.get('lower', False),
+                unidecode=test.get('unidecode', False),
+                min_word_length=test.get('min_word_length')
             )
 
             # print()
