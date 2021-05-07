@@ -37,6 +37,7 @@ EMAIL_LOOKAHEAD_RE = re.compile(r'^[A-Za-z0-9!#$%&*+\-/=?^_`{|}~]{1,64}@')
 SMILEY_RE = re.compile(r'^(?:[\-]+>|<[\-]+|[<>]?[:;=8][\-o\*\']?[\)\]\(\[dDpP/\:\}\{@\|\\]|[\)\]\(\[dDpP/\:\}\{@\|\\][\-o\*\']?[:;=8]|[<:]3)')
 EMOJI_RE = get_emoji_regexp()
 POINT_SPLITTER_RE = re.compile(r'(\.)')
+LENGTHENING_RE = re.compile(r'(.)\1{2,}')
 
 ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
 FRENCH_EXCEPTIONS = ['hui']
@@ -158,6 +159,10 @@ def punct_emoji_iter(string):
             yield item
 
 
+def reduce_lenghtening(string):
+    return LENGTHENING_RE.sub(r'\1\1\1', string)
+
+
 def validate_token_types(types):
     for token_type in types:
         if token_type not in TOKEN_TYPES:
@@ -169,6 +174,7 @@ class WordTokenizer(object):
         self,
         lower: bool = False,
         unidecode: bool = False,
+        reduce_words: bool = False,
         min_word_length: Optional[int] = None,
         stoplist: Optional[Iterable[str]] = None,
         keep: Optional[Iterable[str]] = None,
@@ -176,6 +182,7 @@ class WordTokenizer(object):
     ):
         self.lower = lower
         self.unidecode = unidecode
+        self.reduce_words = reduce_words
         self.min_word_length = min_word_length
         self.stoplist = stoplist
         self.keep = keep
@@ -204,6 +211,7 @@ class WordTokenizer(object):
         if (
             self.lower or
             self.unidecode or
+            self.reduce_words or
             self.min_word_length is not None or
             self.stoplist is not None or
             self.keep is not None or
@@ -494,6 +502,9 @@ class WordTokenizer(object):
 
                 if self.unidecode:
                     token_value = unidecode(token_value)
+
+                if self.reduce_words:
+                    token_value = reduce_lenghtening(token_value)
 
                 if self.min_word_length is not None and len(token_value) < self.min_word_length:
                     continue

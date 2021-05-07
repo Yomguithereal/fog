@@ -245,6 +245,11 @@ TESTS = [
         'text': 'A mouse eats the 3.4 cheese 🙏.',
         'drop': ['emoji', 'punct', 'number'],
         'tokens': ['A', 'mouse', 'eats', 'the', 'cheese']
+    },
+    {
+        'text': 'Loooool I know riiiiiight? Cool.',
+        'reduce_words': True,
+        'tokens': ['Loool', 'I', 'know', 'riiight', '?', 'Cool', '.']
     }
 ]
 
@@ -275,6 +280,7 @@ class TestWordTokenizer(object):
             tokenizer = WordTokenizer(
                 lower=test.get('lower', False),
                 unidecode=test.get('unidecode', False),
+                reduce_words=test.get('reduce_words', False),
                 min_word_length=test.get('min_word_length'),
                 stoplist=test.get('stoplist'),
                 keep=test.get('keep'),
