@@ -267,6 +267,25 @@ TESTS = [
         'max_word_length': 10,
         'lower': True,
         'tokens': ['this', 'is', 'long', 'token', '.']
+    },
+    {
+        'text': '#ÉpopéeRusse @Yomguithereal',
+        'normalize_hashtags': True,
+        'normalize_mentions': True,
+        'tokens': ['#epopeerusse', '@yomguithereal']
+    },
+    {
+        'text': '#ÉpopéeRusse @Yomguithereal',
+        'hashtags_as_words': True,
+        'mentions_as_words': True,
+        'with_types': True,
+        'tokens': [('word', 'ÉpopéeRusse'), ('word', 'Yomguithereal')]
+    },
+    {
+        'text': '#tata @Yomguithereal',
+        'hashtags_as_words': True,
+        'min_word_length': 5,
+        'tokens': ['@Yomguithereal']
     }
 ]
 
@@ -302,6 +321,10 @@ class TestWordTokenizer(object):
                 unidecode=test.get('unidecode', False),
                 reduce_words=test.get('reduce_words', False),
                 decode_html_entities=test.get('decode_html_entities', False),
+                normalize_mentions=test.get('normalize_mentions', False),
+                normalize_hashtags=test.get('normalize_hashtags', False),
+                mentions_as_words=test.get('mentions_as_words', False),
+                hashtags_as_words=test.get('hashtags_as_words', False),
                 min_word_length=test.get('min_word_length'),
                 max_word_length=test.get('max_word_length'),
                 stoplist=test.get('stoplist'),
@@ -309,11 +332,16 @@ class TestWordTokenizer(object):
                 drop=test.get('drop')
             )
 
+            if test.get('with_types', False):
+                tokens = list(tokenizer(test['text']))
+            else:
+                tokens = list(token for _, token in tokenizer(test['text']))
+
             # print()
             # print(test['text'])
-            # print(list(token for _, token in tokenizer(test['text'])))
+            # print(tokens)
 
-            assert list(token for _, token in tokenizer(test['text'])) == test['tokens']
+            assert tokens == test['tokens']
 
     def test_token_types(self):
         tokenizer = WordTokenizer()

@@ -177,6 +177,10 @@ class WordTokenizer(object):
         unidecode: bool = False,
         reduce_words: bool = False,
         decode_html_entities: bool = False,
+        normalize_mentions: bool = False,
+        normalize_hashtags: bool = False,
+        mentions_as_words: bool = False,
+        hashtags_as_words: bool = False,
         min_word_length: Optional[int] = None,
         max_word_length: Optional[int] = None,
         stoplist: Optional[Iterable[str]] = None,
@@ -187,6 +191,10 @@ class WordTokenizer(object):
         self.unidecode = unidecode
         self.reduce_words = reduce_words
         self.decode_html_entities = decode_html_entities
+        self.normalize_mentions = normalize_mentions
+        self.normalize_hashtags = normalize_hashtags
+        self.mentions_as_words = mentions_as_words
+        self.hashtags_as_words = hashtags_as_words
         self.min_word_length = min_word_length
         self.max_word_length = max_word_length
         self.stoplist = stoplist
@@ -221,6 +229,10 @@ class WordTokenizer(object):
             self.lower or
             self.unidecode or
             self.reduce_words or
+            self.normalize_mentions or
+            self.normalize_hashtags or
+            self.mentions_as_words or
+            self.hashtags_as_words or
             self.min_word_length is not None or
             self.max_word_length is not None or
             self.stoplist is not None or
@@ -502,6 +514,7 @@ class WordTokenizer(object):
 
         for token in self.__tokenize(string):
             token_type, token_value = token
+            token_changed = False
 
             if self.keep is not None and token_type not in self.keep:
                 continue
@@ -509,7 +522,29 @@ class WordTokenizer(object):
             elif self.drop is not None and token_type in self.drop:
                 continue
 
-            elif token_type == 'word':
+            elif token_type == 'mention':
+
+                if self.normalize_mentions:
+                    token_value = token_value.lower()
+                    token_changed = True
+
+                if self.mentions_as_words:
+                    token_type = 'word'
+                    token_value = token_value[1:]
+                    token_changed = True
+
+            elif token_type == 'hashtag':
+
+                if self.normalize_hashtags:
+                    token_value = unidecode(token_value.lower())
+                    token_changed = True
+
+                if self.hashtags_as_words:
+                    token_type = 'word'
+                    token_value = token_value[1:]
+                    token_changed = True
+
+            if token_type == 'word':
                 if self.lower:
                     token_value = token_value.lower()
 
@@ -525,10 +560,13 @@ class WordTokenizer(object):
                 elif self.max_word_length is not None and len(token_value) > self.max_word_length:
                     continue
 
-                token = (token_type, token_value)
+                token_changed = True
 
             if self.stoplist is not None and token_value in self.stoplist:
                 continue
+
+            if token_changed:
+                token = (token_type, token_value)
 
             yield token
 
