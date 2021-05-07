@@ -9,7 +9,7 @@
 # It was mostly designed for French and English, but it probably works with
 # other latin languages out of the box.
 #
-# The resulting token streams are tagged by entity types (not part-of-speech).
+# The emitted tokens are tagged by entity types (not part-of-speech).
 #
 # Some design choices:
 #  * We chose to only tag as numbers strings that could be parsed as ints or floats
