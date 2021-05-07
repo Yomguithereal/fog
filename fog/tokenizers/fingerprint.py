@@ -47,8 +47,7 @@ DIGITS_RE = re.compile('\\d+')
 BLACKLIST_RE = re.compile('[^a-z0-9\\s]')
 
 
-def create_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
-                                 split=None, stopwords=None, squeeze=False):
+class FingerprintTokenizer(object):
     """
     Function returning a custom fingerprint tokenizer.
 
@@ -59,48 +58,50 @@ def create_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
         split (list, optional): List of token splitting characters.
         stopwords (iterable, optional): List of stopwords to filter.
         squeeze (bool, optional): Whether to squeeze the tokens or not.
-
-    Returns:
-        function: A custom tokenizer.
-
     """
 
-    STOPWORDS_RE = None
-    SPLIT_RE = None
-    MIN_TOKEN_SIZE_RE = None
+    def __init__(self, keep_digits=True, min_token_size=1,
+                 split=None, stopwords=None, squeeze=False):
 
-    if stopwords is not None:
-        STOPWORDS_RE = re.compile(
-            '(?:' + '|'.join(['\\b' + re.escape(s) + '\\b' for s in stopwords]) + ')',
-            re.I
-        )
+        self.keep_digits = keep_digits
+        self.squeeze = squeeze
 
-    if split is not None:
-        SPLIT_RE = re.compile('[' + re.escape(''.join(split)) + ']')
+        self.stopwords_re = None
+        self.split_re = None
+        self.min_token_size_re = None
 
-    if min_token_size and min_token_size > 1:
-        MIN_TOKEN_SIZE_RE = re.compile('\\b\\S{1,%i}\\b' % min_token_size)
+        if stopwords is not None:
+            self.stopwords_re = re.compile(
+                '(?:' + '|'.join(['\\b' + re.escape(s) + '\\b' for s in stopwords]) + ')',
+                re.I
+            )
 
-    def tokenizer(string):
+        if split is not None:
+            self.split_re = re.compile('[' + re.escape(''.join(split)) + ']')
+
+        if min_token_size and min_token_size > 1:
+            self.min_token_size_re = re.compile('\\b\\S{1,%i}\\b' % min_token_size)
+
+    def tokenize(self, string):
 
         # Splitting
-        if SPLIT_RE is not None:
-            string = re.sub(SPLIT_RE, ' ', string)
+        if self.split_re is not None:
+            string = re.sub(self.split_re, ' ', string)
 
         # Stopwords
-        if STOPWORDS_RE is not None:
-            string = re.sub(STOPWORDS_RE, '', string)
+        if self.stopwords_re is not None:
+            string = re.sub(self.stopwords_re, '', string)
 
         # Digits
-        if not keep_digits:
+        if not self.keep_digits:
             string = re.sub(DIGITS_RE, '', string)
 
         # Case normalization
         string = string.lower()
 
         # Minimum token size
-        if MIN_TOKEN_SIZE_RE:
-            string = re.sub(MIN_TOKEN_SIZE_RE, '', string)
+        if self.min_token_size_re:
+            string = re.sub(self.min_token_size_re, '', string)
 
         # Deburring
         string = unidecode(string)
@@ -112,7 +113,7 @@ def create_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
         string = string.strip()
 
         # Squeezing
-        if squeeze:
+        if self.squeeze:
             string = squeeze_string(string)
 
         # Tokenizing
@@ -126,63 +127,34 @@ def create_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
 
         return tokens
 
-    return tokenizer
+    def __call__(self, string):
+        return self.tokenize(string)
+
+    def key(self, string):
+        return ' '.join(self.tokenize(string))
 
 
-def create_ngrams_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
-                                        split=None, stopwords=None, squeeze=True):
-    """
-    Function returning a custom ngrams fingerprint tokenizer.
-
-    Args:
-        keep_digits (bool, optional): Whether to keep digits in fingerprint?
-            Defaults to True.
-        min_token_size (int, optional): Minimum token size. Defaults to 1.
-        split (list, optional): List of token splitting characters.
-        stopwords (iterable, optional): List of stopwords to filter.
-        squeeze (bool, optional): Whether to squeeze the tokens or not.
-
-    Returns:
-        function: A custom tokenizer.
-
-    """
-
-    STOPWORDS_RE = None
-    SPLIT_RE = None
-    MIN_TOKEN_SIZE_RE = None
-
-    if stopwords is not None:
-        STOPWORDS_RE = re.compile(
-            '(?:' + '|'.join(['\\b' + re.escape(s) + '\\b' for s in stopwords]) + ')',
-            re.I
-        )
-
-    if split is not None:
-        SPLIT_RE = re.compile('[' + re.escape(''.join(split)) + ']')
-
-    if min_token_size and min_token_size > 1:
-        MIN_TOKEN_SIZE_RE = re.compile('\\b\\S{1,%i}\\b' % min_token_size)
-
-    def tokenizer(n, string):
+class NgramsFingerprintTokenizer(FingerprintTokenizer):
+    def tokenize(self, n, string):
 
         # Splitting
-        if SPLIT_RE is not None:
-            string = re.sub(SPLIT_RE, ' ', string)
+        if self.split_re is not None:
+            string = re.sub(self.split_re, ' ', string)
 
         # Stopwords
-        if STOPWORDS_RE is not None:
-            string = re.sub(STOPWORDS_RE, '', string)
+        if self.stopwords_re is not None:
+            string = re.sub(self.stopwords_re, '', string)
 
         # Digits
-        if not keep_digits:
+        if not self.keep_digits:
             string = re.sub(DIGITS_RE, '', string)
 
         # Case normalization
         string = string.lower()
 
         # Minimum token size
-        if MIN_TOKEN_SIZE_RE:
-            string = re.sub(MIN_TOKEN_SIZE_RE, '', string)
+        if self.min_token_size_re:
+            string = re.sub(self.min_token_size_re, '', string)
 
         # Deburring
         string = unidecode(string)
@@ -194,7 +166,7 @@ def create_ngrams_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
         string = string.strip()
 
         # Squeezing
-        if squeeze:
+        if self.squeeze:
             string = squeeze_string(string)
 
         # Tokenizing
@@ -209,9 +181,8 @@ def create_ngrams_fingerprint_tokenizer(keep_digits=True, min_token_size=1,
 
         return tokens
 
-    return tokenizer
+    def __call__(self, n, string):
+        return self.tokenize(n, string)
 
-
-# Default fingerprint tokenizer
-fingerprint_tokenizer = create_fingerprint_tokenizer()
-ngrams_fingerprint_tokenizer = create_ngrams_fingerprint_tokenizer()
+    def key(self, n, string):
+        return ''.join(self.tokenize(n, string))

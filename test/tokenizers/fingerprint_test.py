@@ -2,7 +2,7 @@
 # Fog Fingerprint Tokenizer Unit Tests
 # =============================================================================
 from fog.tokenizers import (
-    create_fingerprint_tokenizer,
+    FingerprintTokenizer,
     fingerprint_tokenizer,
     ngrams_fingerprint_tokenizer
 )
@@ -40,27 +40,27 @@ class TestFingerprintTokenizer(object):
             assert fingerprint(string) == key
 
     def test_stopwords(self):
-        tokenizer = create_fingerprint_tokenizer(stopwords=['de'])
+        tokenizer = FingerprintTokenizer(stopwords=['de'])
 
         assert tokenizer('Université de Paris') == ['paris', 'universite']
 
     def test_digits(self):
-        tokenizer = create_fingerprint_tokenizer(keep_digits=False)
+        tokenizer = FingerprintTokenizer(keep_digits=False)
 
         assert tokenizer('20 grammes de maïß') == ['de', 'grammes', 'maiss']
 
     def test_min_token_size(self):
-        tokenizer = create_fingerprint_tokenizer(min_token_size=2)
+        tokenizer = FingerprintTokenizer(min_token_size=2)
 
         assert tokenizer('a very good cat') == ['cat', 'good', 'very']
 
     def test_split(self):
-        tokenizer = create_fingerprint_tokenizer(min_token_size=2, split=[',', '-'])
+        tokenizer = FingerprintTokenizer(min_token_size=2, split=[',', '-'])
 
         assert tokenizer('l\'université de Bade-Wurt') == ['bade', 'universite', 'wurt']
 
     def test_squeeze(self):
-        tokenizer = create_fingerprint_tokenizer(squeeze=True)
+        tokenizer = FingerprintTokenizer(squeeze=True)
 
         assert tokenizer('Russian Barnett') == ['barnet', 'rusian']
 

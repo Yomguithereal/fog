@@ -1,8 +1,10 @@
 from fog.tokenizers.fingerprint import (
-    create_fingerprint_tokenizer,
-    create_ngrams_fingerprint_tokenizer,
-    fingerprint_tokenizer,
-    ngrams_fingerprint_tokenizer
+    FingerprintTokenizer,
+    NgramsFingerprintTokenizer
 )
 from fog.tokenizers.ngrams import ngrams, bigrams, trigrams, quadrigrams
 from fog.tokenizers.words import WordTokenizer
+
+fingerprint_tokenizer = FingerprintTokenizer()
+ngrams_fingerprint_tokenizer = NgramsFingerprintTokenizer()
+words_tokenizer = WordTokenizer()

@@ -1,8 +1,6 @@
 from fog.key.fingerprint import (
-    create_fingerprint,
-    create_ngrams_fingerprint,
-    fingerprint,
-    ngrams_fingerprint
+    FingerprintingKeyer,
+    NgramsFingerprintKeyer
 )
 from fog.key.levenshtein import (
     levenshtein_1d_keys,
@@ -15,3 +13,6 @@ from fog.key.levenshtein import (
 from fog.key.misc import ngram_keys, zig_zag
 from fog.key.omission import omission_key
 from fog.key.skeleton import skeleton_key
+
+fingerprint = FingerprintingKeyer()
+ngrams_fingerprint = NgramsFingerprintKeyer()
