@@ -22,6 +22,7 @@
 #   * Junk found in the middle of a word token
 #
 import re
+from html import unescape
 from emoji import get_emoji_regexp
 from unidecode import unidecode
 from ebbe import with_next
@@ -175,6 +176,7 @@ class WordTokenizer(object):
         lower: bool = False,
         unidecode: bool = False,
         reduce_words: bool = False,
+        decode_html_entities: bool = False,
         min_word_length: Optional[int] = None,
         stoplist: Optional[Iterable[str]] = None,
         keep: Optional[Iterable[str]] = None,
@@ -183,6 +185,7 @@ class WordTokenizer(object):
         self.lower = lower
         self.unidecode = unidecode
         self.reduce_words = reduce_words
+        self.decode_html_entities = decode_html_entities
         self.min_word_length = min_word_length
         self.stoplist = stoplist
         self.keep = keep
@@ -483,6 +486,9 @@ class WordTokenizer(object):
             i = j
 
     def tokenize(self, string):
+        if self.decode_html_entities:
+            string = unescape(string)
+
         if self.__only_defaults:
             yield from self.__tokenize(string)
             return

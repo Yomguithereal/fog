@@ -250,6 +250,11 @@ TESTS = [
         'text': 'Loooool I know riiiiiight? Cool.',
         'reduce_words': True,
         'tokens': ['Loool', 'I', 'know', 'riiight', '?', 'Cool', '.']
+    },
+    {
+        'text': '&#34;Hello&#34; &eacute;tirons!',
+        'decode_html_entities': True,
+        'tokens': ['"', 'Hello', '"', 'étirons', '!']
     }
 ]
 
@@ -281,6 +286,7 @@ class TestWordTokenizer(object):
                 lower=test.get('lower', False),
                 unidecode=test.get('unidecode', False),
                 reduce_words=test.get('reduce_words', False),
+                decode_html_entities=test.get('decode_html_entities', False),
                 min_word_length=test.get('min_word_length'),
                 stoplist=test.get('stoplist'),
                 keep=test.get('keep'),
