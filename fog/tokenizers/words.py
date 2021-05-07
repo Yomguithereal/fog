@@ -178,6 +178,7 @@ class WordTokenizer(object):
         reduce_words: bool = False,
         decode_html_entities: bool = False,
         min_word_length: Optional[int] = None,
+        max_word_length: Optional[int] = None,
         stoplist: Optional[Iterable[str]] = None,
         keep: Optional[Iterable[str]] = None,
         drop: Optional[Iterable[str]] = None
@@ -187,12 +188,17 @@ class WordTokenizer(object):
         self.reduce_words = reduce_words
         self.decode_html_entities = decode_html_entities
         self.min_word_length = min_word_length
+        self.max_word_length = max_word_length
         self.stoplist = stoplist
         self.keep = keep
         self.drop = drop
 
         if self.keep is not None and self.drop is not None:
             raise TypeError('giving both `keep` and `drop` makes no sense')
+
+        if self.min_word_length is not None and self.max_word_length is not None:
+            if self.min_word_length >= self.max_word_length:
+                raise TypeError('`min_word_length` should be less than `max_word_length`')
 
         if self.stoplist is not None:
             if not isinstance(self.stoplist, set):
@@ -216,6 +222,7 @@ class WordTokenizer(object):
             self.unidecode or
             self.reduce_words or
             self.min_word_length is not None or
+            self.max_word_length is not None or
             self.stoplist is not None or
             self.keep is not None or
             self.drop is not None
@@ -513,6 +520,9 @@ class WordTokenizer(object):
                     token_value = reduce_lenghtening(token_value)
 
                 if self.min_word_length is not None and len(token_value) < self.min_word_length:
+                    continue
+
+                elif self.max_word_length is not None and len(token_value) > self.max_word_length:
                     continue
 
                 token = (token_type, token_value)

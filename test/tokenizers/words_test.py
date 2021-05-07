@@ -255,6 +255,18 @@ TESTS = [
         'text': '&#34;Hello&#34; &eacute;tirons!',
         'decode_html_entities': True,
         'tokens': ['"', 'Hello', '"', 'étirons', '!']
+    },
+    {
+        'text': 'This is a verrofuomsrvhouhvouhoqicpihwoihoihwpff long token.',
+        'max_word_length': 10,
+        'tokens': ['This', 'is', 'a', 'long', 'token', '.']
+    },
+    {
+        'text': 'This is a verrofuomsrvhouhvouhoqicpihwoihoihwpff long token.',
+        'min_word_length': 2,
+        'max_word_length': 10,
+        'lower': True,
+        'tokens': ['this', 'is', 'long', 'token', '.']
     }
 ]
 
@@ -269,6 +281,9 @@ class TestWordTokenizer(object):
 
         with raises(TypeError, match='both'):
             WordTokenizer(keep=['word'], drop=['emoji'])
+
+        with raises(TypeError, match='length'):
+            WordTokenizer(min_word_length=45, max_word_length=4)
 
     def test_punct_emoji_iter(self):
         results = list(punct_emoji_iter('🙏,🙏,'))
@@ -288,6 +303,7 @@ class TestWordTokenizer(object):
                 reduce_words=test.get('reduce_words', False),
                 decode_html_entities=test.get('decode_html_entities', False),
                 min_word_length=test.get('min_word_length'),
+                max_word_length=test.get('max_word_length'),
                 stoplist=test.get('stoplist'),
                 keep=test.get('keep'),
                 drop=test.get('drop')
