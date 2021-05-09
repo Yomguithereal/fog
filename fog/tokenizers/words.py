@@ -172,16 +172,66 @@ def validate_token_types(types):
 
 def split_hashtag(string):
     offset = 1
-
     it = enumerate(string)
-    next(it)
+    state = 'upper-start' if not string[1].isdigit() else 'number'
 
+    next(it)  # Hastag sigil '#'
+    next(it)  # First char
+
+    # NOTE: I hate state machines (I don't use a regex here to keep the benefit
+    # of python's string methods wrt diacritics)
     for i, c in it:
-        if c.isupper() and offset < i:
-            yield string[offset:i]
-            offset = i
+        if state == 'lower':
+            if c.isupper():
+                yield ('word', string[offset:i])
+                state = 'upper-start'
+                offset = i
 
-    yield string[offset:]
+            elif c.isdigit():
+                yield ('word', string[offset:i])
+                state = 'number'
+                offset = i
+
+        elif state == 'upper-start':
+            if c.islower():
+                state = 'lower'
+                continue
+
+            if c.isupper():
+                state = 'upper-next'
+                continue
+
+            if c.isdigit():
+                state = 'number'
+                yield ('word', string[offset:i])
+                offset = i
+
+        elif state == 'upper-next':
+            if c.islower():
+                state = 'lower'
+                yield ('word', string[offset:i - 1])
+                offset = i - 1
+
+            elif c.isdigit():
+                state = 'number'
+                yield ('word', string[offset:i])
+                offset = i
+
+        elif state == 'number':
+            if not c.isdigit():
+                if c.isupper():
+                    state = 'upper-start'
+                    yield ('number', string[offset:i])
+                    offset = i
+
+                else:
+                    state = 'lower'
+                    yield ('number', string[offset:i])
+                    offset = i
+
+        prev = c
+
+    yield ('number' if state == 'number' else 'word', string[offset:])
 
 
 class WordTokenizer(object):
@@ -521,8 +571,7 @@ class WordTokenizer(object):
                         yield (token_type, before)
 
                 elif token_type == 'hashtag' and self.split_hashtags:
-                    for sub_token in split_hashtag(before):
-                        yield ('word', sub_token)
+                    yield from split_hashtag(before)
 
                 else:
 

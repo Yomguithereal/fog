@@ -299,11 +299,12 @@ TESTS = [
         'tokens': [('word', 'Example'), ('word', 'To')]
     },
     {
-        'text': '#ExampleTo',
+        'text': '#ExampleTo45',
         'split_hashtags': True,
         'stoplist': ['to'],
         'lower': True,
-        'tokens': ['example']
+        'with_types': True,
+        'tokens': [('word', 'example'), ('number', '45')]
     }
 ]
 
@@ -323,16 +324,43 @@ class TestWordTokenizer(object):
             WordTokenizer(min_word_length=45, max_word_length=4)
 
     def test_split_hashtag(self):
-        assert list(split_hashtag('#test')) == ['test']
-        assert list(split_hashtag('#Test')) == ['Test']
-        assert list(split_hashtag('#t')) == ['t']
-        assert list(split_hashtag('#T')) == ['T']
-        assert list(split_hashtag('#TestWhatever')) == ['Test', 'Whatever']
-        assert list(split_hashtag('#testWhatever')) == ['test', 'Whatever']
-        assert list(split_hashtag('#ÉpopéeRusse')) == ['Épopée', 'Russe']
-        assert list(split_hashtag('#TestOkFinal')) == ['Test', 'Ok', 'Final']
-        assert list(split_hashtag('#TestOkFinalT')) == ['Test', 'Ok', 'Final', 'T']
-        assert list(split_hashtag('#Test123Whatever')) == ['Test123', 'Whatever']
+        tests = [
+            ('#test', ['test']),
+            ('#Test', ['Test']),
+            ('#t', ['t']),
+            ('#T', ['T']),
+            ('#TestWhatever', ['Test', 'Whatever']),
+            ('#testWhatever', ['test', 'Whatever']),
+            ('#ÉpopéeRusse', ['Épopée', 'Russe']),
+            ('#TestOkFinal', ['Test', 'Ok', 'Final']),
+            ('#TestOkFinalT', ['Test', 'Ok', 'Final', 'T']),
+            ('#Test123Whatever', ['Test', '123', 'Whatever']),
+            ('#TDF2018', ['TDF', '2018']),
+            ('#T2018', ['T', '2018']),
+            ('#TheID2018', ['The', 'ID', '2018']),
+            ('#8YearsOfOneDirection', ['8', 'Years', 'Of', 'One', 'Direction']),
+            ('#This18Gloss', ['This', '18', 'Gloss']),
+            ('#WordpressIDInformation', ['Wordpress', 'ID', 'Information']),
+            ('#LearnWCFInSixEasyMonths', ['Learn', 'WCF', 'In', 'Six', 'Easy', 'Months']),
+            ('#ThisIsInPascalCase', ['This', 'Is', 'In', 'Pascal', 'Case']),
+            ('#whatAboutThis', ['what', 'About', 'This']),
+            ('#This123thingOverload', ['This', '123', 'thing', 'Overload']),
+            ('#final19', ['final', '19'])
+        ]
+
+        for hashtag, result in tests:
+            assert list(t for _, t in split_hashtag(hashtag)) == result
+
+        assert list(split_hashtag('#Test18OK23test45Whatever56')) == [
+            ('word', 'Test'),
+            ('number', '18'),
+            ('word', 'OK'),
+            ('number', '23'),
+            ('word', 'test'),
+            ('number', '45'),
+            ('word', 'Whatever'),
+            ('number', '56')
+        ]
 
     def test_punct_emoji_iter(self):
         results = list(punct_emoji_iter('🙏,🙏,'))
