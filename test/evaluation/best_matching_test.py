@@ -33,7 +33,13 @@ class TestBestMatching(object):
             best_matching([['A1']], [['A2']])
 
         with raises(TypeError, match='fuzzy'):
-            best_matching([['A1'], ['B1'], ['A1']], [])
+            best_matching([['A1'], ['B1'], ['A1']], ['B1', 'A1'])
+
+        with raises(TypeError, match='empty'):
+            best_matching([['A1'], []], [['A1']])
+
+        with raises(TypeError, match='empty'):
+            best_matching([['A1']], [['A1'], []])
 
     def test_basics(self):
         result = best_matching(TRUTH, CLUSTERS)

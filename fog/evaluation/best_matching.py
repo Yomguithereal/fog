@@ -45,6 +45,10 @@ def best_matching(
     truth_cluster_sizes = {}
 
     for i, cluster in enumerate(truth):
+
+        if not cluster:
+            raise TypeError('truth contains an empty cluster')
+
         for item in cluster:
             if item in index:
                 raise TypeError('truth clusters are fuzzy (i.e. one item can be found in multiple clusters)')
@@ -59,6 +63,9 @@ def best_matching(
     F = OnlineMean()
 
     for cluster in predicted:
+
+        if not cluster:
+            raise TypeError('predicted contains an empty cluster')
 
         # Finding best matching cluster from truth
         candidates = Counter()
