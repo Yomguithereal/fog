@@ -21,7 +21,8 @@ from fog.utils import OnlineMean
 def best_matching(
     truth: Iterable[Iterable[Hashable]],
     predicted: Iterable[Iterable[Hashable]],
-    allow_additional_items: bool = False
+    allow_additional_items: bool = False,
+    macro: bool = True
 ) -> Tuple[float, float, float]:
     """
     Efficient implementation of the "best matching F1" evaluation metric for
@@ -34,6 +35,8 @@ def best_matching(
             that don't exist in truth clusters to be found in predicted ones. Those
             additional items will then be ignored when computing the metrics instead
             of raising an error when found. Defaults to False.
+        macro (bool, optional): Whether to compute the macro or the micro average
+            of the evaluation metric. Defaults to True.
 
     Returns:
         tuple of floats: precision, recall and f1 score.
@@ -61,6 +64,10 @@ def best_matching(
     P = OnlineMean()
     R = OnlineMean()
     F = OnlineMean()
+
+    micro_true_positives = 0
+    micro_false_positives = 0
+    micro_false_negatives = 0
 
     for cluster in predicted:
 
@@ -93,16 +100,32 @@ def best_matching(
         false_positives = cluster_size - true_positives
         false_negatives = matching_cluster_size - true_positives
 
-        precision = true_positives / (true_positives + false_positives)
-        recall = true_positives / (true_positives + false_negatives)
-        f1 = 2 * precision * recall / (precision + recall)
+        if macro:
+            precision = true_positives / (true_positives + false_positives)
+            recall = true_positives / (true_positives + false_negatives)
+            f1 = 2 * precision * recall / (precision + recall)
 
-        P.add(precision)
-        R.add(recall)
-        F.add(f1)
+            P.add(precision)
+            R.add(recall)
+            F.add(f1)
+
+        else:
+            micro_true_positives += true_positives
+            micro_false_positives += false_positives
+            micro_false_negatives += false_negatives
+
+    if macro:
+        return (
+            float(P),
+            float(R),
+            float(F)
+        )
+
+    micro_precision = micro_true_positives / (micro_true_positives + micro_false_positives)
+    micro_recall = micro_true_positives / (micro_true_positives + micro_false_negatives)
 
     return (
-        float(P),
-        float(R),
-        float(F)
+        micro_precision,
+        micro_recall,
+        2 * micro_precision * micro_recall / (micro_precision + micro_recall)
     )
