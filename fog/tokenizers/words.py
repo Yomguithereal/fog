@@ -461,7 +461,7 @@ class WordTokenizer(object):
                         if n == ',':
                             break
 
-                    elif n in IDENTIFIER_PARTS:
+                    elif n in IDENTIFIER_PARTS or n == '·':
                         if j + 1 >= l:
                             break
 

@@ -310,6 +310,10 @@ TESTS = [
         'text': 'Hello ^^!',
         'with_types': True,
         'tokens': [('word', 'Hello'), ('smiley', '^^'), ('punct', '!')]
+    },
+    {
+        'text': 'Musicien-ne-s, musicien·nes et ingénieur·e·s.',
+        'tokens': ['Musicien-ne-s', ',', 'musicien·nes', 'et', 'ingénieur·e·s', '.']
     }
 ]
 
