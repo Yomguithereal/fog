@@ -305,6 +305,11 @@ TESTS = [
         'lower': True,
         'with_types': True,
         'tokens': [('word', 'example'), ('number', '45')]
+    },
+    {
+        'text': 'Hello ^^!',
+        'with_types': True,
+        'tokens': [('word', 'Hello'), ('smiley', '^^'), ('punct', '!')]
     }
 ]
 
