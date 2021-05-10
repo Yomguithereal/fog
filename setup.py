@@ -11,7 +11,7 @@ EXTENSIONS = [
 ]
 
 setup(name='fog',
-    version='0.11.2',
+    version='0.11.3',
     description='A fuzzy matching & clustering library for python.',
     long_description=long_description,
     long_description_content_type='text/markdown',
