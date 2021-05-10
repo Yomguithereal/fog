@@ -47,7 +47,12 @@ def best_matching(
     index = {}
     truth_cluster_sizes = {}
 
+    # NOTE: I use a counter because the function accepts arbitrary (potentially lazy)
+    # iterables, not just sized ones.
+    c = 0
+
     for i, cluster in enumerate(truth):
+        c += 1
 
         if not cluster:
             raise TypeError('truth contains an empty cluster')
@@ -60,6 +65,9 @@ def best_matching(
 
         truth_cluster_sizes[i] = len(cluster)
 
+    if c == 0:
+        raise TypeError('truth is empty')
+
     # Aggregating scores
     P = OnlineMean()
     R = OnlineMean()
@@ -69,7 +77,10 @@ def best_matching(
     micro_false_positives = 0
     micro_false_negatives = 0
 
+    c = 0
+
     for cluster in predicted:
+        c += 1
 
         if not cluster:
             raise TypeError('predicted contains an empty cluster')
@@ -113,6 +124,9 @@ def best_matching(
             micro_true_positives += true_positives
             micro_false_positives += false_positives
             micro_false_negatives += false_negatives
+
+    if c == 0:
+        raise TypeError('predicted is empty')
 
     if macro:
         return (

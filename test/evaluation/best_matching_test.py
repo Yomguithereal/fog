@@ -41,6 +41,12 @@ class TestBestMatching(object):
         with raises(TypeError, match='empty'):
             best_matching([['A1']], [['A1'], []])
 
+        with raises(TypeError, match='truth is empty'):
+            best_matching([], [['A1']])
+
+        with raises(TypeError, match='predicted is empty'):
+            best_matching([['A1']], [])
+
     def test_basics(self):
         result = best_matching(TRUTH, CLUSTERS)
 
