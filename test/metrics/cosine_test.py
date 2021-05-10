@@ -8,9 +8,10 @@ from fog.metrics import (
     sparse_cosine_similarity,
     sparse_dot_product,
     sparse_binary_cosine_similarity,
+    sparse_norm,
+    sparse_normalize,
     binary_cosine_similarity
 )
-from fog.metrics.cosine import sparse_normalize
 
 BASIC_TESTS = [
     ({}, {}, 0.0),
@@ -41,10 +42,6 @@ BINARY_TESTS = [
 ]
 
 
-def norm(S):
-    return math.sqrt(sum(map(lambda x: x * x, S.values())))
-
-
 class TestSparseCosineSimilarity(object):
     def test_basics(self):
         for A, B, similarity in BASIC_TESTS:
@@ -57,8 +54,8 @@ class TestSparseCosineSimilarity(object):
     def test_dotproduct(self):
         for A, B, similarity in BASIC_TESTS:
             dotproduct = sparse_dot_product(A, B)
-            A_norm = norm(A)
-            B_norm = norm(B)
+            A_norm = sparse_norm(A)
+            B_norm = sparse_norm(B)
 
             cosine = 0.0
 
