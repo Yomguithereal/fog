@@ -314,7 +314,16 @@ TESTS = [
     {
         'text': 'Musicien-ne-s, musicien·nes et ingénieur·e·s.',
         'tokens': ['Musicien-ne-s', ',', 'musicien·nes', 'et', 'ingénieur·e·s', '.']
-    }
+    },
+    {
+        'text': 'L\'1.',
+        'with_types': True,
+        'tokens': [('word', "L'"), ('number', '1'), ('punct', '.')]
+    },
+    # {
+    #     'text': "reprise et que truc ''s’éclipse'' alors et ''mange''. 'twas 'sisters'! 'Mbappé",
+    #     'tokens': ['reprise', 'et', 'que', 'truc', "'", "'", 's’', 'éclipse', "'", "'", 'alors', 'et', "'", "'", 'mange', "'", "'", '.', '\'twas', "'", 'sisters', "'", '!', '\'Mbappé']
+    # }
 ]
 
 

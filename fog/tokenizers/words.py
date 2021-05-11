@@ -501,7 +501,7 @@ class WordTokenizer(object):
                 k = j + 1
 
                 while k < l:
-                    if not string[k].isalpha():
+                    if not string[k].isalnum():
                         break
 
                     k += 1
@@ -509,7 +509,12 @@ class WordTokenizer(object):
                 if k > j + 1:
                     after = string[j + 1:k]
 
-                    if after in ENGLISH_CONTRACTIONS:
+                    if after[0].isdigit():
+                        yield (token_type, before + string[j])
+                        i = j + 1
+                        continue
+
+                    elif after in ENGLISH_CONTRACTIONS:
                         yield (token_type, before)
                         yield (token_type, string[j] + after)
 
