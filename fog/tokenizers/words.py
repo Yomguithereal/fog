@@ -40,7 +40,7 @@ EMAIL_LOOKAHEAD_RE = re.compile(r'^[A-Za-z0-9!#$%&*+\-/=?^_`{|}~]{1,64}@')
 SMILEY_RE = re.compile(r'^(?:[\-]+>|<[\-]+|[<>]?[:;=8][\-o\*\']?[\)\]\(\[dDpP/\:\}\{@\|\\]|[\)\]\(\[dDpP/\:\}\{@\|\\][\-o\*\']?[:;=8]|[<:]3|\^\^)')
 EMOJI_RE = get_emoji_regexp()
 POINT_SPLITTER_RE = re.compile(r'(\.)')
-LENGTHENING_RE = re.compile(r'(.)\1{2,}')
+LENGTHENING_RE = re.compile(r'(.)\1{4,}')
 
 ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
 ENGLISH_ARCHAIC_CONTRACTIONS = ['tis', 'twas']
