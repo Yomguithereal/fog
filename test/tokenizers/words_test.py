@@ -100,7 +100,7 @@ TESTS = [
     },
     {
         'text': 'L\'#amour appartient à l\'@ange!',
-        'tokens': ['L', '#amour', 'appartient', 'à', 'l', '@ange', '!']
+        'tokens': ['L\'', '#amour', 'appartient', 'à', 'l\'', '@ange', '!']
     },
     {
         'text': 'La température est de -23. Il est -sûr que cela va arriver.',
@@ -320,10 +320,14 @@ TESTS = [
         'with_types': True,
         'tokens': [('word', "L'"), ('number', '1'), ('punct', '.')]
     },
-    # {
-    #     'text': "reprise et que truc ''s’éclipse'' alors et ''mange''. 'twas 'sisters'! 'Mbappé",
-    #     'tokens': ['reprise', 'et', 'que', 'truc', "'", "'", 's’', 'éclipse', "'", "'", 'alors', 'et', "'", "'", 'mange', "'", "'", '.', '\'twas', "'", 'sisters', "'", '!', '\'Mbappé']
-    # }
+    {
+        'text': "'''",
+        'tokens': ["'", "'", "'"]
+    },
+    {
+        'text': "'this is reprise et que truc ''s’éclipse'' alors et ''mange''. 'twas 'sisters'! 'Mbappé'.",
+        'tokens': ["'", 'this', 'is', 'reprise', 'et', 'que', 'truc', "'", "'", 's’', 'éclipse', "'", "'", 'alors', 'et', "'", "'", 'mange', "'", "'", '.', '\'twas', "'", 'sisters', "'", '!', "'", 'Mbappé', "'", '.']
+    }
 ]
 
 

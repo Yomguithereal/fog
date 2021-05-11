@@ -20,6 +20,7 @@
 #   * Complex graphemes such as: u̲n̲d̲e̲r̲l̲i̲n̲e̲d̲ or ārrive
 #   * Multi-line hyphenation schemes
 #   * Junk found in the middle of a word token
+#   * It is not possible to keep apostrophes starting names
 #
 import re
 from html import unescape
@@ -31,6 +32,7 @@ from typing import Optional, Iterable
 DECIMALS = ['.', ',']
 IDENTIFIER_PARTS = ['-', '_']
 APOSTROPHES = ['\'', '’']
+SIGILS = ['#', '@', '$']
 IRISH = ['O', 'o']
 VOWELS_PATTERN = 'aáàâäąåoôóøeéèëêęiíïîıuúùûüyÿæœAÁÀÂÄĄÅOÓÔØEÉÈËÊĘIİÍÏÎYŸUÚÙÛÜÆŒ'
 CONSONANTS_RE = re.compile(r'^[^%s]$' % VOWELS_PATTERN)
@@ -41,6 +43,7 @@ POINT_SPLITTER_RE = re.compile(r'(\.)')
 LENGTHENING_RE = re.compile(r'(.)\1{2,}')
 
 ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
+ENGLISH_ARCHAIC_CONTRACTIONS = ['tis', 'twas']
 FRENCH_EXCEPTIONS = ['hui']
 FRENCH_UNION_TARGETS = {
     'je',
@@ -337,7 +340,7 @@ class WordTokenizer(object):
                 pass
 
             # Breaking punctuation apart and tokenizing emojis
-            elif not c.isalnum() and c not in APOSTROPHES and c != '-':
+            elif not c.isalnum() and c != '-':
                 j = i + 1
 
                 while j < l:
@@ -354,10 +357,14 @@ class WordTokenizer(object):
 
                     j += 1
 
-                yield from punct_emoji_iter(string[i:j])
-                i = j
+                punct_cluster = string[i:j]
 
-                continue
+                if punct_cluster in APOSTROPHES:
+                    j = i + 1
+                else:
+                    yield from punct_emoji_iter(punct_cluster)
+                    i = j
+                    continue
 
             # Consuming token
             j = i + 1
@@ -485,6 +492,15 @@ class WordTokenizer(object):
 
             before = string[i:j]
 
+            if before[0] in APOSTROPHES and before[1:].lower() not in ENGLISH_ARCHAIC_CONTRACTIONS:
+                yield ('punct', before[0])
+                i += 1
+
+                if i == j:
+                    continue
+
+                before = before[1:]
+
             if can_be_acronym:
                 if all(len(t) <= 1 for t in before.split('.')):
                     yield ('word', before)
@@ -501,7 +517,9 @@ class WordTokenizer(object):
                 k = j + 1
 
                 while k < l:
-                    if not string[k].isalnum():
+                    n = string[k]
+
+                    if not n.isalnum() and n not in SIGILS:
                         break
 
                     k += 1
@@ -529,7 +547,7 @@ class WordTokenizer(object):
                         (
                             after[0] != 'h' and
                             is_consonant(before[-1]) and
-                            is_consonant(after[0])
+                            (is_consonant(after[0]) and after[0] not in SIGILS)
                         ) or
                         before in IRISH
                     ):
@@ -542,6 +560,7 @@ class WordTokenizer(object):
 
                 else:
                     yield (token_type, before)
+                    yield ('punct', string[j])
 
                 j = k
 
