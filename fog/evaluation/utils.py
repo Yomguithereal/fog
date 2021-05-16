@@ -32,3 +32,26 @@ def labels_to_clusters(labels):
         c.append(i)
 
     return list(clusters.values())
+
+
+def clusters_to_labels(clusters, *, key=None, flat=False):
+    labels = {}
+
+    for i, cluster in enumerate(clusters):
+        for item in cluster:
+            k = item
+
+            if key is not None:
+                k = key(item)
+
+            labels[k] = i
+
+    if flat:
+        flat_labels = [-1] * len(labels)
+
+        for i, l in labels.items():
+            flat_labels[i] = l
+
+        return flat_labels
+
+    return labels
