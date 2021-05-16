@@ -11,7 +11,7 @@ endef
 
 # Commands
 all: lint test
-test: build-ext unit
+test: unit
 publish: clean lint test build-ext upload
 	$(call clean)
 
