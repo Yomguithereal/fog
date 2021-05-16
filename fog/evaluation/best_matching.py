@@ -22,11 +22,13 @@ def best_matching(
     truth: Iterable[Iterable[Hashable]],
     predicted: Iterable[Iterable[Hashable]],
     allow_additional_items: bool = False,
-    macro: bool = True
+    micro: bool = False
 ) -> Tuple[float, float, float]:
     """
     Efficient implementation of the "best matching F1" evaluation metric for
     clusters.
+
+    Note that this metric is not symmetric and will match truth -> predicted.
 
     Args:
         truth (iterable): the truth clusters.
@@ -35,38 +37,52 @@ def best_matching(
             that don't exist in truth clusters to be found in predicted ones. Those
             additional items will then be ignored when computing the metrics instead
             of raising an error when found. Defaults to False.
-        macro (bool, optional): Whether to compute the macro or the micro average
-            of the evaluation metric. Defaults to True.
+        micro (bool, optional): Whether to compute the micro average instead of the macro
+            average of the evaluation metric. Defaults to False.
 
     Returns:
         tuple of floats: precision, recall and f1 score.
 
     """
 
-    # Indexing truth clusters
+    # NOTE: need to change this if we want to accept lazy iterables
+    if len(truth) == 0:
+        raise TypeError('truth is empty')
+
+    if len(predicted) == 0:
+        raise TypeError('predicted is empty')
+
+    # Indexing truth items
+    truth_items = set()
+
+    for cluster in truth:
+        for item in cluster:
+            truth_items.add(item)
+
+    # Indexing predicted clusters
     index = {}
-    truth_cluster_sizes = {}
+    predicted_cluster_sizes = {}
 
-    # NOTE: I use a counter because the function accepts arbitrary (potentially lazy)
-    # iterables, not just sized ones.
-    c = 0
-
-    for i, cluster in enumerate(truth):
-        c += 1
+    for i, cluster in enumerate(predicted):
+        l = 0
 
         if not cluster:
-            raise TypeError('truth contains an empty cluster')
+            raise TypeError('predicted contains an empty cluster')
 
         for item in cluster:
+            if item not in truth_items:
+                if not allow_additional_items:
+                    raise TypeError('predicted clusters contains items that cannot be found in truth ones')
+                else:
+                    continue
+
             if item in index:
-                raise TypeError('truth clusters are fuzzy (i.e. one item can be found in multiple clusters)')
+                raise TypeError('predicted clusters are fuzzy (i.e. one item can be found in multiple clusters)')
 
             index[item] = i
+            l += 1
 
-        truth_cluster_sizes[i] = len(cluster)
-
-    if c == 0:
-        raise TypeError('truth is empty')
+        predicted_cluster_sizes[i] = l
 
     # Aggregating scores
     P = OnlineMean()
@@ -77,13 +93,10 @@ def best_matching(
     micro_false_positives = 0
     micro_false_negatives = 0
 
-    c = 0
-
-    for cluster in predicted:
-        c += 1
-
+    # Matching truth
+    for cluster in truth:
         if not cluster:
-            raise TypeError('predicted contains an empty cluster')
+            raise TypeError('truth contains an empty cluster')
 
         # Finding best matching cluster from truth
         candidates = Counter()
@@ -93,25 +106,18 @@ def best_matching(
             candidate_cluster_index = index.get(item)
 
             if candidate_cluster_index is None:
-                if not allow_additional_items:
-                    raise TypeError('predicted clusters don\'t have the same items as truth ones')
-                else:
-                    continue
+                raise TypeError('truth has items that cannot be found in predicted clusters')
 
             candidates[candidate_cluster_index] += 1
             cluster_size += 1
 
-        if len(candidates) == 0:
-            assert allow_additional_items
-            continue
-
         matching_cluster_index, true_positives = candidates.most_common(1)[0]
-        matching_cluster_size = truth_cluster_sizes[matching_cluster_index]
+        matching_cluster_size = predicted_cluster_sizes[matching_cluster_index]
 
-        false_positives = cluster_size - true_positives
-        false_negatives = matching_cluster_size - true_positives
+        false_positives = matching_cluster_size - true_positives
+        false_negatives = cluster_size - true_positives
 
-        if macro:
+        if not micro:
             precision = true_positives / (true_positives + false_positives)
             recall = true_positives / (true_positives + false_negatives)
             f1 = 2 * precision * recall / (precision + recall)
@@ -125,10 +131,7 @@ def best_matching(
             micro_false_positives += false_positives
             micro_false_negatives += false_negatives
 
-    if c == 0:
-        raise TypeError('predicted is empty')
-
-    if macro:
+    if not micro:
         return (
             float(P),
             float(R),

@@ -29,11 +29,11 @@ CLUSTERS_WITH_ADDITIONAL_ITEMS = [
 
 class TestBestMatching(object):
     def test_exceptions(self):
-        with raises(TypeError, match='same item'):
+        with raises(TypeError, match='cannot be found'):
             best_matching([['A1']], [['A2']])
 
         with raises(TypeError, match='fuzzy'):
-            best_matching([['A1'], ['B1'], ['A1']], ['B1', 'A1'])
+            best_matching([['A1', 'B1']], [['A1'], ['B1'], ['A1']])
 
         with raises(TypeError, match='empty'):
             best_matching([['A1'], []], [['A1']])
@@ -47,28 +47,30 @@ class TestBestMatching(object):
         with raises(TypeError, match='predicted is empty'):
             best_matching([['A1']], [])
 
+        with raises(TypeError, match='cannot be found'):
+            best_matching([['A1']], [['A1', 'B1']])
+
     def test_basics(self):
         result = best_matching(TRUTH, CLUSTERS)
 
         assert result == approx((
-            0.75,
-            0.83,
-            0.78
+            0.625,
+            0.875,
+            0.714
         ), rel=1e-2)
+
+        assert best_matching(TRUTH, CLUSTERS) == best_matching(TRUTH, CLUSTERS_WITH_ADDITIONAL_ITEMS, allow_additional_items=True)
 
     def test_micro(self):
-        result = best_matching(TRUTH, CLUSTERS, macro=False)
+        result = best_matching(TRUTH, CLUSTERS, micro=True)
 
         assert result == approx((
-            0.80,
-            0.89,
-            0.84
+            0.642,
+            0.9,
+            0.75
         ), rel=1e-2)
 
-    def test_allow_additional_items(self):
-        result = best_matching(TRUTH, CLUSTERS_WITH_ADDITIONAL_ITEMS, allow_additional_items=True)
-
-        assert result == best_matching(TRUTH, CLUSTERS)
+        assert best_matching(TRUTH, CLUSTERS, micro=True) == best_matching(TRUTH, CLUSTERS_WITH_ADDITIONAL_ITEMS, micro=True, allow_additional_items=True)
 
     def test_identity(self):
         result = best_matching(TRUTH, TRUTH)
@@ -77,8 +79,8 @@ class TestBestMatching(object):
         result = best_matching(CLUSTERS, CLUSTERS)
         assert result == approx((1.0, 1.0, 1.0))
 
-        result = best_matching(TRUTH, TRUTH, macro=False)
+        result = best_matching(TRUTH, TRUTH, micro=True)
         assert result == approx((1.0, 1.0, 1.0))
 
-        result = best_matching(CLUSTERS, CLUSTERS, macro=False)
+        result = best_matching(CLUSTERS, CLUSTERS, micro=True)
         assert result == approx((1.0, 1.0, 1.0))
