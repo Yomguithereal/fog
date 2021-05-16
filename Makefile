@@ -1,10 +1,19 @@
 # Variables
 SOURCE = fog cfog docs
 
+# Functions
+define clean
+	rm -rf *.egg-info .pytest_cache .ipynb_checkpoints build dist
+	find . -name __pycache__ -type d | xargs rm -rf
+	find . -name *.c -type f | xargs rm -f
+	find . -name *.so -type f | xargs rm -f
+endef
+
 # Commands
 all: lint test
 test: build-ext unit
-publish: clean lint test build-ext upload clean
+publish: clean lint test build-ext upload
+	$(call clean)
 
 build-ext:
 	@echo Building native extensions...
@@ -14,10 +23,7 @@ build-ext:
 	@echo
 
 clean:
-	rm -rf *.egg-info .pytest_cache .ipynb_checkpoints build dist
-	find . -name __pycache__ -type d | xargs rm -rf
-	find . -name *.c -type f | xargs rm -f
-	find . -name *.so -type f | xargs rm -f
+	$(call clean)
 
 deps:
 	pip3 install -U pip
