@@ -7,8 +7,8 @@
 import re
 from statistics import StatisticsError
 
-SQUEEZE_RE = re.compile(r'(?:(.)\1+)')
-SQUEEZE_ROMAN_RE = re.compile(r'(?:([^IXCMixcm])\1+)')
+SQUEEZE_RE = re.compile(r'(.)\1+')
+SQUEEZE_ROMAN_RE = re.compile(r'([^IXCMixcm])\1+')
 
 
 def squeeze(string, keep_roman_numerals=False):
