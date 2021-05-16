@@ -40,6 +40,8 @@ pip install fog
 Efficient implementation of the "best matching F1" evaluation metric for
 clusters.
 
+Note that this metric is not symmetric and will match truth -> predicted.
+
 *Arguments*
 * **truth** *iterable*: the truth clusters.
 * **predicted** *iterable*: the predicted clusters.
@@ -47,6 +49,8 @@ clusters.
 that don't exist in truth clusters to be found in predicted ones. Those
 additional items will then be ignored when computing the metrics instead
 of raising an error when found.
+* **micro** *?bool* [`False`]: Whether to compute the micro average instead of the macro
+average of the evaluation metric.
 
 ### Graph
 
