@@ -1,7 +1,6 @@
 # =============================================================================
 # Fog Cosine Similarity Unit Tests
 # =============================================================================
-import math
 from pytest import approx
 from fog.metrics import (
     cosine_similarity,
