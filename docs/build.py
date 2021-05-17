@@ -18,7 +18,7 @@ DOCS = [
     {
         'title': 'Evaluation',
         'fns': [
-            evaluation.best_matching
+            evaluation.best_matching_macro_average
         ]
     },
     {

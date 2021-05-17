@@ -18,15 +18,14 @@ from typing import Hashable, Iterable, Tuple
 from fog.utils import OnlineMean
 
 
-def best_matching(
+def best_matching_macro_average(
     truth: Iterable[Iterable[Hashable]],
     predicted: Iterable[Iterable[Hashable]],
-    allow_additional_items: bool = False,
-    micro: bool = False
+    allow_additional_items: bool = False
 ) -> Tuple[float, float, float]:
     """
-    Efficient implementation of the "best matching F1" evaluation metric for
-    clusters.
+    Efficient implementation of the "macro average best matching F1" evaluation
+    metric for clusters.
 
     Note that this metric is not symmetric and will match truth -> predicted.
 
@@ -37,8 +36,6 @@ def best_matching(
             that don't exist in truth clusters to be found in predicted ones. Those
             additional items will then be ignored when computing the metrics instead
             of raising an error when found. Defaults to False.
-        micro (bool, optional): Whether to compute the micro average instead of the macro
-            average of the evaluation metric. Defaults to False.
 
     Returns:
         tuple of floats: precision, recall and f1 score.
@@ -89,10 +86,6 @@ def best_matching(
     R = OnlineMean()
     F = OnlineMean()
 
-    micro_true_positives = 0
-    micro_false_positives = 0
-    micro_false_negatives = 0
-
     # Matching truth
     for cluster in truth:
         if not cluster:
@@ -111,38 +104,32 @@ def best_matching(
             candidates[candidate_cluster_index] += 1
             cluster_size += 1
 
-        matching_cluster_index, true_positives = candidates.most_common(1)[0]
-        matching_cluster_size = predicted_cluster_sizes[matching_cluster_index]
+        best_f1 = -1.0
+        best = None
 
-        false_positives = matching_cluster_size - true_positives
-        false_negatives = cluster_size - true_positives
+        # Finding a matching cluster that maximizes F1 score
+        for matching_cluster_index, true_positives in candidates.items():
+            matching_cluster_size = predicted_cluster_sizes[matching_cluster_index]
 
-        if not micro:
+            false_positives = matching_cluster_size - true_positives
+            false_negatives = cluster_size - true_positives
+
             precision = true_positives / (true_positives + false_positives)
             recall = true_positives / (true_positives + false_negatives)
             f1 = 2 * precision * recall / (precision + recall)
 
-            P.add(precision)
-            R.add(recall)
-            F.add(f1)
+            if f1 > best_f1:
+                best_f1 = f1
+                best = (precision, recall, f1)
 
-        else:
-            micro_true_positives += true_positives
-            micro_false_positives += false_positives
-            micro_false_negatives += false_negatives
+        assert best is not None
 
-    if not micro:
-        return (
-            float(P),
-            float(R),
-            float(F)
-        )
-
-    micro_precision = micro_true_positives / (micro_true_positives + micro_false_positives)
-    micro_recall = micro_true_positives / (micro_true_positives + micro_false_negatives)
+        P.add(best[0])
+        R.add(best[1])
+        F.add(best[2])
 
     return (
-        micro_precision,
-        micro_recall,
-        2 * micro_precision * micro_recall / (micro_precision + micro_recall)
+        float(P),
+        float(R),
+        float(F)
     )

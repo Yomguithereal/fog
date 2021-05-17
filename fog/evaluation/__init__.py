@@ -1,2 +1,2 @@
-from fog.evaluation.best_matching import best_matching
+from fog.evaluation.best_matching import best_matching_macro_average
 from fog.evaluation.utils import labels_to_clusters, clusters_to_labels

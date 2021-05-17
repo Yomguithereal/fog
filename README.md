@@ -15,7 +15,7 @@ pip install fog
 ## Usage
 
 * [Evaluation](#evaluation)
-  * [best_matching](#best_matching)
+  * [best_matching_macro_average](#best_matching_macro_average)
 * [Graph](#graph)
   * [floatsam_sparsification](#floatsam_sparsification)
   * [monopartite_projection](#monopartite_projection)
@@ -35,10 +35,10 @@ pip install fog
 
 ### Evaluation
 
-#### best_matching
+#### best_matching_macro_average
 
-Efficient implementation of the "best matching F1" evaluation metric for
-clusters.
+Efficient implementation of the "macro average best matching F1" evaluation
+metric for clusters.
 
 Note that this metric is not symmetric and will match truth -> predicted.
 
@@ -49,8 +49,6 @@ Note that this metric is not symmetric and will match truth -> predicted.
 that don't exist in truth clusters to be found in predicted ones. Those
 additional items will then be ignored when computing the metrics instead
 of raising an error when found.
-* **micro** *?bool* [`False`]: Whether to compute the micro average instead of the macro
-average of the evaluation metric.
 
 ### Graph
 
