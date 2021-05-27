@@ -40,7 +40,7 @@ EMAIL_LOOKAHEAD_RE = re.compile(r'^[A-Za-z0-9!#$%&*+\-/=?^_`{|}~]{1,64}@')
 SMILEY_RE = re.compile(r'^(?:[\-]+>|<[\-]+|[<>]?[:;=8][\-o\*\']?[\)\]\(\[dDpP/\:\}\{@\|\\]|[\)\]\(\[dDpP/\:\}\{@\|\\][\-o\*\']?[:;=8]|[<:]3|\^\^)')
 EMOJI_RE = get_emoji_regexp()
 POINT_SPLITTER_RE = re.compile(r'(\.)')
-LENGTHENING_RE = re.compile(r'(.)\1{4,}')
+LENGTHENING_RE = re.compile(r'([^\W\d])\1{4,}')
 
 ENGLISH_CONTRACTIONS = ['ll', 're', 'm', 's', 've', 'd']
 ENGLISH_ARCHAIC_CONTRACTIONS = ['tis', 'twas']
@@ -294,7 +294,6 @@ class WordTokenizer(object):
 
         if (
             self.lower or
-            self.reduce_words or
             self.normalize_mentions or
             self.normalize_hashtags or
             self.mentions_as_words or
@@ -607,6 +606,9 @@ class WordTokenizer(object):
         if self.unidecode:
             string = unidecode_expect_ascii(string)
 
+        if self.reduce_words:
+            string = reduce_lenghtening(string)
+
         if self.__only_defaults:
             yield from self.__tokenize(string)
             return
@@ -646,9 +648,6 @@ class WordTokenizer(object):
             if token_type == 'word':
                 if self.lower:
                     token_value = token_value.lower()
-
-                if self.reduce_words:
-                    token_value = reduce_lenghtening(token_value)
 
                 if self.min_word_length is not None and len(token_value) < self.min_word_length:
                     continue
