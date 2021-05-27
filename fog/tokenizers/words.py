@@ -25,7 +25,7 @@
 import re
 from html import unescape
 from emoji import get_emoji_regexp
-from unidecode import unidecode
+from unidecode import unidecode_expect_ascii
 from ebbe import with_next
 from typing import Optional, Iterable
 
@@ -294,7 +294,6 @@ class WordTokenizer(object):
 
         if (
             self.lower or
-            self.unidecode or
             self.reduce_words or
             self.normalize_mentions or
             self.normalize_hashtags or
@@ -605,6 +604,9 @@ class WordTokenizer(object):
         if self.decode_html_entities:
             string = unescape(string)
 
+        if self.unidecode:
+            string = unidecode_expect_ascii(string)
+
         if self.__only_defaults:
             yield from self.__tokenize(string)
             return
@@ -633,7 +635,7 @@ class WordTokenizer(object):
             elif token_type == 'hashtag':
 
                 if self.normalize_hashtags:
-                    token_value = unidecode(token_value.lower())
+                    token_value = unidecode_expect_ascii(token_value.lower())
                     token_changed = True
 
                 if self.hashtags_as_words:
@@ -644,9 +646,6 @@ class WordTokenizer(object):
             if token_type == 'word':
                 if self.lower:
                     token_value = token_value.lower()
-
-                if self.unidecode:
-                    token_value = unidecode(token_value)
 
                 if self.reduce_words:
                     token_value = reduce_lenghtening(token_value)
