@@ -232,8 +232,6 @@ def split_hashtag(string):
                     yield ('number', string[offset:i])
                     offset = i
 
-        prev = c
-
     yield ('number' if state == 'number' else 'word', string[offset:])
 
 
