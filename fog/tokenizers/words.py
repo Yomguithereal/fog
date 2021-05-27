@@ -645,6 +645,7 @@ class WordTokenizer(object):
                     token_value = token_value[1:]
                     token_changed = True
 
+            # NOTE: not an `elif` here because the token type can change is hashtags are splitted
             if token_type == 'word':
                 if self.lower:
                     token_value = token_value.lower()
