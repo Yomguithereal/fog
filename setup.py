@@ -6,7 +6,8 @@ with open('./README.md', 'r') as f:
 EXTENSIONS = [
     Extension(
         'cfog.metrics.levenshtein',
-        ['cfog/metrics/levenshtein.c']
+        ['cfog/metrics/levenshtein.c'],
+        optional=True
     )
 ]
 
