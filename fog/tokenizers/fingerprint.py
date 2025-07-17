@@ -127,7 +127,7 @@ class FingerprintTokenizer(object):
             tokens = sorted_uniq(tokens)
         else:
             # Remove duplicated tokens while preserving order
-            tokens = [t for t in distinct(tokens)]
+            tokens = list(distinct(tokens))
 
         return tokens
 
@@ -177,11 +177,12 @@ class NgramsFingerprintTokenizer(FingerprintTokenizer):
         string = re.sub(WHITESPACE_RE, '', string)
         tokens = ngrams(n, string)
 
-        # Keeping unique tokens
-        tokens = set(tokens)
-
-        # Sorting
-        tokens = sorted(tokens)
+        if self.sort:
+            # Remove duplicated tokens and sort them
+            tokens = sorted_uniq(tokens)
+        else:
+            # Remove duplicated tokens while preserving order
+            tokens = list(distinct(tokens))
 
         return tokens
 
