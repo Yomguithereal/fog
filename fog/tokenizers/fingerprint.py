@@ -58,13 +58,15 @@ class FingerprintTokenizer(object):
         split (list, optional): List of token splitting characters.
         stopwords (iterable, optional): List of stopwords to filter.
         squeeze (bool, optional): Whether to squeeze the tokens or not.
+        sort (bool, optional): Whether to sort the tokens or not.
     """
 
     def __init__(self, keep_digits=True, min_token_size=1,
-                 split=None, stopwords=None, squeeze=False):
+                 split=None, stopwords=None, squeeze=False, sort=None):
 
         self.keep_digits = keep_digits
         self.squeeze = squeeze
+        self.sort = sort
 
         self.stopwords_re = None
         self.split_re = None
@@ -119,11 +121,12 @@ class FingerprintTokenizer(object):
         # Tokenizing
         tokens = re.split(WHITESPACE_RE, string)
 
-        # Keeping unique tokens
-        tokens = set(tokens)
+        # Keeping unique tokens while preserving order
+        tokens = list(dict.fromkeys(tokens))
 
         # Sorting
-        tokens = sorted(tokens)
+        if self.sort:
+            tokens = sorted(tokens)
 
         return tokens
 
