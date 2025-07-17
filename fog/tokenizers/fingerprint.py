@@ -38,6 +38,7 @@
 # http://openrefine.org/
 #
 import re
+from ebbe import distinct, sorted_uniq
 from unidecode import unidecode
 from fog.utils import squeeze as squeeze_string
 from fog.tokenizers.ngrams import ngrams
@@ -62,7 +63,7 @@ class FingerprintTokenizer(object):
     """
 
     def __init__(self, keep_digits=True, min_token_size=1,
-                 split=None, stopwords=None, squeeze=False, sort=None):
+                 split=None, stopwords=None, squeeze=False, sort=True):
 
         self.keep_digits = keep_digits
         self.squeeze = squeeze
@@ -121,12 +122,12 @@ class FingerprintTokenizer(object):
         # Tokenizing
         tokens = re.split(WHITESPACE_RE, string)
 
-        # Keeping unique tokens while preserving order
-        tokens = list(dict.fromkeys(tokens))
-
-        # Sorting
         if self.sort:
-            tokens = sorted(tokens)
+            # Remove duplicated tokens and sort them
+            tokens = sorted_uniq(tokens)
+        else:
+            # Remove duplicated tokens while preserving order
+            tokens = [t for t in distinct(tokens)]
 
         return tokens
 
