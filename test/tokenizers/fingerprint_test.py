@@ -69,3 +69,8 @@ class TestFingerprintTokenizer(object):
         for n, string, key in NGRAMS_TESTS:
             assert ''.join(ngrams_fingerprint_tokenizer(n, string)) == key
             assert ngrams_fingerprint(n, string) == key
+
+    def test_not_sort(self):
+
+        tokenizer = FingerprintTokenizer(sort=False, split=['-'])
+        assert tokenizer('Auvergne, Auvergne-Rhône-Alpes') == ['auvergne', 'rhone', 'alpes']
